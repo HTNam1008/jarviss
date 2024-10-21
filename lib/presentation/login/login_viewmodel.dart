@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter_application_1/domain/usecase/login_usecase.dart';
-import 'package:flutter_application_1/presentation/base/baseviewmodel.dart';
-import 'package:flutter_application_1/presentation/common/freezed_data_classes.dart';
+import 'package:jarvis/domain/usecase/login_usecase.dart';
+import 'package:jarvis/presentation/base/baseviewmodel.dart';
+import 'package:jarvis/presentation/common/freezed_data_classes.dart';
 
 class LoginViewModel extends BaseViewModel implements LoginViewModelInputs, LoginViewModelOutputs {
   final StreamController _userNameStreamController = StreamController<String>.broadcast();

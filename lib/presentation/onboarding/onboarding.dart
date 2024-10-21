@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/domain/model/model.dart';
-import 'package:flutter_application_1/presentation/onboarding/onboarding_viewmodel.dart';
-import 'package:flutter_application_1/presentation/resources/assets_manager.dart';
-import 'package:flutter_application_1/presentation/resources/color_manager.dart';
-import 'package:flutter_application_1/presentation/resources/strings_manager.dart';
-import 'package:flutter_application_1/presentation/resources/values_manager.dart';
+import 'package:jarvis/domain/model/model.dart';
+import 'package:jarvis/presentation/onboarding/onboarding_viewmodel.dart';
+import 'package:jarvis/presentation/resources/assets_manager.dart';
+import 'package:jarvis/presentation/resources/color_manager.dart';
+import 'package:jarvis/presentation/resources/strings_manager.dart';
+import 'package:jarvis/presentation/resources/values_manager.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class OnBoardingView extends StatefulWidget {

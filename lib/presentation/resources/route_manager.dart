@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/presentation/forgot_password/forgot_password.dart';
-import 'package:flutter_application_1/presentation/login/login.dart';
-import 'package:flutter_application_1/presentation/main/main_view.dart';
-import 'package:flutter_application_1/presentation/onboarding/onboarding.dart';
-import 'package:flutter_application_1/presentation/register/register.dart';
-import 'package:flutter_application_1/presentation/resources/strings_manager.dart';
-import 'package:flutter_application_1/presentation/splash/splash.dart';
-import 'package:flutter_application_1/presentation/store_details/store_details.dart';
+import 'package:jarvis/presentation/forgot_password/forgot_password.dart';
+import 'package:jarvis/presentation/login/login.dart';
+import 'package:jarvis/presentation/main/main_view.dart';
+import 'package:jarvis/presentation/onboarding/onboarding.dart';
+import 'package:jarvis/presentation/register/register.dart';
+import 'package:jarvis/presentation/resources/strings_manager.dart';
+import 'package:jarvis/presentation/splash/splash.dart';
+import 'package:jarvis/presentation/store_details/store_details.dart';
 
 class Routes {
   static const String splashRoute = "/";

@@ -1,6 +1,6 @@
-import 'package:flutter_application_1/data/network/app_api.dart';
-import 'package:flutter_application_1/data/request/request.dart';
-import 'package:flutter_application_1/data/responses/responses.dart';
+import 'package:jarvis/data/network/app_api.dart';
+import 'package:jarvis/data/request/request.dart';
+import 'package:jarvis/data/responses/responses.dart';
 
 abstract class RemoteDataSource {
   Future<AuthenticationResponse> login(LoginRequest loginRequest);

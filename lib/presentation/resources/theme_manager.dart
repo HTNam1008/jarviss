@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/presentation/resources/color_manager.dart';
-import 'package:flutter_application_1/presentation/resources/font_manager.dart';
-import 'package:flutter_application_1/presentation/resources/style_manager.dart';
-import 'package:flutter_application_1/presentation/resources/values_manager.dart';
+import 'package:jarvis/presentation/resources/color_manager.dart';
+import 'package:jarvis/presentation/resources/font_manager.dart';
+import 'package:jarvis/presentation/resources/style_manager.dart';
+import 'package:jarvis/presentation/resources/values_manager.dart';
 
 ThemeData getApplicationTheme() {
   final ThemeData theme = ThemeData();

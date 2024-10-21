@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter_application_1/app/functions.dart';
-import 'package:flutter_application_1/data/network/failure.dart';
-import 'package:flutter_application_1/data/request/request.dart';
-import 'package:flutter_application_1/domain/model/model.dart';
-import 'package:flutter_application_1/domain/repository/repository.dart';
-import 'package:flutter_application_1/domain/usecase/base_usecase.dart';
+import 'package:jarvis/app/functions.dart';
+import 'package:jarvis/data/network/failure.dart';
+import 'package:jarvis/data/request/request.dart';
+import 'package:jarvis/domain/model/model.dart';
+import 'package:jarvis/domain/repository/repository.dart';
+import 'package:jarvis/domain/usecase/base_usecase.dart';
 
 class LoginUseCase implements BaseUseCase<LoginUseCaseInput, Authentication> {
   final Repository _repository;

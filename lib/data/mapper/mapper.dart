@@ -1,6 +1,7 @@
-import 'package:flutter_application_1/app/extensions.dart';
-import 'package:flutter_application_1/data/responses/responses.dart';
-import 'package:flutter_application_1/domain/model/model.dart';
+
+import 'package:jarvis/app/extensions.dart';
+import 'package:jarvis/data/responses/responses.dart';
+import 'package:jarvis/domain/model/model.dart';
 
 const EMPTY = "";
 const ZERO = 0;

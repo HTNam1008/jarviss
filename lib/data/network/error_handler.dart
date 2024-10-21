@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_application_1/data/network/failure.dart';
+import 'package:jarvis/data/network/failure.dart';
 
 enum DataSource {
   SUCCESS,

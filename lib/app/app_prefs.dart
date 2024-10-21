@@ -1,4 +1,4 @@
-import 'package:flutter_application_1/presentation/resources/language_manager.dart';
+import 'package:jarvis/presentation/resources/language_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const String PREFS_KEY_LANG = "PREFS_KEY_LANG";

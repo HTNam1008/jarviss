@@ -1,6 +1,5 @@
 // extension on String
-
-import 'package:flutter_application_1/data/mapper/mapper.dart';
+import 'package:jarvis/data/mapper/mapper.dart';
 
 extension NonNullString on String? {
   String orEmpty() {
