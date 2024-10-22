@@ -81,6 +81,11 @@ flutter:
    - assets/images/left_arrow_ic.svg
    - assets/images/right_arrow_ic.svg
    - assets/images/logo_ic.svg
+   - assets/images/logo_ic_1.png
+   - assets/images/add_ic.png
+   - assets/images/bot_ic.png
+   - assets/images/knowledge_ic.png
+   - assets/images/message_circle_ic.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

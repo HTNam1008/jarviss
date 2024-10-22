@@ -13,4 +13,10 @@ class ImageAssets {
   static const String leftArrowIc = "$IMAGE_PATH/left_arrow_ic.svg";
   static const String rightArrowIc = "$IMAGE_PATH/right_arrow_ic.svg";
   static const String logoIc = "$IMAGE_PATH/logo_ic.svg";
+
+  static const String gettingStartedLogo = "$IMAGE_PATH/logo_ic_1.png";
+  static const String botIc = "$IMAGE_PATH/bot_ic.png";
+  static const String addIc = "$IMAGE_PATH/add_ic.png";
+  static const String knowledgeIc = "$IMAGE_PATH/knowledge_ic.png";
+  static const String messageCircleIc = "$IMAGE_PATH/message_circle_ic.png";
 }
