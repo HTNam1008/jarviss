@@ -11,7 +11,14 @@ class GettingStartedViewModel extends BaseViewModel {
   void start() {
   }
 
-  Future<void> navigateToMainScreen(BuildContext context) async {
-    Navigator.pushReplacementNamed(context, Routes.mainRoute);
+  @override
+  Future<void> navigateReplaceNamed(BuildContext context, String route) async {
+    Navigator.pushReplacementNamed(context, route);
+  }
+
+  @override
+  Future<void> navigateNamed(BuildContext context, String route) async {
+    Navigator.pushNamed(context, route);
+
   }
 }
