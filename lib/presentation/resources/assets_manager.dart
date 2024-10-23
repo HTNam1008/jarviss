@@ -19,4 +19,7 @@ class ImageAssets {
   static const String addIc = "$IMAGE_PATH/add_ic.png";
   static const String knowledgeIc = "$IMAGE_PATH/knowledge_ic.png";
   static const String messageCircleIc = "$IMAGE_PATH/message_circle_ic.png";
+  static const String fb_ic = "$IMAGE_PATH/fb_ic.png";
+  static const String gg_ic = "$IMAGE_PATH/gg_ic.png";
+  static const String apple_ic = "$IMAGE_PATH/apple_ic.png";
 }
