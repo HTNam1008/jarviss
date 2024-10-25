@@ -17,16 +17,11 @@ class CustomHeaderBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: Colors.teal.shade300,
       elevation: 0,
-      leading: leading ??
-          IconButton(
-            icon: Icon(Icons.menu, color: Colors.white),
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-          ),
+      leading: leading,
       title: centerWidget,
       centerTitle: centerTitle,
       actions: actions ?? [],
+      automaticallyImplyLeading: false,
     );
   }
 
