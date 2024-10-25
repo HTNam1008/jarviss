@@ -15,7 +15,7 @@ ThemeData getApplicationTheme() {
     disabledColor: ColorManager.grey1,
     // old accent color
     colorScheme: theme.colorScheme.copyWith(secondary: ColorManager.grey),
-    splashColor: ColorManager.primaryOpacity70, // will be used incase of disabled button for example
+    // splashColor: ColorManager.primaryOpacity70, // will be used incase of disabled button for example
 
     // card view theme
     cardTheme: CardTheme(
@@ -29,7 +29,7 @@ ThemeData getApplicationTheme() {
       centerTitle: true,
       color: ColorManager.primary,
       elevation: AppSize.s4,
-      shadowColor: ColorManager.primaryOpacity70,
+      // shadowColor: ColorManager.primaryOpacity70,
       titleTextStyle:
           getRegularStyle(color: ColorManager.white, fontSize: FontSize.s16),
     ),
@@ -38,7 +38,7 @@ ThemeData getApplicationTheme() {
     buttonTheme: ButtonThemeData(
       shape: const StadiumBorder(),
       disabledColor: ColorManager.grey,
-      splashColor: ColorManager.primaryOpacity70,
+      // splashColor: ColorManager.primaryOpacity70,
       buttonColor: ColorManager.primary,
     ),
 

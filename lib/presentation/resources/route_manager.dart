@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jarvis/presentation/chatbot/main_chatbot_view.dart';
 import 'package:jarvis/presentation/forgot_password/forgot_password.dart';
 import 'package:jarvis/presentation/getting_started/getting_started.dart';
 import 'package:jarvis/presentation/login/login.dart';
@@ -16,7 +17,7 @@ class Routes {
   static const String registerRoute = "/register";
   static const String forgotPasswordRoute = "/forgotPassword";
   static const String mainRoute = "/main";
-  static const String storeDetailsRoute = "/storeDetails";
+  static const String chatbotRoute = "/chatbotRoute";
 }
 
 class RouteGenerator {
@@ -34,8 +35,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const ForgotPasswordView());
       case Routes.mainRoute:
         return MaterialPageRoute(builder: (_) => MainView());
-      case Routes.storeDetailsRoute:
-        return MaterialPageRoute(builder: (_) => const StoreDetailsView());
+      case Routes.chatbotRoute:
+        return MaterialPageRoute(builder: (_) => ChatbotView());
       default:
         return UndefinedRoute();
     }
