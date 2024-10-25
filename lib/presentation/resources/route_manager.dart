@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:jarvis/presentation/forgot_password/forgot_password.dart';
 import 'package:jarvis/presentation/getting_started/getting_started.dart';
@@ -7,6 +8,15 @@ import 'package:jarvis/presentation/register/register.dart';
 import 'package:jarvis/presentation/resources/strings_manager.dart';
 import 'package:jarvis/presentation/splash/splash.dart';
 import 'package:jarvis/presentation/store_details/store_details.dart';
+import 'package:jarvis/presentation/knowledge_view/knowledge_view.dart';
+import 'package:jarvis/presentation/knowledge_detail/knowledge_detail.dart';
+import 'package:jarvis/presentation/knowledge_add/knowledge_add.dart';
+import 'package:jarvis/presentation/knowledge_delete/knowledge_delete.dart';
+import 'package:jarvis/presentation/unit_add/unit_add.dart';
+import 'package:jarvis/presentation/unit_add/unit_add_localfile.dart';
+import 'package:jarvis/presentation/unit_add/unit_add_website.dart';
+
+
 
 class Routes {
   static const String splashRoute = "/";
@@ -33,7 +43,7 @@ class RouteGenerator {
       case Routes.forgotPasswordRoute:
         return MaterialPageRoute(builder: (_) => const ForgotPasswordView());
       case Routes.mainRoute:
-        return MaterialPageRoute(builder: (_) => MainView());
+        return MaterialPageRoute(builder: (_) => UnitAddWebsite());
       case Routes.storeDetailsRoute:
         return MaterialPageRoute(builder: (_) => const StoreDetailsView());
       default:
