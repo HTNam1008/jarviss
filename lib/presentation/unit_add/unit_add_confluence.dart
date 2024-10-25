@@ -225,7 +225,7 @@ class _UnitAddConfluenceState extends State<UnitAddConfluence> {
               onPressed: _isLoading ? null : _handleConnect,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: AppPadding.p16),
-                backgroundColor: Colors.purple,
+                backgroundColor: ColorManager.teal,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppSize.s12),
                 ),

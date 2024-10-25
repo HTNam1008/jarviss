@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/common/bottom_navigation.dart';
+import 'package:jarvis/presentation/resources/color_manager.dart';
+import 'package:jarvis/presentation/resources/values_manager.dart';
 
 class EditBotView extends StatelessWidget {
   const EditBotView({super.key});
@@ -165,7 +167,7 @@ class EditBotView extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14.0,
                   color: Colors.black,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 6.0),
@@ -173,6 +175,10 @@ class EditBotView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: ColorManager.teal), // Set border color and width
+                      borderRadius: BorderRadius.circular(AppSize.s8),
+                    ),
                     padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
                     child: Text(
                       '4 units',

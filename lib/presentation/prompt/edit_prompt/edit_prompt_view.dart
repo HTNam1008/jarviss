@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
-import 'package:jarvis/presentation/common/bottom_navigation.dart';
+import 'package:jarvis/presentation/resources/color_manager.dart';
+import 'package:jarvis/presentation/resources/values_manager.dart';
 
-class CreateBotView extends StatelessWidget {
-  const CreateBotView({super.key});
+class EditPromptView extends StatelessWidget {
+  const EditPromptView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +12,7 @@ class CreateBotView extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: CustomHeaderBar(
         centerWidget: const Text(
-          'Create Bot',
+          'Edit Prompt',
           style: TextStyle(
             color: Colors.white,
             fontSize: 20.0,
@@ -22,7 +23,7 @@ class CreateBotView extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context); // Go back to the previous screen
           },
         ),
       ),
@@ -30,7 +31,7 @@ class CreateBotView extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Container(
+              /*Container(
                 padding: EdgeInsets.only(top: 30.0),
                 child: Center(
                   child: CircleAvatar(
@@ -38,12 +39,12 @@ class CreateBotView extends StatelessWidget {
                     backgroundImage: AssetImage('assets/images/avt.png'),
                   ),
                 ),
-              ),
+              ),*/
               const SizedBox(height: 20.0),
-              _buildInputField('Bot name', 'Enter bot name', context),
-              _buildInputField('Description', 'Example: You are an experienced science fiction writer...', context, maxLines: 5),
-              _buildInputField('Persona & Prompt', 'Example: Answer in 2 sentences', context, maxLines: 3),
-              _buildKnowledgeField(),
+              _buildInputField('Prompt Name', 'MyPrompt 1', context),
+              _buildInputField('Description', 'Description for MyPrompt 1...', context, maxLines: 5),
+              _buildInputField('Prompt', 'Prompt for MyPrompt 1', context, maxLines: 3),
+              _buildPromptField(),
               const SizedBox(height: 40.0),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -54,14 +55,13 @@ class CreateBotView extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
-                    minimumSize: Size(double.infinity, 50),
+                    minimumSize: Size(double.infinity, 50), // Full width button
                   ),
                   onPressed: () {
                     // Logic to preview bot
-                    _previewBot(context);
                   },
                   child: const Text(
-                    'Preview bot',
+                    'Save',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 16.0,
@@ -77,27 +77,9 @@ class CreateBotView extends StatelessWidget {
     );
   }
 
-  void _previewBot(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Preview Bot'),
-          content: Text('This is a preview of the bot.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Close'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  Widget _buildInputField(String label, String preFilledText, BuildContext context, {int maxLines = 1}) {
+    TextEditingController controller = TextEditingController(text: preFilledText);
 
-  Widget _buildInputField(String label, String hint, BuildContext context, {int maxLines = 1}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       child: Theme(
@@ -111,6 +93,7 @@ class CreateBotView extends StatelessWidget {
           ),
         ),
         child: TextField(
+          controller: controller,
           maxLines: maxLines,
           style: const TextStyle(
             fontSize: 14.0,
@@ -118,10 +101,6 @@ class CreateBotView extends StatelessWidget {
           ),
           decoration: InputDecoration(
             labelText: label,
-            hintText: hint,
-            hintStyle: const TextStyle(
-              color: Colors.grey,
-            ),
             floatingLabelBehavior: FloatingLabelBehavior.auto,
             labelStyle: const TextStyle(
               fontSize: 14.0,
@@ -144,7 +123,8 @@ class CreateBotView extends StatelessWidget {
     );
   }
 
-  Widget _buildKnowledgeField() {
+
+  Widget _buildPromptField() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       child: Container(
@@ -159,11 +139,11 @@ class CreateBotView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Knowledge',
+                'Prompt',
                 style: TextStyle(
                   fontSize: 14.0,
                   color: Colors.black,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 6.0),
@@ -171,6 +151,10 @@ class CreateBotView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: ColorManager.teal), // Set border color and width
+                      borderRadius: BorderRadius.circular(AppSize.s8),
+                    ),
                     padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
                     child: Text(
                       '4 units',
@@ -191,7 +175,7 @@ class CreateBotView extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
                     ),
                     onPressed: () {
-                      // Add knowledge logic
+                      // Add Prompt logic
                     },
                     child: const Text(
                       'Add',

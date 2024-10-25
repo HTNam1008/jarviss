@@ -85,7 +85,7 @@ class _UnitAddLocalfileState extends State<UnitAddLocalfile> {
                       child: Icon(
                         _selectedFile != null ? Icons.description : Icons.add,
                         size: AppSize.s32,
-                        color: _selectedFile != null ? Colors.purple : Colors.grey[400],
+                        color: _selectedFile != null ? ColorManager.teal : Colors.grey[400],
                       ),
                     ),
                     const SizedBox(height: AppSize.s16),
@@ -119,7 +119,7 @@ class _UnitAddLocalfileState extends State<UnitAddLocalfile> {
                   : null,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: AppPadding.p16),
-                backgroundColor: Colors.purple,
+                backgroundColor: ColorManager.teal,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppSize.s12),
                 ),

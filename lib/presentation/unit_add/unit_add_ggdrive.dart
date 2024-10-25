@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:jarvis/presentation/common/bottom_navigation.dart';
-import 'package:jarvis/presentation/common/chat_input_box.dart';
-import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
-import 'package:jarvis/presentation/resources/font_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
-import 'package:file_picker/file_picker.dart';
 
-class UnitAddWebsite extends StatefulWidget {
+class UnitAddGoogleDrive extends StatefulWidget {
   @override
-  State<UnitAddWebsite> createState() => _UnitAddWebsiteState();
+  State<UnitAddGoogleDrive> createState() => _UnitAddGoogleDriveState();
 }
 
-class _UnitAddWebsiteState extends State<UnitAddWebsite> {
+class _UnitAddGoogleDriveState extends State<UnitAddGoogleDrive> {
   final TextEditingController _urlController = TextEditingController();
   final TextEditingController _labelController = TextEditingController();
   String? _urlErrorText;
@@ -106,7 +101,7 @@ class _UnitAddWebsiteState extends State<UnitAddWebsite> {
               children: [
                 Expanded(
                   child: Text(
-                    'Website',
+                    'Slack',
                     style: TextStyle(
                       fontSize: AppSize.s20,
                       fontWeight: FontWeight.bold,

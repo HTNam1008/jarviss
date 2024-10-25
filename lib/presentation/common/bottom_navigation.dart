@@ -39,7 +39,7 @@ class BottomNavigation extends StatelessWidget {
               width: AppSize.s28,
               height: AppSize.s28,
             ),
-            label: 'Create'),
+            label: 'Prompt'),
         BottomNavigationBarItem(
             icon: Image.asset(
               ImageAssets.knowledgeIc,
