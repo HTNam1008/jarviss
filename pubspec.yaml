@@ -30,7 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  file_picker: ^6.1.1
+
   flutter_svg: ^2.0.10+1
   retrofit: ^4.4.1
   analyzer: ^6.7.0
