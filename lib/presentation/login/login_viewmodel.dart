@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/src/widgets/framework.dart';
 import 'package:jarvis/domain/usecase/login_usecase.dart';
 import 'package:jarvis/presentation/base/baseviewmodel.dart';
 import 'package:jarvis/presentation/common/freezed_data_classes.dart';
@@ -69,6 +71,16 @@ class LoginViewModel extends BaseViewModel implements LoginViewModelInputs, Logi
 
   bool _isUserNameValid(String userName) {
     return userName.isNotEmpty;
+  }
+
+  @override
+  Future<void> navigateReplaceNamed(BuildContext context, String route) async {
+    Navigator.pushReplacementNamed(context, route);
+  }
+
+  @override
+  Future<void> navigateNamed(BuildContext context, String route) async {
+    Navigator.pushNamed(context, route);
   }
 }
 

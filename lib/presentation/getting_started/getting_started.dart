@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jarvis/presentation/resources/assets_manager.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
+import 'package:jarvis/presentation/resources/route_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 import 'getting_started_viewmodel.dart';
 
@@ -61,7 +62,7 @@ class _GettingStartedViewState extends State<GettingStartedView> {
                 SizedBox(height: AppSize.s40),
                 ElevatedButton(
                   onPressed: () {
-                    _viewModel.navigateToMainScreen(context);
+                    _viewModel.navigateNamed(context, Routes.loginRoute);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.teal,
