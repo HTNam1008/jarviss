@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:jarvis/presentation/chat/chat_view.dart';
-import 'package:jarvis/presentation/chatbot/create_bot/create_bot_view.dart';
 import 'package:jarvis/presentation/chatbot/main_chatbot_view.dart';
 import 'package:jarvis/presentation/common/bottom_navigation.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/knowledge/knowledge_view.dart';
+import 'package:jarvis/presentation/prompt/main_prompt_view.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
+import 'package:jarvis/presentation/resources/route_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 
 class MainView extends StatefulWidget {
+  const MainView({super.key});
+
   @override
   State<MainView> createState() => _MainViewState();
 }
@@ -37,9 +40,9 @@ class _MainViewState extends State<MainView> {
 
   List<Widget> body = [
     const ChatView(),
-    const ChatbotView(),
-    const CreateBotView(),
-    const KnowledgeView(),
+    const ChatBotMainView(),
+    const PromptView(),
+     KnowledgeView(),
   ];
 
   @override
@@ -89,7 +92,16 @@ class _MainViewState extends State<MainView> {
             ListTile(
               leading: Icon(Icons.person),
               title: Text('Profile'),
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).pushNamed(Routes.profileRoute);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.upgrade),
+              title: Text('Upgrade Pro'),
+              onTap: () {
+                Navigator.of(context).pushNamed(Routes.upgradeProRoute);
+              },
             ),
             ListTile(
               title: _isSearching
@@ -202,6 +214,14 @@ class _MainViewState extends State<MainView> {
                 },
               ),
               actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(Routes.upgradeProRoute);
+                    },
+                    child: Text(
+                      "Upgrade",
+                      style: TextStyle(color: Colors.blue.shade100, fontSize: AppSize.s16),
+                    )),
                 Container(
                   margin: EdgeInsets.only(right: AppSize.s8),
                   padding: EdgeInsets.symmetric(horizontal: AppSize.s12, vertical: AppSize.s6),

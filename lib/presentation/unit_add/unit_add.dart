@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:jarvis/presentation/common/bottom_navigation.dart';
-import 'package:jarvis/presentation/common/chat_input_box.dart';
-import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
-import 'package:jarvis/presentation/resources/font_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
+import 'package:jarvis/presentation/unit_add/unit_add_confluence.dart';
+import 'package:jarvis/presentation/unit_add/unit_add_ggdrive.dart';
+import 'package:jarvis/presentation/unit_add/unit_add_localfile.dart';
+import 'package:jarvis/presentation/unit_add/unit_add_slack.dart';
+import 'package:jarvis/presentation/unit_add/unit_add_website.dart';
 
 class UnitAdd extends StatefulWidget {
   @override
@@ -37,7 +38,7 @@ class _UnitAddState extends State<UnitAdd> {
     ),UnitOption(
       icon: Icons.link_outlined,
       title: 'Google Drive',
-      description: 'Add Slack link',
+      description: 'Add Google Drive link',
     )
 
   ];
@@ -66,13 +67,13 @@ class _UnitAddState extends State<UnitAdd> {
               width: AppSize.s60,
               height: AppSize.s60,
               decoration: BoxDecoration(
-                color: Colors.purple.withOpacity(0.1),
+                color: ColorManager.teal.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(AppSize.s12),
               ),
               child: Icon(
                 Icons.add_box_outlined,
                 size: AppSize.s32,
-                color: Colors.purple[400],
+                color: ColorManager.teal,
               ),
             ),
             const SizedBox(height: AppSize.s20),
@@ -94,12 +95,12 @@ class _UnitAddState extends State<UnitAdd> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(AppSize.s12),
                       ),
-                      backgroundColor: Colors.purple.withOpacity(0.1),
+                      backgroundColor: ColorManager.teal.withOpacity(0.1),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Cancel',
                       style: TextStyle(
-                        color: Colors.purple,
+                        color: ColorManager.teal,
                         fontSize: AppSize.s16,
                       ),
                     ),
@@ -109,11 +110,11 @@ class _UnitAddState extends State<UnitAdd> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pop(context, _selectedIndex);
+                      showDialog(context: context, builder: (builder) => _handleAddUnit(_selectedIndex));
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: AppPadding.p12),
-                      backgroundColor: Colors.purple,
+                      backgroundColor: ColorManager.teal,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(AppSize.s12),
                       ),
@@ -147,10 +148,10 @@ class _UnitAddState extends State<UnitAdd> {
         margin: const EdgeInsets.only(bottom: AppSize.s12),
         padding: const EdgeInsets.all(AppPadding.p16),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.purple.withOpacity(0.1) : Colors.grey[50],
+          color: isSelected ? ColorManager.teal.withOpacity(0.1) : Colors.grey[50],
           borderRadius: BorderRadius.circular(AppSize.s12),
           border: Border.all(
-            color: isSelected ? Colors.purple : Colors.transparent,
+            color: isSelected ? ColorManager.teal : Colors.transparent,
             width: 2,
           ),
         ),
@@ -160,12 +161,12 @@ class _UnitAddState extends State<UnitAdd> {
               width: AppSize.s40,
               height: AppSize.s40,
               decoration: BoxDecoration(
-                color: isSelected ? Colors.purple.withOpacity(0.2) : Colors.white,
+                color: isSelected ? ColorManager.teal.withOpacity(0.2) : Colors.white,
                 borderRadius: BorderRadius.circular(AppSize.s8),
               ),
               child: Icon(
                 option.icon,
-                color: isSelected ? Colors.purple : Colors.grey,
+                color: isSelected ? ColorManager.teal : Colors.grey,
                 size: AppSize.s24,
               ),
             ),
@@ -179,7 +180,7 @@ class _UnitAddState extends State<UnitAdd> {
                     style: TextStyle(
                       fontSize: AppSize.s16,
                       fontWeight: FontWeight.w500,
-                      color: isSelected ? Colors.purple : Colors.black,
+                      color: isSelected ? ColorManager.teal : Colors.black,
                     ),
                   ),
                   Text(
@@ -195,7 +196,7 @@ class _UnitAddState extends State<UnitAdd> {
             Radio(
               value: index,
               groupValue: _selectedIndex,
-              activeColor: Colors.purple,
+              activeColor: ColorManager.teal,
               onChanged: (int? value) {
                 if (value != null) {
                   setState(() {
@@ -208,6 +209,23 @@ class _UnitAddState extends State<UnitAdd> {
         ),
       ),
     );
+  }
+
+  Widget _handleAddUnit(int selectedIndex) {
+    switch (selectedIndex) {
+      case 0:
+        return UnitAddLocalfile();
+      case 1:
+        return UnitAddWebsite();
+      case 2:
+        return UnitAddConfluence();
+      case 3:
+        return UnitAddSlack();
+      case 4:
+        return UnitAddGoogleDrive();
+      default:
+        return Container();
+    }
   }
 }
 

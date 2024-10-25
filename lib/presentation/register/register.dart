@@ -87,7 +87,7 @@ class _RegisterViewState extends State<RegisterView> {
                   ),
                   child: Container(
                     alignment: Alignment.center,
-                    height: AppSize.s40,
+                    height: AppSize.s14,
                     child: Text(
                       'Register',
                       style: TextStyle(fontSize: FontSize.s16, color: ColorManager.white),

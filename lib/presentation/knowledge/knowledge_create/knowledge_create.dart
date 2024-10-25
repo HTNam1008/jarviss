@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:jarvis/presentation/common/bottom_navigation.dart';
-import 'package:jarvis/presentation/common/chat_input_box.dart';
-import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
-import 'package:jarvis/presentation/resources/font_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 
-class KnowledgeAdd extends StatefulWidget {
+class CreateKnowledgeView extends StatefulWidget {
   @override
-  State<KnowledgeAdd> createState() => _KnowledgeAddState();
+  State<CreateKnowledgeView> createState() => _CreateKnowledgeViewState();
 }
 
-class _KnowledgeAddState extends State<KnowledgeAdd> {
+class _CreateKnowledgeViewState extends State<CreateKnowledgeView> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
@@ -35,7 +31,7 @@ class _KnowledgeAddState extends State<KnowledgeAdd> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
-              'Add knowledge',
+              'Create knowledge',
               style: TextStyle(
                 fontSize: AppSize.s20,
                 fontWeight: FontWeight.bold,
@@ -46,13 +42,13 @@ class _KnowledgeAddState extends State<KnowledgeAdd> {
               width: AppSize.s60,
               height: AppSize.s60,
               decoration: BoxDecoration(
-                color: Colors.purple.withOpacity(0.1),
+                color: ColorManager.teal.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(AppSize.s12),
               ),
               child: Icon(
                 Icons.layers_outlined,
                 size: AppSize.s32,
-                color: Colors.purple[400],
+                color: ColorManager.teal,
               ),
             ),
             const SizedBox(height: AppSize.s20),
@@ -134,12 +130,12 @@ class _KnowledgeAddState extends State<KnowledgeAdd> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(AppSize.s12),
                       ),
-                      backgroundColor: Colors.purple.withOpacity(0.1),
+                      backgroundColor: ColorManager.teal.withOpacity(0.1),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Cancel',
                       style: TextStyle(
-                        color: Colors.purple,
+                        color: ColorManager.teal,
                         fontSize: AppSize.s16,
                       ),
                     ),
@@ -159,7 +155,7 @@ class _KnowledgeAddState extends State<KnowledgeAdd> {
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: AppPadding.p12),
-                      backgroundColor: Colors.purple,
+                      backgroundColor: ColorManager.teal,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(AppSize.s12),
                       ),

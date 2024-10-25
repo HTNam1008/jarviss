@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:jarvis/presentation/common/bottom_navigation.dart';
-import 'package:jarvis/presentation/common/chat_input_box.dart';
-import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
-import 'package:jarvis/presentation/resources/font_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
-import 'package:file_picker/file_picker.dart';
 
 class UnitAddSlack extends StatefulWidget {
   @override
@@ -225,7 +220,7 @@ class _UnitAddSlackState extends State<UnitAddSlack> {
               onPressed: _isLoading ? null : _handleConnect,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: AppPadding.p16),
-                backgroundColor: Colors.purple,
+                backgroundColor: ColorManager.teal,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppSize.s12),
                 ),

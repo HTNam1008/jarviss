@@ -1,36 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:jarvis/presentation/common/bottom_navigation.dart';
-import 'package:jarvis/presentation/common/chat_input_box.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
+import 'package:jarvis/presentation/knowledge/knowledge_edit/knowledge_edit.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
+import 'package:jarvis/presentation/resources/route_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
+import 'package:jarvis/presentation/unit_add/unit_add.dart';
 
-class KnowledgeDetail extends StatefulWidget {
+class DetailKnowledgeView extends StatefulWidget {
   @override
-  State<KnowledgeDetail> createState() => _KnowledgeDetailState();
+  State<DetailKnowledgeView> createState() => _DetailKnowledgeViewState();
 }
 
-class _KnowledgeDetailState extends State<KnowledgeDetail> {
-  final TextEditingController _searchController = TextEditingController();
-  int _currentIndex = 0;
-  final TextEditingController _chatController = TextEditingController();
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-    // Thực hiện logic điều hướng theo index (ví dụ: chuyển màn hình)
-  }
-
-  void _sendMessage() {
-    String message = _chatController.text;
-    if (message.isNotEmpty) {
-      print('User message: $message');
-      _chatController.clear();
-    }
-  }
-
+class _DetailKnowledgeViewState extends State<DetailKnowledgeView> {
   final List<KnowledgeUnit> units = [
     KnowledgeUnit(name: 'bai1.docx', size: '15KB', isEnabled: true),
     KnowledgeUnit(name: 'bai1.docx', size: '15KB', isEnabled: true),
@@ -46,13 +28,14 @@ class _KnowledgeDetailState extends State<KnowledgeDetail> {
           style: TextStyle(
             color: Colors.white,
             fontSize: AppSize.s20,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeightManager.semiBold,
           ),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
+        centerTitle: true,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,10 +49,6 @@ class _KnowledgeDetailState extends State<KnowledgeDetail> {
                 return _buildUnitItem(units[index]);
               },
             ),
-          ),
-          BottomNavigation(
-            currentIndex: _currentIndex,
-            onTap: _onItemTapped,
           ),
         ],
       ),
@@ -132,17 +111,17 @@ class _KnowledgeDetailState extends State<KnowledgeDetail> {
             width: AppSize.s40,
             height: AppSize.s40,
             decoration: BoxDecoration(
-              color: Colors.purple.withOpacity(0.1),
+              color: Colors.blue.shade100.withOpacity(0.4),
               shape: BoxShape.circle,
             ),
             child: IconButton(
-              icon: const Icon(
+              icon: Icon(
                 Icons.edit_outlined,
-                color: Colors.purple,
+                color: ColorManager.teal,
                 size: AppSize.s20,
               ),
               onPressed: () {
-                // Handle edit action
+                showDialog(context: context, builder: (builder) => EditKnowledgeView());
               },
             ),
           ),
@@ -169,10 +148,10 @@ class _KnowledgeDetailState extends State<KnowledgeDetail> {
           ),
           TextButton(
             onPressed: () {
-              // Handle add action
+              showDialog(context: context, builder: (builder) => UnitAdd());
             },
             style: TextButton.styleFrom(
-              backgroundColor: Colors.purple,
+              backgroundColor: ColorManager.teal,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(AppSize.s20),
               ),
@@ -229,7 +208,7 @@ class _KnowledgeDetailState extends State<KnowledgeDetail> {
                 unit.isEnabled = value;
               });
             },
-            activeColor: Colors.purple,
+            activeColor: ColorManager.teal,
           ),
         ],
       ),

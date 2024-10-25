@@ -114,7 +114,7 @@ class _LoginViewState extends State<LoginView> {
                   ),
                   child: Container(
                     alignment: Alignment.center,
-                    height: AppSize.s40,
+                    height: AppSize.s20,
                     child: Text(
                       'Login',
                       style: TextStyle(fontSize: FontSize.s16, color: ColorManager.white),

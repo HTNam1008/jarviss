@@ -6,12 +6,12 @@ import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 
-class KnowledgeDelete extends StatelessWidget {
-  final String knowledgeName;
+class DeleteKnowledgeView extends StatelessWidget {
+  final String? knowledgeName;
 
-  const KnowledgeDelete({
+  const DeleteKnowledgeView({
     Key? key,
-    required this.knowledgeName,
+    this.knowledgeName,
   }) : super(key: key);
 
   @override

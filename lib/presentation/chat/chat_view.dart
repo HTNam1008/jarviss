@@ -121,7 +121,7 @@ class _ChatViewState extends State<ChatView> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSize.s10),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: AppSize.s16, vertical: AppSize.s8),
+        contentPadding: const EdgeInsets.symmetric(horizontal: AppSize.s16),
       ),
     );
   }
@@ -129,7 +129,6 @@ class _ChatViewState extends State<ChatView> {
   void _sendMessage() {
     String message = _chatController.text;
     if (message.isNotEmpty) {
-      print('User message: $message');
       _chatController.clear();
     }
   }
