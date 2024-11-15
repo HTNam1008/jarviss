@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
-import 'package:jarvis/presentation/common/bottom_navigation.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 

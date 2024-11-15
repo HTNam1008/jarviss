@@ -1,11 +1,10 @@
-import 'package:appinio_animated_toggle_tab/appinio_animated_toggle_tab.dart';
 import 'package:flutter/material.dart';
+import 'package:jarvis/presentation/common/animated_toggle_tab/animated_toggle_tab.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/prompt/create_prompt/create_prompt_view.dart';
 import 'package:jarvis/presentation/prompt/edit_prompt/edit_prompt_view.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
-import 'package:jarvis/presentation/resources/route_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 
 class PromptView extends StatefulWidget {
@@ -49,7 +48,7 @@ class _PromptViewState extends State<PromptView> {
     return Scaffold(
       appBar: CustomHeaderBar(
         centerTitle: true,
-        centerWidget: Text(
+        centerWidget: const Text(
           "Prompt Libraries",
           style: TextStyle(
             fontSize: AppSize.s20,
@@ -58,25 +57,25 @@ class _PromptViewState extends State<PromptView> {
         ),
         actions: [
           Padding(
-            padding: EdgeInsets.all(AppSize.s4),
+            padding: const EdgeInsets.all(AppSize.s4),
             child: Center(
               child: ElevatedButton.icon(
                 onPressed: () {
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
-                      return CreatePromptView();
+                      return const CreatePromptView();
                     },
                   );
                 },
-                icon: Icon(Icons.add), // Add your desired icon here
-                label: Text('Create'),
+                icon: const Icon(Icons.add), 
+                label: const Text('Create'),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor: ColorManager.teal, // Text color
-                  padding: EdgeInsets.symmetric(horizontal: AppSize.s8, vertical: AppSize.s4),
+                  backgroundColor: ColorManager.teal,
+                  padding: const EdgeInsets.symmetric(horizontal: AppSize.s8, vertical: AppSize.s4),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30), // Rounded corners
+                    borderRadius: BorderRadius.circular(30), 
                   ),
                 ),
               ),
@@ -140,9 +139,9 @@ class _PromptViewState extends State<PromptView> {
                   child: TextField(
                     decoration: InputDecoration(
                       hintText: 'Search',
-                      prefixIcon: Icon(Icons.search),
+                      prefixIcon: const Icon(Icons.search),
                       suffixIcon: IconButton(
-                        icon: Icon(Icons.mic),
+                        icon: const Icon(Icons.mic),
                         onPressed: () {},
                       ),
                       border: OutlineInputBorder(
@@ -150,7 +149,7 @@ class _PromptViewState extends State<PromptView> {
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(40.0), // Đặt borderRadius cho trạng thái bình thường
-                        borderSide: BorderSide(color: Colors.grey), // Màu viền khi không focus
+                        borderSide: const BorderSide(color: Colors.grey), // Màu viền khi không focus
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(40.0), // Đặt borderRadius cho trạng thái focus
@@ -182,20 +181,20 @@ class _PromptViewState extends State<PromptView> {
       context: context,
       builder: (context) {
         return Container(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(Icons.edit),
-                title: Text('Edit'),
+                leading: const Icon(Icons.edit),
+                title: const Text('Edit'),
                 onTap: () {
-                  showDialog(context: context, builder: (builder) => EditPromptView());
+                  showDialog(context: context, builder: (builder) => const EditPromptView());
                 },
               ),
               ListTile(
-                leading: Icon(Icons.delete),
-                title: Text('Delete'),
+                leading: const Icon(Icons.delete),
+                title: const Text('Delete'),
                 onTap: () {
                   Navigator.pop(context);
                 },
@@ -212,13 +211,13 @@ class _PromptViewState extends State<PromptView> {
       return GestureDetector(
         onTap: () {
           setState(() {
-            _selectedIndexTab = index; // Cập nhật chỉ số tab được chọn
+            _selectedIndexTab = index; 
           });
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Text(
-            'Tab ${index + 1}', // Đổi tên tab nếu cần
+            'Tab ${index + 1}', 
             style: TextStyle(
               fontWeight: _selectedIndexTab == index ? FontWeight.bold : FontWeight.normal,
               color: _selectedIndexTab == index ? Colors.blue : Colors.black,
@@ -234,10 +233,10 @@ class _PromptViewState extends State<PromptView> {
       itemCount: promptData[_selectedIndexTab].length,
       itemBuilder: (context, index) {
         return Container(
-          margin: EdgeInsets.symmetric(vertical: AppSize.s4, horizontal: AppSize.s4),
+          margin: const EdgeInsets.symmetric(vertical: AppSize.s4, horizontal: AppSize.s4),
           decoration: BoxDecoration(
-            border: Border.all(color: ColorManager.teal), // Set border color and width
-            borderRadius: BorderRadius.circular(AppSize.s8), // Rounded corners (optional)
+            border: Border.all(color: ColorManager.teal), 
+            borderRadius: BorderRadius.circular(AppSize.s8), 
           ),
           child: ListTile(
             minTileHeight: AppSize.s40,
@@ -258,14 +257,14 @@ class _PromptViewState extends State<PromptView> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.more_vert),
+                  icon: const Icon(Icons.more_vert),
                   onPressed: () {
                     _showActions(context, promptData[_selectedIndexTab][index]);
                   },
                 ),
               ],
             ),
-            contentPadding: EdgeInsets.only(left: AppSize.s8),
+            contentPadding: const EdgeInsets.only(left: AppSize.s8),
             onTap: () {
               // Khi nhấn vào item, chuyển đến một trang mới
             },

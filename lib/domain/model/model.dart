@@ -1,38 +1,29 @@
-class SliderObject {
-  String title;
-  String subTitle;
-  String image;
+class User {
+  final String id;
+  final String email;
+  final String username;
+  final bool isActive;
+  final List<String> roles;
+  final String createdAt;
+  final String updatedAt;
 
-  SliderObject(this.title, this.subTitle, this.image);
+  User({
+    required this.id,
+    required this.email,
+    required this.username,
+    required this.isActive,
+    required this.roles,
+    required this.createdAt,
+    required this.updatedAt,
+  });
 }
 
-class Customer {
-  String id;
-  String name;
-  int numOfNotifications;
+class Token {
+  final String accessToken;
+  final String refreshToken;
 
-  Customer(this.id, this.name, this.numOfNotifications);
-}
-
-class Contacts {
-  String email;
-  String phone;
-  String link;
-
-  Contacts(this.email, this.phone, this.link);
-}
-
-class Authentication {
-  Customer? customer;
-  Contacts? contacts;
-  
-  Authentication(this.customer, this.contacts);
-}
-
-class DeviceInfo {
-  String name;
-  String version;
-  String identifier;
-
-  DeviceInfo(this.name, this.version, this.identifier);
+  Token({
+    required this.accessToken,
+    required this.refreshToken,
+  });
 }

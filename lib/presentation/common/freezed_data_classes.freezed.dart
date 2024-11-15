@@ -16,7 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$LoginObject {
-  String get userName => throw _privateConstructorUsedError;
+  String get email => throw _privateConstructorUsedError;
   String get password => throw _privateConstructorUsedError;
 
   /// Create a copy of LoginObject
@@ -32,7 +32,7 @@ abstract class $LoginObjectCopyWith<$Res> {
           LoginObject value, $Res Function(LoginObject) then) =
       _$LoginObjectCopyWithImpl<$Res, LoginObject>;
   @useResult
-  $Res call({String userName, String password});
+  $Res call({String email, String password});
 }
 
 /// @nodoc
@@ -50,13 +50,13 @@ class _$LoginObjectCopyWithImpl<$Res, $Val extends LoginObject>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? userName = null,
+    Object? email = null,
     Object? password = null,
   }) {
     return _then(_value.copyWith(
-      userName: null == userName
-          ? _value.userName
-          : userName // ignore: cast_nullable_to_non_nullable
+      email: null == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
               as String,
       password: null == password
           ? _value.password
@@ -74,7 +74,7 @@ abstract class _$$LoginObjectImplCopyWith<$Res>
       __$$LoginObjectImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String userName, String password});
+  $Res call({String email, String password});
 }
 
 /// @nodoc
@@ -90,13 +90,13 @@ class __$$LoginObjectImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? userName = null,
+    Object? email = null,
     Object? password = null,
   }) {
     return _then(_$LoginObjectImpl(
-      userName: null == userName
-          ? _value.userName
-          : userName // ignore: cast_nullable_to_non_nullable
+      email: null == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
               as String,
       password: null == password
           ? _value.password
@@ -109,16 +109,16 @@ class __$$LoginObjectImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoginObjectImpl implements _LoginObject {
-  const _$LoginObjectImpl({required this.userName, required this.password});
+  const _$LoginObjectImpl({required this.email, required this.password});
 
   @override
-  final String userName;
+  final String email;
   @override
   final String password;
 
   @override
   String toString() {
-    return 'LoginObject(userName: $userName, password: $password)';
+    return 'LoginObject(email: $email, password: $password)';
   }
 
   @override
@@ -126,14 +126,13 @@ class _$LoginObjectImpl implements _LoginObject {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$LoginObjectImpl &&
-            (identical(other.userName, userName) ||
-                other.userName == userName) &&
+            (identical(other.email, email) || other.email == email) &&
             (identical(other.password, password) ||
                 other.password == password));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, userName, password);
+  int get hashCode => Object.hash(runtimeType, email, password);
 
   /// Create a copy of LoginObject
   /// with the given fields replaced by the non-null parameter values.
@@ -146,11 +145,11 @@ class _$LoginObjectImpl implements _LoginObject {
 
 abstract class _LoginObject implements LoginObject {
   const factory _LoginObject(
-      {required final String userName,
+      {required final String email,
       required final String password}) = _$LoginObjectImpl;
 
   @override
-  String get userName;
+  String get email;
   @override
   String get password;
 

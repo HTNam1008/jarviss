@@ -1,76 +1,102 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:jarvis/app/app_prefs.dart';
 import 'package:jarvis/domain/usecase/login_usecase.dart';
 import 'package:jarvis/presentation/base/baseviewmodel.dart';
 import 'package:jarvis/presentation/common/freezed_data_classes.dart';
 
-class LoginViewModel extends BaseViewModel implements LoginViewModelInputs, LoginViewModelOutputs {
-  final StreamController _userNameStreamController = StreamController<String>.broadcast();
-  final StreamController _passwordStreamController = StreamController<String>.broadcast();
+class LoginViewModel extends BaseViewModel
+    implements LoginViewModelInputs, LoginViewModelOutputs {
+  final StreamController<String> _emailStreamController =
+      StreamController<String>.broadcast();
 
-  var loginObject = const LoginObject(userName: '', password: '');
+  final StreamController<String> _passwordStreamController =
+      StreamController<String>.broadcast();
 
-  final LoginUseCase? _loginUseCase; // TODO: remove ?
+  final StreamController<String> _errorStreamController =
+      StreamController<String>.broadcast();
 
-  LoginViewModel(this._loginUseCase);
+  final StreamController<bool> _loginStreamController =
+      StreamController<bool>.broadcast();
+
+  var loginObject = const LoginObject(email: '', password: '');
+
+  final LoginUseCase _loginUseCase;
+
+  final AppPreferences _appPreferences;
+
+  LoginViewModel(this._loginUseCase, this._appPreferences);
 
   @override
   void start() {}
 
   @override
   void dispose() {
-    _userNameStreamController.close();
+    _emailStreamController.close();
     _passwordStreamController.close();
+    _errorStreamController.close();
+    _loginStreamController.close();
   }
 
-  // outputs
+  // Outputs
   @override
-  Stream<bool> get getPasswordValid => _passwordStreamController.stream.map((password) => _isPasswordValid(password));
+  Stream<bool> get isEmailValid =>
+      _emailStreamController.stream.map(_isEmailValid);
 
   @override
-  Stream<bool> get getUserNameValid => _userNameStreamController.stream.map((userName) => _isUserNameValid(userName));
+  Stream<bool> get isPasswordValid =>
+      _passwordStreamController.stream.map(_isPasswordValid);
 
-  // inputs
+  Stream<String> get errorStream => _errorStreamController.stream;
+
+  @override
+  Stream<bool> get loginStream => _loginStreamController.stream;
+
+  // Inputs
+  @override
+  Sink get inputEmail => _emailStreamController.sink;
+
   @override
   Sink get inputPassword => _passwordStreamController.sink;
 
   @override
-  Sink get inputUserName => _userNameStreamController.sink;
-
-  @override
-  login() async {
-    (await _loginUseCase!.execute(LoginUseCaseInput(loginObject.userName, loginObject.password)))
+  Future<void> login() async {
+    (await _loginUseCase.execute(
+      LoginUseCaseInput(loginObject.email, loginObject.password),
+    ))
         .fold(
-            (failure) => {
-              // left -> failure
-              print(failure.message)},
-            (data) => {
-              // right -> success (data)
-              print(data.customer?.name)
-            }
-        );
+      (failure) {
+        print('Login failed: ${failure.message}');
+        _errorStreamController.add(failure.message); 
+        _loginStreamController.add(false);
+      },
+      (token) {
+        print('Login successful. Access Token: ${token.accessToken}');
+        _appPreferences.setToken(token.accessToken); 
+      _loginStreamController.add(true); 
+      },
+    );
   }
 
   @override
-  setPassword(String password) {
+  void setEmail(String email) {
+    inputEmail.add(email);
+    loginObject = loginObject.copyWith(email: email);
+  }
+
+  @override
+  void setPassword(String password) {
     inputPassword.add(password);
     loginObject = loginObject.copyWith(password: password);
   }
 
-  @override
-  setUserName(String userName) {
-    inputUserName.add(userName);
-    loginObject = loginObject.copyWith(userName: userName);
+  bool _isEmailValid(String email) {
+    return email.isNotEmpty && email.contains('@');
   }
 
   bool _isPasswordValid(String password) {
-    return password.isNotEmpty;
-  }
-
-  bool _isUserNameValid(String userName) {
-    return userName.isNotEmpty;
+    return password.length >= 6;
   }
 
   @override
@@ -85,21 +111,22 @@ class LoginViewModel extends BaseViewModel implements LoginViewModelInputs, Logi
 }
 
 abstract class LoginViewModelInputs {
-  // three functions for actions
-  setUserName(String userName);
+  void setEmail(String email);
 
-  setPassword(String password);
+  void setPassword(String password);
 
-  login();
+  Future<void> login();
 
-  // two sink for streams
-  Sink get inputUserName;
+  // Sink cho Streams
+  Sink get inputEmail;
 
   Sink get inputPassword;
 }
 
 abstract class LoginViewModelOutputs {
-  Stream<bool> get getUserNameValid;
+  Stream<bool> get isEmailValid;
 
-  Stream<bool> get getPasswordValid;
+  Stream<bool> get isPasswordValid;
+
+  Stream<bool> get loginStream;
 }

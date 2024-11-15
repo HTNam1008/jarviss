@@ -8,35 +8,38 @@ import 'package:jarvis/data/request/request.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 
-class RepositoryImpl implements  Repository {
+class RepositoryImpl implements Repository {
   final RemoteDataSource _remoteDataSource;
   final NetworkInfo _networkInfo;
 
   RepositoryImpl(this._remoteDataSource, this._networkInfo);
 
   @override
-  Future<Either<Failure, Authentication>> login(
-      LoginRequest loginRequest) async {
+  Future<Either<Failure, Token>> signIn(SignInRequest signInRequest) async {
     if (await _networkInfo.isConnected) {
       try {
-        // its safe to call
-        final response = await _remoteDataSource.login(loginRequest);
+        final response = await _remoteDataSource.signIn(signInRequest);
 
-        if (response.status == ApiInternalStatus.SUCCESS) {
-          // return data (success)
-          // return right
-          return Right(response.toDomain());
-        } else {
-          // return business logic error
-          // return left
-          return Left(Failure(response.status ?? ApiInternalStatus.FAILURE,
-              response.message ?? ResponseMessage.DEFAULT));
-        }
+        return Right(response.toDomain());
       } catch (error) {
         return Left(ErrorHandler.handle(error).failure);
       }
     } else {
-      // return connection error
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, User>> signUp(SignUpRequest signUpRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.signUp(signUpRequest);
+
+        return Right(response.toDomain());
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
       return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
     }
   }

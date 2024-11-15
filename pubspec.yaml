@@ -45,6 +45,9 @@ dependencies:
   shared_preferences: ^2.3.2
   device_info: ^2.0.3
   freezed: ^2.5.7
+  json_annotation: ^4.9.0
+  freezed_annotation: ^2.4.4
+  get_it: ^8.0.2
 
 dev_dependencies:
   flutter_test:
@@ -86,6 +89,8 @@ flutter:
    - assets/images/bot_ic.png
    - assets/images/knowledge_ic.png
    - assets/images/message_circle_ic.png
+   - assets/images/gg_ic.png
+   - assets/images/avt.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

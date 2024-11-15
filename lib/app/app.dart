@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jarvis/presentation/resources/route_manager.dart';
 import 'package:jarvis/presentation/resources/theme_manager.dart';
 
+// ignore: must_be_immutable
 class MyApp extends StatefulWidget {
   MyApp._internal(); // private named constructor
 

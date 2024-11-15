@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:jarvis/app/app_prefs.dart';
+import 'package:jarvis/domain/repository/repository.dart';
+import 'package:jarvis/domain/usecase/login_usecase.dart';
 import 'package:jarvis/presentation/login/login_viewmodel.dart';
 import 'package:jarvis/presentation/resources/assets_manager.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
@@ -14,26 +18,57 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  final LoginViewModel _loginViewModel = LoginViewModel(null); // TODO: pass for loginUseCase
+  final getIt = GetIt.instance;
+  late LoginViewModel _loginViewModel;
 
-  final TextEditingController _userNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   _bind() {
     _loginViewModel.start();
-    _userNameController.addListener(() => _loginViewModel.setUserName(_userNameController.text));
+    _emailController.addListener(() => _loginViewModel.setEmail(_emailController.text));
     _passwordController.addListener(() => _loginViewModel.setPassword(_passwordController.text));
+
+    _loginViewModel.loginStream.listen((isSuccess) {
+      if (isSuccess) {
+        _loginViewModel.navigateReplaceNamed(context, Routes.mainRoute);
+      }
+    });
+
+    _loginViewModel.errorStream.listen((errorMessage) {
+      _showErrorDialog(errorMessage);
+    });
   }
+
+  void _showErrorDialog(String message) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Login Failed'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
 
   @override
   void initState() {
-    _bind();
     super.initState();
+    // Khởi tạo LoginViewModel với LoginUseCase
+    _loginViewModel = LoginViewModel(LoginUseCase(getIt<Repository>()), getIt<AppPreferences>());
+    _bind();
   }
 
   @override
   void dispose() {
     _loginViewModel.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -77,9 +112,9 @@ class _LoginViewState extends State<LoginView> {
                 ),
                 const SizedBox(height: AppSize.s24),
                 _buildTextField(
-                  controller: _userNameController,
-                  hintText: 'Username/Email',
-                  icon: Icons.person,
+                  controller: _emailController,
+                  hintText: 'Email',
+                  icon: Icons.email,
                 ),
                 const SizedBox(height: AppSize.s16),
                 _buildTextField(
@@ -100,17 +135,16 @@ class _LoginViewState extends State<LoginView> {
                 ),
                 const SizedBox(height: AppSize.s16),
                 ElevatedButton(
-                  onPressed: () {
-                    // TODO: Implement login functionality
-                    _loginViewModel.navigateReplaceNamed(context, Routes.mainRoute);
+                  onPressed: () async {
+                    await _loginViewModel.login();
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: AppSize.s16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppSize.s28),
                     ),
-                    backgroundColor: ColorManager.teal, // Make button background transparent
-                    shadowColor: Colors.transparent, // Remove shadow for a clean gradient effect
+                    backgroundColor: ColorManager.teal,
+                    shadowColor: Colors.transparent,
                   ),
                   child: Container(
                     alignment: Alignment.center,
@@ -152,18 +186,24 @@ class _LoginViewState extends State<LoginView> {
     required IconData icon,
     bool obscureText = false,
   }) {
-    return TextField(
-      controller: controller,
-      obscureText: obscureText,
-      decoration: InputDecoration(
-        prefixIcon: Icon(icon),
-        hintText: hintText,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
-        filled: true,
-        fillColor: Colors.white,
-      ),
+    return StreamBuilder<bool>(
+      stream: hintText == 'Email' ? _loginViewModel.isEmailValid : _loginViewModel.isPasswordValid,
+      builder: (context, snapshot) {
+        return TextField(
+          controller: controller,
+          obscureText: obscureText,
+          decoration: InputDecoration(
+            prefixIcon: Icon(icon),
+            hintText: hintText,
+            errorText: (snapshot.data == false) ? 'Invalid $hintText' : null,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+            filled: true,
+            fillColor: Colors.white,
+          ),
+        );
+      },
     );
   }
 
