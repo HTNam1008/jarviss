@@ -59,7 +59,7 @@ class RouteGenerator {
       case Routes.forgotPasswordRoute:
         return MaterialPageRoute(builder: (_) => const ForgotPasswordView());
       case Routes.mainRoute:
-        return MaterialPageRoute(builder: (_) => MainView());
+        return MaterialPageRoute(builder: (_) => const MainView());
       case Routes.chatbotMainRoute:
         return MaterialPageRoute(builder: (_) => const ChatBotMainView());
       case Routes.chatbotRoute:
