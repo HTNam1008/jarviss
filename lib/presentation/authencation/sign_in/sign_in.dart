@@ -4,6 +4,7 @@ import 'package:jarvis/app/app_prefs.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 import 'package:jarvis/domain/usecase/sign_in_usecase.dart';
 import 'package:jarvis/presentation/authencation/sign_in/sign_in_viewmodel.dart';
+import 'package:jarvis/presentation/common/dialog_util.dart';
 import 'package:jarvis/presentation/resources/assets_manager.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
@@ -19,54 +20,50 @@ class SignInView extends StatefulWidget {
 
 class _SignInViewState extends State<SignInView> {
   final getIt = GetIt.instance;
-  late SignInViewModel _loginViewModel;
+  late SignInViewModel _signInViewModel;
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   _bind() {
-    _loginViewModel.start();
-    _emailController.addListener(() => _loginViewModel.setEmail(_emailController.text));
-    _passwordController.addListener(() => _loginViewModel.setPassword(_passwordController.text));
+    _signInViewModel.start();
+    _emailController.addListener(() => _signInViewModel.setEmail(_emailController.text));
+    _passwordController.addListener(() => _signInViewModel.setPassword(_passwordController.text));
 
-    _loginViewModel.loginStream.listen((isSuccess) {
+    _signInViewModel.signInStream.listen((isSuccess) {
       if (isSuccess) {
-        _loginViewModel.navigateReplaceNamed(context, Routes.mainRoute);
+        showCustomDialog(
+          context: context,
+          type: DialogType.success,
+          title: 'Sign in successfully',
+          message: 'Welcome to the Jarvis app!',
+        ).then((_) {
+          _signInViewModel.navigateReplaceNamed(context, Routes.mainRoute);
+        });
       }
     });
 
-    _loginViewModel.errorStream.listen((errorMessage) {
-      _showErrorDialog(errorMessage);
+    _signInViewModel.errorStream.listen((errorMessage) {
+      showCustomDialog(
+          context: context,
+          type: DialogType.error,
+          title: 'Sign in failed',
+          message: errorMessage,
+        );
     });
   }
-
-  void _showErrorDialog(String message) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Login Failed'),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
-    }
 
   @override
   void initState() {
     super.initState();
-    // Khởi tạo LoginViewModel với LoginUseCase
-    _loginViewModel = SignInViewModel(SignInUseCase(getIt<Repository>()), getIt<AppPreferences>());
+    // Khởi tạo signInViewModel với signInUseCase
+    _signInViewModel = SignInViewModel(SignInUseCase(getIt<Repository>()), getIt<AppPreferences>());
     _bind();
   }
 
   @override
   void dispose() {
-    _loginViewModel.dispose();
+    _signInViewModel.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -99,7 +96,7 @@ class _SignInViewState extends State<SignInView> {
                 ),
                 const SizedBox(height: AppSize.s24),
                 const Text(
-                  'Login',
+                  'Sign In',
                   style: TextStyle(
                     fontSize: AppSize.s28,
                     fontWeight: FontWeightManager.bold,
@@ -107,7 +104,7 @@ class _SignInViewState extends State<SignInView> {
                 ),
                 const SizedBox(height: AppSize.s8),
                 Text(
-                  'Please Login to continue',
+                  'Please Sign In to continue',
                   style: TextStyle(fontSize: AppSize.s16, color: ColorManager.grey),
                 ),
                 const SizedBox(height: AppSize.s24),
@@ -128,7 +125,7 @@ class _SignInViewState extends State<SignInView> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () {
-                      _loginViewModel.navigateNamed(context, Routes.forgotPasswordRoute);
+                      _signInViewModel.navigateNamed(context, Routes.forgotPasswordRoute);
                     },
                     child: const Text('Forgot password?'),
                   ),
@@ -136,7 +133,7 @@ class _SignInViewState extends State<SignInView> {
                 const SizedBox(height: AppSize.s16),
                 ElevatedButton(
                   onPressed: () async {
-                    await _loginViewModel.login();
+                    await _signInViewModel.signIn();
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: AppSize.s16),
@@ -150,13 +147,13 @@ class _SignInViewState extends State<SignInView> {
                     alignment: Alignment.center,
                     height: AppSize.s20,
                     child: Text(
-                      'Login',
+                      'Sign In',
                       style: TextStyle(fontSize: FontSize.s16, color: ColorManager.white),
                     ),
                   ),
                 ),
                 const SizedBox(height: AppSize.s16),
-                const Text('Or Login With'),
+                const Text('Or Sign In With'),
                 const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -168,7 +165,7 @@ class _SignInViewState extends State<SignInView> {
                 const SizedBox(height: AppSize.s16),
                 TextButton(
                   onPressed: () {
-                    _loginViewModel.navigateNamed(context, Routes.signUpRoute);
+                    _signInViewModel.navigateNamed(context, Routes.signUpRoute);
                   },
                   child: const Text('Don\'t have an account? Register'),
                 ),
@@ -187,7 +184,7 @@ class _SignInViewState extends State<SignInView> {
     bool obscureText = false,
   }) {
     return StreamBuilder<bool>(
-      stream: hintText == 'Email' ? _loginViewModel.isEmailValid : _loginViewModel.isPasswordValid,
+      stream: hintText == 'Email' ? _signInViewModel.isEmailValid : _signInViewModel.isPasswordValid,
       builder: (context, snapshot) {
         return TextField(
           controller: controller,

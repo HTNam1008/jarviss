@@ -16,7 +16,7 @@ import 'package:jarvis/presentation/profile/detail_profile_view.dart';
 import 'package:jarvis/presentation/profile/profile_view.dart';
 import 'package:jarvis/presentation/prompt/create_prompt/create_prompt_view.dart';
 import 'package:jarvis/presentation/prompt/main_prompt_view.dart';
-import 'package:jarvis/presentation/authencation/sign_up/register.dart';
+import 'package:jarvis/presentation/authencation/sign_up/sign_up.dart';
 import 'package:jarvis/presentation/resources/strings_manager.dart';
 import 'package:jarvis/presentation/splash/splash.dart';
 import 'package:jarvis/presentation/upgrade/upgrade.dart';
@@ -55,7 +55,7 @@ class RouteGenerator {
       case Routes.signInRoute:
         return MaterialPageRoute(builder: (_) => const SignInView());
       case Routes.signUpRoute:
-        return MaterialPageRoute(builder: (_) => const RegisterView());
+        return MaterialPageRoute(builder: (_) => const SignUpView());
       case Routes.forgotPasswordRoute:
         return MaterialPageRoute(builder: (_) => const ForgotPasswordView());
       case Routes.mainRoute:

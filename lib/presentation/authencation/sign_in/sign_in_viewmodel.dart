@@ -17,16 +17,16 @@ class SignInViewModel extends BaseViewModel
   final StreamController<String> _errorStreamController =
       StreamController<String>.broadcast();
 
-  final StreamController<bool> _loginStreamController =
+  final StreamController<bool> _signInStreamController =
       StreamController<bool>.broadcast();
 
-  var loginObject = const LoginObject(email: '', password: '');
+  var signInObject = const SignInObject(email: '', password: '');
 
-  final SignInUseCase _loginUseCase;
+  final SignInUseCase _signInUseCase;
 
   final AppPreferences _appPreferences;
 
-  SignInViewModel(this._loginUseCase, this._appPreferences);
+  SignInViewModel(this._signInUseCase, this._appPreferences);
 
   @override
   void start() {}
@@ -36,7 +36,7 @@ class SignInViewModel extends BaseViewModel
     _emailStreamController.close();
     _passwordStreamController.close();
     _errorStreamController.close();
-    _loginStreamController.close();
+    _signInStreamController.close();
   }
 
   // Outputs
@@ -51,7 +51,7 @@ class SignInViewModel extends BaseViewModel
   Stream<String> get errorStream => _errorStreamController.stream;
 
   @override
-  Stream<bool> get loginStream => _loginStreamController.stream;
+  Stream<bool> get signInStream => _signInStreamController.stream;
 
   // Inputs
   @override
@@ -61,20 +61,20 @@ class SignInViewModel extends BaseViewModel
   Sink get inputPassword => _passwordStreamController.sink;
 
   @override
-  Future<void> login() async {
-    (await _loginUseCase.execute(
-      SignInUseCaseInput(loginObject.email, loginObject.password),
+  Future<void> signIn() async {
+    (await _signInUseCase.execute(
+      SignInUseCaseInput(signInObject.email, signInObject.password),
     ))
         .fold(
       (failure) {
-        print('Login failed: ${failure.message}');
+        print('SignIn failed: ${failure.message}');
         _errorStreamController.add(failure.message); 
-        _loginStreamController.add(false);
+        _signInStreamController.add(false);
       },
       (token) {
-        print('Login successful. Access Token: ${token.accessToken}');
+        print('SignIn successful. Access Token: ${token.accessToken}');
         _appPreferences.setToken(token.accessToken); 
-      _loginStreamController.add(true); 
+        _signInStreamController.add(true); 
       },
     );
   }
@@ -82,13 +82,13 @@ class SignInViewModel extends BaseViewModel
   @override
   void setEmail(String email) {
     inputEmail.add(email);
-    loginObject = loginObject.copyWith(email: email);
+    signInObject = signInObject.copyWith(email: email);
   }
 
   @override
   void setPassword(String password) {
     inputPassword.add(password);
-    loginObject = loginObject.copyWith(password: password);
+    signInObject = signInObject.copyWith(password: password);
   }
 
   bool _isEmailValid(String email) {
@@ -115,7 +115,7 @@ abstract class SignInViewModelInputs {
 
   void setPassword(String password);
 
-  Future<void> login();
+  Future<void> signIn();
 
   // Sink cho Streams
   Sink get inputEmail;
@@ -128,5 +128,5 @@ abstract class SignInViewModelOutputs {
 
   Stream<bool> get isPasswordValid;
 
-  Stream<bool> get loginStream;
+  Stream<bool> get signInStream;
 }
