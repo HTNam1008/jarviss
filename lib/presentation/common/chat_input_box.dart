@@ -18,7 +18,7 @@ class ChatInputBox extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: AppSize.s8, vertical: AppSize.s10),
       decoration: BoxDecoration(
         color: Colors.teal.shade50,
-        borderRadius: BorderRadius.all(Radius.circular(AppSize.s16)),
+        //borderRadius: BorderRadius.all(Radius.circular(AppSize.s16)),
       ),
       child: Row(
         children: [
@@ -33,12 +33,13 @@ class ChatInputBox extends StatelessWidget {
               controller: controller,
               decoration: InputDecoration(
                 hintText: AppStrings.chatHintText,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppSize.s24),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: ColorManager.white,
+
+                // border: OutlineInputBorder(
+                //   borderRadius: BorderRadius.circular(AppSize.s100),
+                //   borderSide: BorderSide(color: Colors.blue),
+                // ),
+                // filled: true,
+                // fillColor: ColorManager.white,
               ),
             ),
           ),

@@ -146,8 +146,8 @@ class _PreviewBotViewState extends State<PreviewBotView> {
                       ),
                     );
                   });
-            },
-              child: Text("Save")
+                },
+                child: Text("Save")
             ),
           )
         ],
