@@ -5,13 +5,13 @@ import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 import 'package:jarvis/domain/usecase/base_usecase.dart';
 
-class LoginUseCase implements BaseUseCase<LoginUseCaseInput, Token> {
+class SignInUseCase implements BaseUseCase<SignInUseCaseInput, Token> {
   final Repository _repository;
 
-  LoginUseCase(this._repository);
+  SignInUseCase(this._repository);
 
   @override
-  Future<Either<Failure, Token>> execute(LoginUseCaseInput input) async {
+  Future<Either<Failure, Token>> execute(SignInUseCaseInput input) async {
     return await _repository.signIn(
       SignInRequest(
         email: input.email,
@@ -21,9 +21,9 @@ class LoginUseCase implements BaseUseCase<LoginUseCaseInput, Token> {
   }
 }
 
-class LoginUseCaseInput {
+class SignInUseCaseInput {
   final String email;
   final String password;
 
-  LoginUseCaseInput(this.email, this.password);
+  SignInUseCaseInput(this.email, this.password);
 }

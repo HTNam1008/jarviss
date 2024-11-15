@@ -10,14 +10,14 @@ import 'package:jarvis/presentation/resources/font_manager.dart';
 import 'package:jarvis/presentation/resources/route_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 
-class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+class SignInView extends StatefulWidget {
+  const SignInView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<SignInView> createState() => _SignInViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _SignInViewState extends State<SignInView> {
   final getIt = GetIt.instance;
   late SignInViewModel _loginViewModel;
 

@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:jarvis/app/app_prefs.dart';
-import 'package:jarvis/domain/usecase/login_usecase.dart';
+import 'package:jarvis/domain/usecase/sign_in_usecase.dart';
 import 'package:jarvis/presentation/base/baseviewmodel.dart';
 import 'package:jarvis/presentation/common/freezed_data_classes.dart';
 
-class LoginViewModel extends BaseViewModel
-    implements LoginViewModelInputs, LoginViewModelOutputs {
+class SignInViewModel extends BaseViewModel
+    implements SignInViewModelInputs, SignInViewModelOutputs {
   final StreamController<String> _emailStreamController =
       StreamController<String>.broadcast();
 
@@ -22,11 +22,11 @@ class LoginViewModel extends BaseViewModel
 
   var loginObject = const LoginObject(email: '', password: '');
 
-  final LoginUseCase _loginUseCase;
+  final SignInUseCase _loginUseCase;
 
   final AppPreferences _appPreferences;
 
-  LoginViewModel(this._loginUseCase, this._appPreferences);
+  SignInViewModel(this._loginUseCase, this._appPreferences);
 
   @override
   void start() {}
@@ -63,7 +63,7 @@ class LoginViewModel extends BaseViewModel
   @override
   Future<void> login() async {
     (await _loginUseCase.execute(
-      LoginUseCaseInput(loginObject.email, loginObject.password),
+      SignInUseCaseInput(loginObject.email, loginObject.password),
     ))
         .fold(
       (failure) {
@@ -110,7 +110,7 @@ class LoginViewModel extends BaseViewModel
   }
 }
 
-abstract class LoginViewModelInputs {
+abstract class SignInViewModelInputs {
   void setEmail(String email);
 
   void setPassword(String password);
@@ -123,7 +123,7 @@ abstract class LoginViewModelInputs {
   Sink get inputPassword;
 }
 
-abstract class LoginViewModelOutputs {
+abstract class SignInViewModelOutputs {
   Stream<bool> get isEmailValid;
 
   Stream<bool> get isPasswordValid;
