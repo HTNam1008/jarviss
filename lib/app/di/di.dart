@@ -11,7 +11,9 @@ import 'package:jarvis/data/network/network_info.dart';
 import 'package:jarvis/data/repository/repository_impl.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 import 'package:jarvis/domain/usecase/sign_in_usecase.dart';
+import 'package:jarvis/domain/usecase/sign_up_usecase.dart';
 import 'package:jarvis/presentation/authencation/sign_in/sign_in_viewmodel.dart';
+import 'package:jarvis/presentation/authencation/sign_up/sign_up_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final getIt = GetIt.instance;
@@ -62,8 +64,16 @@ Future<void> setupLocator() async {
     () => SignInUseCase(getIt<Repository>()),
   );
 
-  // Register LoginViewModels
+  getIt.registerFactory<SignUpUseCase>(
+    () => SignUpUseCase(getIt<Repository>()),
+  );
+
+  // Register ViewModels
   getIt.registerFactory<SignInViewModel>(
     () => SignInViewModel(getIt<SignInUseCase>(), getIt<AppPreferences>()),
+  );
+
+  getIt.registerFactory<SignUpViewModel>(
+    () => SignUpViewModel(getIt<SignUpUseCase>(), getIt<AppPreferences>()),
   );
 }
