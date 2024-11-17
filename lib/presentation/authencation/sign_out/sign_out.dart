@@ -28,15 +28,15 @@ class _SignOutViewState extends State<SignOutView> {
     _signOutSubscription = _viewModel.signOutStream.listen((isSuccess) {
       if (isSuccess) {
         // Show success dialog
-        showCustomDialog(
-          context: context,
-          type: DialogType.success,
-          title: 'Đăng xuất thành công',
-          message: 'Bạn đã đăng xuất khỏi ứng dụng.',
-        ).then((_) {
+        // showCustomDialog(
+        //   context: context,
+        //   type: DialogType.success,
+        //   title: 'Đăng xuất thành công',
+        //   message: 'Bạn đã đăng xuất khỏi ứng dụng.',
+        // ).then((_) {
           // Navigate to login screen after dialog is dismissed
           _viewModel.navigateReplaceNamed(context, Routes.signInRoute);
-        });
+        // });
       }
     });
 
@@ -46,7 +46,7 @@ class _SignOutViewState extends State<SignOutView> {
       showCustomDialog(
         context: context,
         type: DialogType.error,
-        title: 'Đăng xuất thất bại',
+        title: 'Sign out failed!',
         message: errorMessage,
       );
     });
@@ -68,7 +68,8 @@ class _SignOutViewState extends State<SignOutView> {
     // Display a loading indicator while signing out
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Đăng xuất'),
+        title: const Text('Sign out'),
+        automaticallyImplyLeading: false,
       ),
       body: const Center(
         child: CircularProgressIndicator(),
