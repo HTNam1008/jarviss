@@ -164,7 +164,7 @@ class _ChatBotMainViewState extends State<ChatBotMainView> {
                           color: Colors.grey.withOpacity(0.2),
                           spreadRadius: 1,
                           blurRadius: 4,
-                          offset: Offset(0, 2), // hiệu ứng bóng đổ
+                          offset: Offset(0, 2),
                         ),
                       ],
                     ),
