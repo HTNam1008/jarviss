@@ -37,3 +37,15 @@ class SignUpRequest {
 
   Map<String, dynamic> toJson() => _$SignUpRequestToJson(this);
 }
+
+@JsonSerializable()
+class RefreshTokenRequest {
+  final String refreshToken;
+
+  RefreshTokenRequest({required this.refreshToken});
+
+  factory RefreshTokenRequest.fromJson(Map<String, dynamic> json) =>
+      _$RefreshTokenRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RefreshTokenRequestToJson(this);
+}

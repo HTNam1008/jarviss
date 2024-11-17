@@ -21,4 +21,12 @@ abstract class AppServiceClient {
   Future<SignUpResponse> signUp(
     @Body() SignUpRequest request,
   );
+
+  @GET("/api/v1/auth/sign-out")
+  Future<void> signOut();
+
+  @GET("/api/v1/auth/refresh")
+  Future<RefreshTokenResponse> refreshToken(
+    @Query("refreshToken") RefreshTokenRequest refreshToken,
+  );
 }

@@ -72,3 +72,22 @@ Map<String, dynamic> _$SignInResponseToJson(SignInResponse instance) =>
     <String, dynamic>{
       'token': instance.token,
     };
+
+SignOutResponse _$SignOutResponseFromJson(Map<String, dynamic> json) =>
+    SignOutResponse();
+
+Map<String, dynamic> _$SignOutResponseToJson(SignOutResponse instance) =>
+    <String, dynamic>{};
+
+RefreshTokenResponse _$RefreshTokenResponseFromJson(
+        Map<String, dynamic> json) =>
+    RefreshTokenResponse(
+      newToken:
+          TokenResponse.fromJson(json['newToken'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$RefreshTokenResponseToJson(
+        RefreshTokenResponse instance) =>
+    <String, dynamic>{
+      'newToken': instance.newToken,
+    };
