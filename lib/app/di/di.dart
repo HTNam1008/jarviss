@@ -1,5 +1,6 @@
 // lib/app/di/di.dart
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -10,9 +11,12 @@ import 'package:jarvis/data/network/dio_factory.dart';
 import 'package:jarvis/data/network/network_info.dart';
 import 'package:jarvis/data/repository/repository_impl.dart';
 import 'package:jarvis/domain/repository/repository.dart';
+import 'package:jarvis/domain/usecase/refresh_token_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_in_usecase.dart';
+import 'package:jarvis/domain/usecase/sign_out_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_up_usecase.dart';
 import 'package:jarvis/presentation/authencation/sign_in/sign_in_viewmodel.dart';
+import 'package:jarvis/presentation/authencation/sign_out/sign_out_viewmodel.dart';
 import 'package:jarvis/presentation/authencation/sign_up/sign_up_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,10 +26,14 @@ Future<void> setupLocator() async {
   // Register SharedPreferences
   final sharedPreferences = await SharedPreferences.getInstance();
   getIt.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
+   // Đăng ký FlutterSecureStorage
+  getIt.registerLazySingleton<FlutterSecureStorage>(
+    () => const FlutterSecureStorage(),
+  );
 
   // Register AppPreferences
   getIt.registerLazySingleton<AppPreferences>(
-      () => AppPreferences(getIt<SharedPreferences>()));
+      () => AppPreferences(getIt<SharedPreferences>(), getIt<FlutterSecureStorage>()));
 
   // Register DioFactory
   getIt.registerLazySingleton<DioFactory>(
@@ -67,7 +75,14 @@ Future<void> setupLocator() async {
   getIt.registerFactory<SignUpUseCase>(
     () => SignUpUseCase(getIt<Repository>()),
   );
+  
+  getIt.registerFactory<RefreshTokenUseCase>(
+    () => RefreshTokenUseCase(getIt<Repository>()),
+  );
 
+  getIt.registerFactory<SignOutUseCase>(
+    () => SignOutUseCase(getIt<Repository>()),
+  );
   // Register ViewModels
   getIt.registerFactory<SignInViewModel>(
     () => SignInViewModel(getIt<SignInUseCase>(), getIt<AppPreferences>()),
@@ -75,5 +90,12 @@ Future<void> setupLocator() async {
 
   getIt.registerFactory<SignUpViewModel>(
     () => SignUpViewModel(getIt<SignUpUseCase>(), getIt<AppPreferences>()),
+  );
+
+  getIt.registerFactory<SignOutViewModel>(
+    () => SignOutViewModel(
+      getIt<SignOutUseCase>(),
+      getIt<AppPreferences>(),
+    ),
   );
 }

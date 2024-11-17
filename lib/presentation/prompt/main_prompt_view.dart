@@ -57,9 +57,17 @@ class _PromptViewState extends State<PromptView> {
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.all(AppSize.s4),
+            padding: EdgeInsets.all(AppSize.s6),
             child: Center(
-              child: ElevatedButton.icon(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: ColorManager.teal,
+                  padding: EdgeInsets.symmetric(horizontal: AppSize.s8, vertical: AppSize.s6),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
                 onPressed: () {
                   showDialog(
                     context: context,
@@ -68,15 +76,21 @@ class _PromptViewState extends State<PromptView> {
                     },
                   );
                 },
-                icon: const Icon(Icons.add), 
-                label: const Text('Create'),
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: ColorManager.teal,
-                  padding: const EdgeInsets.symmetric(horizontal: AppSize.s8, vertical: AppSize.s4),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30), 
-                  ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.add,
+                      size: 14,
+                    ),
+                    const SizedBox(width: 4,),
+                    Text(
+                      'Create',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -86,7 +100,7 @@ class _PromptViewState extends State<PromptView> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: AppSize.s8),
+            padding: const EdgeInsets.only(top: AppSize.s12),
             child: AppinioAnimatedToggleTab(
               callback: (int i) {
                 setState(() {
@@ -98,10 +112,10 @@ class _PromptViewState extends State<PromptView> {
                 'My Prompts',
                 'Public Prompts',
               ],
-              height: 40,
-              width: 300,
+              height: 50,
+              width: 405,
               boxDecoration: BoxDecoration(
-                color: ColorManager.primary,
+                color: Colors.teal[50],
                 borderRadius: BorderRadius.circular(AppSize.s8),
               ),
               animatedBoxDecoration: BoxDecoration(
@@ -113,17 +127,17 @@ class _PromptViewState extends State<PromptView> {
                     offset: const Offset(2, 2),
                   ),
                 ],
-                color: ColorManager.white,
+                color: ColorManager.teal,
                 borderRadius: const BorderRadius.all(
                   Radius.circular(AppSize.s8),
                 ),
                 border: Border.all(
-                  color: Colors.grey,
+                  color: Colors.white,
                   width: 1,
                 ),
               ),
               activeStyle: const TextStyle(
-                color: Colors.blue,
+                color: Colors.white,
               ),
               inactiveStyle: const TextStyle(
                 color: Colors.black,
@@ -132,7 +146,7 @@ class _PromptViewState extends State<PromptView> {
           ),
           // Thanh tìm kiếm
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(12.0),
             child: Row(
               children: [
                 Expanded(
@@ -148,12 +162,12 @@ class _PromptViewState extends State<PromptView> {
                         borderRadius: BorderRadius.circular(40.0),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(40.0), // Đặt borderRadius cho trạng thái bình thường
-                        borderSide: const BorderSide(color: Colors.grey), // Màu viền khi không focus
+                        borderRadius: BorderRadius.circular(40.0),
+                        borderSide: BorderSide(color: Colors.grey),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(40.0), // Đặt borderRadius cho trạng thái focus
-                        borderSide: BorderSide(color: ColorManager.teal), // Màu viền khi focus
+                        borderRadius: BorderRadius.circular(40.0),
+                        borderSide: BorderSide(color: ColorManager.teal),
                       ),
                     ),
                   ),
@@ -162,7 +176,7 @@ class _PromptViewState extends State<PromptView> {
             ),
           ),
           SizedBox(
-            height: 50, // Chiều cao của danh sách tab
+            height: 40,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: _generateListTab(_isPublicPrompts ? _publicPromptDataTab : _myPromptDataTab),
@@ -208,19 +222,25 @@ class _PromptViewState extends State<PromptView> {
 
   List<Widget> _generateListTab(List<List<String>> promptData) {
     return List.generate(promptData.length, (index) {
+      final bool isSelected = _selectedIndexTab == index;
       return GestureDetector(
         onTap: () {
           setState(() {
-            _selectedIndexTab = index; 
+            _selectedIndexTab = index;
           });
         },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+          margin: const EdgeInsets.symmetric(horizontal: 4.0),
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.teal : Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Text(
-            'Tab ${index + 1}', 
+            'Tab ${index + 1}',
             style: TextStyle(
-              fontWeight: _selectedIndexTab == index ? FontWeight.bold : FontWeight.normal,
-              color: _selectedIndexTab == index ? Colors.blue : Colors.black,
+              fontWeight: FontWeight.bold,
+              color: isSelected ? Colors.white : Colors.black,
             ),
           ),
         ),
@@ -233,34 +253,58 @@ class _PromptViewState extends State<PromptView> {
       itemCount: promptData[_selectedIndexTab].length,
       itemBuilder: (context, index) {
         return Container(
-          margin: const EdgeInsets.symmetric(vertical: AppSize.s4, horizontal: AppSize.s4),
+          margin: EdgeInsets.symmetric(vertical: AppSize.s6, horizontal: AppSize.s8),
+          padding: EdgeInsets.all(AppSize.s4),
           decoration: BoxDecoration(
-            border: Border.all(color: ColorManager.teal), 
-            borderRadius: BorderRadius.circular(AppSize.s8), 
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(AppSize.s12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                spreadRadius: 1,
+                blurRadius: 4,
+                offset: Offset(0, 2),
+              ),
+            ],
           ),
           child: ListTile(
-            minTileHeight: AppSize.s40,
-            title: Text(promptData[_selectedIndexTab][index]),
-            subtitle: Text('Description for ${promptData[_selectedIndexTab][index]}'),
+            title: Text(promptData[_selectedIndexTab][index],
+              style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: AppSize.s14,
+              ),
+            ),
+            subtitle: Text('A brief description or tagline for the bot.',
+            style: TextStyle(
+              fontSize: AppSize.s14,
+              color: Colors.grey,
+              ),
+            ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                IconButton(
-                  onPressed: () {
+                GestureDetector(
+                  onTap: (){
                     setState(() {
-                      _isFavourite = !_isFavourite;
+                    _isFavourite = !_isFavourite;
                     });
                   },
-                  icon: Icon(
-                    Icons.star,
-                    color: _isFavourite ? Colors.yellow : Colors.grey,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0, top: 8.0, bottom: 8.0),
+                    child: Icon(
+                      Icons.star,
+                      color: _isFavourite ? Colors.yellow : Colors.grey,
+                    ),
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.more_vert),
-                  onPressed: () {
+                GestureDetector(
+                  onTap: (){
                     _showActions(context, promptData[_selectedIndexTab][index]);
                   },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(Icons.more_vert, color: Colors.grey,),
+                  ),
                 ),
               ],
             ),

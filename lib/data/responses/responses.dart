@@ -79,3 +79,25 @@ class SignInResponse {
 
   Map<String, dynamic> toJson() => _$SignInResponseToJson(this);
 }
+
+@JsonSerializable()
+class SignOutResponse {
+  SignOutResponse();
+  
+  factory SignOutResponse.fromJson(Map<String, dynamic> json) =>
+      _$SignOutResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SignOutResponseToJson(this);
+}
+
+@JsonSerializable()
+class RefreshTokenResponse {
+  final TokenResponse newToken;
+
+  RefreshTokenResponse({required this.newToken});
+
+  factory RefreshTokenResponse.fromJson(Map<String, dynamic> json) =>
+      _$RefreshTokenResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RefreshTokenResponseToJson(this);
+}

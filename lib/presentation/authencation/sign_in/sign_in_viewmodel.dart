@@ -73,7 +73,8 @@ class SignInViewModel extends BaseViewModel
       },
       (token) {
         print('SignIn successful. Access Token: ${token.accessToken}');
-        _appPreferences.setToken(token.accessToken); 
+        _appPreferences.setAccessToken(token.accessToken); 
+        _appPreferences.setRefreshToken(token.refreshToken); 
         _signInStreamController.add(true); 
       },
     );

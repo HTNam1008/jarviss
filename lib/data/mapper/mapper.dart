@@ -39,3 +39,9 @@ extension SignUpResponseMapper on SignUpResponse {
     return user.toDomain();
   }
 }
+
+extension RefreshTokenResponseMapper on RefreshTokenResponse {
+  Token toDomain() {
+    return newToken.toDomain();
+  }
+}
