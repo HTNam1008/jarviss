@@ -45,119 +45,199 @@ class _ChatBotMainViewState extends State<ChatBotMainView> {
         ),
         actions: [
           Padding(
-            padding: EdgeInsets.all(AppSize.s4),
+            padding: EdgeInsets.all(AppSize.s6),
             child: Center(
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  // Define the action for the button press
-                  Navigator.of(context).pushNamed(Routes.createBotRoute);
-                },
-                icon: Icon(Icons.add), // Add your desired icon here
-                label: Text('Create'),
+              child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor: ColorManager.teal, // Text color
-                  padding: EdgeInsets.symmetric(horizontal: AppSize.s8, vertical: AppSize.s4),
+                  backgroundColor: ColorManager.teal,
+                  padding: EdgeInsets.symmetric(horizontal: AppSize.s8, vertical: AppSize.s6),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30), // Rounded corners
+                    borderRadius: BorderRadius.circular(30),
                   ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pushNamed(Routes.createBotRoute);
+                },
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.add,
+                      size: 14,
+                    ),
+                    const SizedBox(width: 4,),
+                    Text(
+                      'Create',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Search',
-                      prefixIcon: Icon(Icons.search),
-                      suffixIcon: IconButton(
-                        icon: Icon(Icons.mic),
-                        onPressed: () {
-                        },
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(40.0),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(40.0), // Đặt borderRadius cho trạng thái bình thường
-                        borderSide: BorderSide(color: Colors.grey), // Màu viền khi không focus
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(40.0), // Đặt borderRadius cho trạng thái focus
-                        borderSide: BorderSide(color: ColorManager.teal), // Màu viền khi focus
+      body: Container(
+        color: Colors.teal[50],
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Search',
+                        prefixIcon: Icon(Icons.search),
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.mic),
+                          onPressed: () {
+                          },
+                        ),
+                        fillColor: Colors.white,
+                        filled: true,
+
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(40.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(40.0),
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(40.0),
+                          borderSide: BorderSide(color: ColorManager.teal),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Container(
-            height: 30,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: List.generate(_botData.length, (index) {
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedIndex = index;
-                    });
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Text(
-                      'Tab ${index + 1}', // Đổi tên tab nếu cần
-                      style: TextStyle(
-                        fontWeight: _selectedIndex == index ? FontWeight.bold : FontWeight.normal,
-                        color: _selectedIndex == index ? Colors.blue : Colors.black,
-                      ),
-                    ),
-                  ),
-                );
-              }),
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _botData[_selectedIndex].length,
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: EdgeInsets.symmetric(vertical: AppSize.s4, horizontal: AppSize.s4),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: ColorManager.teal), // Set border color and width
-                    borderRadius: BorderRadius.circular(AppSize.s8),
-                  ),
-                  child: ListTile(
-                    minTileHeight: AppSize.s40,
-                    leading: CircleAvatar(
-                      child: Icon(Icons.person),
-                    ),
-                    title: Text(_botData[_selectedIndex][index]),
-                    subtitle: Text('Description for ${_botData[_selectedIndex][index]}'),
-                    trailing: IconButton(
-                      icon: Icon(Icons.more_vert),
-                      onPressed: () {
-                        _showActions(context, _botData[_selectedIndex][index]);
-                      },
-                    ),
-                    contentPadding: EdgeInsets.only(left: AppSize.s8),
+            Container(
+              height: 40,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: List.generate(_botData.length, (index) {
+                  final bool isSelected = _selectedIndex == index;
+                  return GestureDetector(
                     onTap: () {
-                      Navigator.of(context).pushNamed(Routes.chatbotRoute);
+                      setState(() {
+                        _selectedIndex = index;
+                      });
                     },
-                  ),
-                );
-              },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                      margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                      decoration: BoxDecoration(
+                        color: isSelected ? Colors.teal : Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        'Tab ${index + 1}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: isSelected ? Colors.white : Colors.black,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ),
             ),
-          ),
-        ],
+            Expanded(
+              child: ListView.builder(
+                itemCount: _botData[_selectedIndex].length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    margin: EdgeInsets.symmetric(vertical: AppSize.s6, horizontal: AppSize.s8),
+                    padding: EdgeInsets.all(AppSize.s8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(AppSize.s12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 1,
+                          blurRadius: 4,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: AppSize.s24,
+                          backgroundImage: AssetImage('assets/images/avatar.png'),
+                        ),
+                        SizedBox(width: AppSize.s12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                _botData[_selectedIndex][index],
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: AppSize.s16,
+                                ),
+                              ),
+                              SizedBox(height: AppSize.s4),
+                              Text(
+                                'A brief description or tagline for the bot.',
+                                style: TextStyle(
+                                  fontSize: AppSize.s14,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              SizedBox(height: AppSize.s8),
+                              Row(
+                                children: [
+                                  Text(
+                                    'By Monica Team',
+                                    style: TextStyle(
+                                      fontSize: AppSize.s12,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  SizedBox(width: AppSize.s8),
+                                  Icon(
+                                    Icons.public,
+                                    color: Colors.grey,
+                                    size: AppSize.s12,
+                                  ),
+                                  SizedBox(width: AppSize.s4),
+                                  Text(
+                                    '9.2k',
+                                    style: TextStyle(
+                                      fontSize: AppSize.s12,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.more_vert),
+                          onPressed: () {
+                            _showActions(context, _botData[_selectedIndex][index]);
+                          },
+                          color: Colors.grey,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -22,6 +22,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.7.0"
+  appinio_animated_toggle_tab:
+    dependency: "direct main"
+    description:
+      name: appinio_animated_toggle_tab
+      sha256: cbc451a86e87b41dab10fcc493e30f721cdecc01d4ec3f6c8d6ee6c71401b319
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.3"
   args:
     dependency: transitive
     description:
