@@ -34,21 +34,35 @@ class _KnowledgeViewState extends State<KnowledgeView> {
         ),
         actions: [
           Padding(
-            padding: EdgeInsets.all(AppSize.s4),
+            padding: EdgeInsets.all(AppSize.s6),
             child: Center(
-              child: ElevatedButton.icon(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: ColorManager.teal,
+                  padding: EdgeInsets.symmetric(horizontal: AppSize.s8, vertical: AppSize.s6),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
                 onPressed: () {
                   showDialog(context: context, builder: (builder) => CreateKnowledgeView());
                 },
-                icon: Icon(Icons.add),
-                label: Text('Create'),
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: ColorManager.teal, // Text color
-                  padding: EdgeInsets.symmetric(horizontal: AppSize.s8, vertical: AppSize.s4),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30), // Rounded corners
-                  ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.add,
+                      size: 14,
+                    ),
+                    const SizedBox(width: 4,),
+                    Text(
+                      'Create',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -56,72 +70,95 @@ class _KnowledgeViewState extends State<KnowledgeView> {
         ],
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Search',
-                      prefixIcon: Icon(Icons.search),
-                      suffixIcon: IconButton(
-                        icon: Icon(Icons.mic),
-                        onPressed: () {
-                        },
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(40.0),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(40.0), // Đặt borderRadius cho trạng thái bình thường
-                        borderSide: BorderSide(color: Colors.grey), // Màu viền khi không focus
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(40.0), // Đặt borderRadius cho trạng thái focus
-                        borderSide: BorderSide(color: ColorManager.teal), // Màu viền khi focus
+      body: Container(
+        color: Colors.teal[50],
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 18, bottom: 10, right: 10, left: 10),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Search',
+                        prefixIcon: Icon(Icons.search),
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.mic),
+                          onPressed: () {
+                          },
+                        ),
+                        fillColor: Colors.white,
+                        filled: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(40.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(40.0),
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(40.0),
+                          borderSide: BorderSide(color: ColorManager.teal),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: 4,
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: EdgeInsets.symmetric(vertical: AppSize.s4, horizontal: AppSize.s4),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: ColorManager.teal), // Set border color and width
-                    borderRadius: BorderRadius.circular(AppSize.s8),
-                  ),
-                  child: ListTile(
-                    minTileHeight: AppSize.s40,
-                    leading: CircleAvatar(
-                      child: Icon(Icons.article_outlined),
+            Expanded(
+              child: ListView.builder(
+                itemCount: 4,
+                itemBuilder: (context, index) {
+                  return Container(
+                    margin: EdgeInsets.symmetric(vertical: AppSize.s6, horizontal: AppSize.s8),
+                    padding: EdgeInsets.all(AppSize.s8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(AppSize.s12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 1,
+                          blurRadius: 4,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
                     ),
-                    title: Text("Title"),
-                    subtitle: Text('Description'),
-                    trailing: IconButton(
-                      icon: Icon(Icons.more_vert),
-                      onPressed: () {
-                        _showActions(context);
+                    child: ListTile(
+                      minTileHeight: AppSize.s40,
+                      leading: CircleAvatar(
+                        child: Icon(Icons.article_outlined),
+                      ),
+                      title: Text("Title",
+                        style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: AppSize.s14,
+                      ),),
+                      subtitle: Text('Description',
+                        style: TextStyle(
+                        fontSize: AppSize.s14,
+                        color: Colors.grey,
+                      ),),
+                      trailing: IconButton(
+                        icon: Icon(Icons.more_vert),
+                        onPressed: () {
+                          _showActions(context);
+                        },
+                        color: Colors.grey,
+                      ),
+                      contentPadding: EdgeInsets.only(left: AppSize.s8),
+                      onTap: () {
+                        Navigator.of(context).pushNamed(Routes.detailKnowledgeRoute);
                       },
                     ),
-                    contentPadding: EdgeInsets.only(left: AppSize.s8),
-                    onTap: () {
-                      Navigator.of(context).pushNamed(Routes.detailKnowledgeRoute);
-                    },
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

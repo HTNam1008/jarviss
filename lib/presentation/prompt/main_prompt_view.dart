@@ -97,95 +97,100 @@ class _PromptViewState extends State<PromptView> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: AppSize.s12),
-            child: AppinioAnimatedToggleTab(
-              callback: (int i) {
-                setState(() {
-                  _isPublicPrompts = !_isPublicPrompts;
-                  _selectedIndexTab = 0;
-                });
-              },
-              tabTexts: const [
-                'My Prompts',
-                'Public Prompts',
-              ],
-              height: 50,
-              width: 405,
-              boxDecoration: BoxDecoration(
-                color: Colors.teal[50],
-                borderRadius: BorderRadius.circular(AppSize.s8),
-              ),
-              animatedBoxDecoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFFc3d2db).withOpacity(0.1),
-                    spreadRadius: 1,
-                    blurRadius: 5,
-                    offset: const Offset(2, 2),
-                  ),
+      body: Container(
+        color: Colors.teal[50],
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: AppSize.s12),
+              child: AppinioAnimatedToggleTab(
+                callback: (int i) {
+                  setState(() {
+                    _isPublicPrompts = !_isPublicPrompts;
+                    _selectedIndexTab = 0;
+                  });
+                },
+                tabTexts: const [
+                  'My Prompts',
+                  'Public Prompts',
                 ],
-                color: ColorManager.teal,
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(AppSize.s8),
-                ),
-                border: Border.all(
+                height: 50,
+                width: 405,
+                boxDecoration: BoxDecoration(
                   color: Colors.white,
-                  width: 1,
+                  borderRadius: BorderRadius.circular(AppSize.s8),
                 ),
-              ),
-              activeStyle: const TextStyle(
-                color: Colors.white,
-              ),
-              inactiveStyle: const TextStyle(
-                color: Colors.black,
+                animatedBoxDecoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFFc3d2db).withOpacity(0.1),
+                      spreadRadius: 1,
+                      blurRadius: 5,
+                      offset: const Offset(2, 2),
+                    ),
+                  ],
+                  color: ColorManager.teal,
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(AppSize.s8),
+                  ),
+                  border: Border.all(
+                    color: Colors.white,
+                    width: 1,
+                  ),
+                ),
+                activeStyle: const TextStyle(
+                  color: Colors.white,
+                ),
+                inactiveStyle: const TextStyle(
+                  color: Colors.black,
+                ),
               ),
             ),
-          ),
-          // Thanh tìm kiếm
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Search',
-                      prefixIcon: const Icon(Icons.search),
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.mic),
-                        onPressed: () {},
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(40.0),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(40.0),
-                        borderSide: BorderSide(color: Colors.grey),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(40.0),
-                        borderSide: BorderSide(color: ColorManager.teal),
+            // Thanh tìm kiếm
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Search',
+                        prefixIcon: const Icon(Icons.search),
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.mic),
+                          onPressed: () {},
+                        ),
+                        fillColor: Colors.white,
+                        filled: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(40.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(40.0),
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(40.0),
+                          borderSide: BorderSide(color: ColorManager.teal),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          SizedBox(
-            height: 40,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: _generateListTab(_isPublicPrompts ? _publicPromptDataTab : _myPromptDataTab),
+            SizedBox(
+              height: 40,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: _generateListTab(_isPublicPrompts ? _publicPromptDataTab : _myPromptDataTab),
+              ),
             ),
-          ),
-          Expanded(
-            child: _generateListData(_isPublicPrompts ? _publicPromptDataTab : _myPromptDataTab),
-          ),
-        ],
+            Expanded(
+              child: _generateListData(_isPublicPrompts ? _publicPromptDataTab : _myPromptDataTab),
+            ),
+          ],
+        ),
       ),
     );
   }
