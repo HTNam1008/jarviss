@@ -1,5 +1,5 @@
-import 'package:appinio_animated_toggle_tab/appinio_animated_toggle_tab.dart';
 import 'package:flutter/material.dart';
+import 'package:jarvis/presentation/common/animated_toggle_tab/animated_toggle_tab.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
@@ -21,13 +21,13 @@ class _CreatePromptViewState extends State<CreatePromptView> {
         borderRadius: BorderRadius.circular(16.0),
       ),
       child: Container(
-        padding: EdgeInsets.all(AppSize.s8),
+        padding: const EdgeInsets.all(AppSize.s8),
         width: 700,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               "New Prompt",
               style: TextStyle(
                 fontWeight: FontWeightManager.bold,
@@ -79,8 +79,8 @@ class _CreatePromptViewState extends State<CreatePromptView> {
                 ),
               ),
             ),
-            SizedBox(height: AppSize.s8),
-            TextField(
+            const SizedBox(height: AppSize.s8),
+            const TextField(
               decoration: InputDecoration(
                 labelText: 'Name *',
                 hintText: 'Name of the prompt',
@@ -88,9 +88,9 @@ class _CreatePromptViewState extends State<CreatePromptView> {
                 floatingLabelBehavior: FloatingLabelBehavior.always,
               ),
             ),
-            _isPublicPrompts ? SizedBox(height: AppSize.s8) : SizedBox(),
+            _isPublicPrompts ? const SizedBox(height: AppSize.s8) : const SizedBox(),
             _isPublicPrompts
-                ? TextField(
+                ? const TextField(
                     decoration: InputDecoration(
                       labelText: 'Category *',
                       hintText: 'Select a category',
@@ -99,8 +99,8 @@ class _CreatePromptViewState extends State<CreatePromptView> {
                     ),
                   )
                 : const SizedBox(),
-            SizedBox(height: AppSize.s8),
-            TextField(
+            const SizedBox(height: AppSize.s8),
+            const TextField(
               maxLines: 3,
               decoration: InputDecoration(
                 labelText: 'Description',
@@ -109,8 +109,8 @@ class _CreatePromptViewState extends State<CreatePromptView> {
                 floatingLabelBehavior: FloatingLabelBehavior.always,
               ),
             ),
-            SizedBox(height: AppSize.s8),
-            TextField(
+            const SizedBox(height: AppSize.s8),
+            const TextField(
               maxLines: 3,
               decoration: InputDecoration(
                 labelText: 'Prompt *',
@@ -119,7 +119,7 @@ class _CreatePromptViewState extends State<CreatePromptView> {
                 floatingLabelBehavior: FloatingLabelBehavior.always,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -127,14 +127,14 @@ class _CreatePromptViewState extends State<CreatePromptView> {
                   onPressed: () {
                     Navigator.of(context).pop(); // Cancel action
                   },
-                  child: Text('Cancel'),
+                  child: const Text('Cancel'),
                 ),
-                SizedBox(width: AppSize.s8),
+                const SizedBox(width: AppSize.s8),
                 ElevatedButton(
                   onPressed: () {
                     // Handle create prompt action
                   },
-                  child: Text('Create'),
+                  child: const Text('Create'),
                 ),
               ],
             ),

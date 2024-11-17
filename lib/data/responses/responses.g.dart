@@ -6,62 +6,69 @@ part of 'responses.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-BaseResponse _$BaseResponseFromJson(Map<String, dynamic> json) => BaseResponse()
-  ..status = (json['status'] as num?)?.toInt()
-  ..message = json['message'] as String?;
-
-Map<String, dynamic> _$BaseResponseToJson(BaseResponse instance) =>
-    <String, dynamic>{
-      'status': instance.status,
-      'message': instance.message,
-    };
-
-CustomerResponse _$CustomerResponseFromJson(Map<String, dynamic> json) =>
-    CustomerResponse(
-      json['id'] as String?,
-      json['name'] as String?,
-      (json['numOfNotifications'] as num?)?.toInt(),
+UserResponse _$UserResponseFromJson(Map<String, dynamic> json) => UserResponse(
+      email: json['email'] as String,
+      password: json['password'] as String,
+      username: json['username'] as String,
+      isActive: json['isActive'] as bool,
+      usedAuthOptions: (json['usedAuthOptions'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      roles: (json['roles'] as List<dynamic>).map((e) => e as String).toList(),
+      createdBy: json['createdBy'] as String?,
+      updatedBy: json['updatedBy'] as String?,
+      hashedRefreshToken: json['hashedRefreshToken'] as String?,
+      createdAt: json['createdAt'] as String,
+      updatedAt: json['updatedAt'] as String,
+      deletedAt: json['deletedAt'] as String?,
+      id: json['id'] as String,
     );
 
-Map<String, dynamic> _$CustomerResponseToJson(CustomerResponse instance) =>
+Map<String, dynamic> _$UserResponseToJson(UserResponse instance) =>
     <String, dynamic>{
-      'id': instance.id,
-      'name': instance.name,
-      'numOfNotifications': instance.numOfNotifications,
-    };
-
-ContactsResponse _$ContactsResponseFromJson(Map<String, dynamic> json) =>
-    ContactsResponse(
-      json['phone'] as String?,
-      json['link'] as String?,
-      json['email'] as String?,
-    );
-
-Map<String, dynamic> _$ContactsResponseToJson(ContactsResponse instance) =>
-    <String, dynamic>{
-      'phone': instance.phone,
-      'link': instance.link,
       'email': instance.email,
+      'password': instance.password,
+      'username': instance.username,
+      'isActive': instance.isActive,
+      'usedAuthOptions': instance.usedAuthOptions,
+      'roles': instance.roles,
+      'createdBy': instance.createdBy,
+      'updatedBy': instance.updatedBy,
+      'hashedRefreshToken': instance.hashedRefreshToken,
+      'createdAt': instance.createdAt,
+      'updatedAt': instance.updatedAt,
+      'deletedAt': instance.deletedAt,
+      'id': instance.id,
     };
 
-AuthenticationResponse _$AuthenticationResponseFromJson(
-        Map<String, dynamic> json) =>
-    AuthenticationResponse(
-      json['contacts'] == null
-          ? null
-          : ContactsResponse.fromJson(json['contacts'] as Map<String, dynamic>),
-      json['customer'] == null
-          ? null
-          : CustomerResponse.fromJson(json['customer'] as Map<String, dynamic>),
-    )
-      ..status = (json['status'] as num?)?.toInt()
-      ..message = json['message'] as String?;
+SignUpResponse _$SignUpResponseFromJson(Map<String, dynamic> json) =>
+    SignUpResponse(
+      user: UserResponse.fromJson(json['user'] as Map<String, dynamic>),
+    );
 
-Map<String, dynamic> _$AuthenticationResponseToJson(
-        AuthenticationResponse instance) =>
+Map<String, dynamic> _$SignUpResponseToJson(SignUpResponse instance) =>
     <String, dynamic>{
-      'status': instance.status,
-      'message': instance.message,
-      'customer': instance.customer,
-      'contacts': instance.contacts,
+      'user': instance.user,
+    };
+
+TokenResponse _$TokenResponseFromJson(Map<String, dynamic> json) =>
+    TokenResponse(
+      accessToken: json['accessToken'] as String,
+      refreshToken: json['refreshToken'] as String,
+    );
+
+Map<String, dynamic> _$TokenResponseToJson(TokenResponse instance) =>
+    <String, dynamic>{
+      'accessToken': instance.accessToken,
+      'refreshToken': instance.refreshToken,
+    };
+
+SignInResponse _$SignInResponseFromJson(Map<String, dynamic> json) =>
+    SignInResponse(
+      token: TokenResponse.fromJson(json['token'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$SignInResponseToJson(SignInResponse instance) =>
+    <String, dynamic>{
+      'token': instance.token,
     };

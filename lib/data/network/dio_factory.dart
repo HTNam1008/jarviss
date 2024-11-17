@@ -1,3 +1,7 @@
+// lib/data/network/dio_factory.dart
+
+// ignore_for_file: constant_identifier_names
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:jarvis/app/app_prefs.dart';
@@ -15,18 +19,19 @@ class DioFactory {
 
   DioFactory(this._appPreferences);
 
-  Future<Dio> getDio() async {
+  Dio getDio() {
     Dio dio = Dio();
-    final language = await _appPreferences.getAppLanguage();
+
+    final language = _appPreferences.getAppLanguage();
 
     Map<String, String> headers = {
       CONTENT_TYPE: APPLICATION_JSON,
       ACCEPT: APPLICATION_JSON,
-      AUTHORIZATION: Constant.token,
       DEFAULT_LANGUAGE: language,
+      // AUTHORIZATION sẽ được thêm thông qua interceptor
     };
 
-    const timeOut = 60; // 1 min
+    const timeOut = 60; // 1 phút
 
     dio.options = BaseOptions(
       baseUrl: Constant.baseUrl,
@@ -35,13 +40,27 @@ class DioFactory {
       headers: headers,
     );
 
-    if (kReleaseMode) {
-      print("release mode no logs");
-    } else {
+    // Thêm interceptor để thêm token vào header nếu có
+    dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) {
+        final token = _appPreferences.getToken();
+        if (token.isNotEmpty) {
+          options.headers[AUTHORIZATION] = 'Bearer $token';
+        }
+        return handler.next(options);
+      },
+      onError: (DioException error, handler) {
+        return handler.next(error);
+      },
+    ));
+
+    if (!kReleaseMode) {
       dio.interceptors.add(PrettyDioLogger(
         requestHeader: true,
         requestBody: true,
         responseHeader: true,
+        responseBody: true,
+        compact: true,
       ));
     }
 

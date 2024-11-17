@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jarvis/presentation/forgot_password/forgot_password_viewmodel.dart';
+import 'package:jarvis/presentation/authencation/forgot_password/forgot_password_viewmodel.dart';
 import 'package:jarvis/presentation/resources/assets_manager.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';

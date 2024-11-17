@@ -14,7 +14,7 @@ class _AppServiceClient implements AppServiceClient {
     this.baseUrl,
     this.errorLogger,
   }) {
-    baseUrl ??= 'https://htnam1008.wiremockapi.cloud/';
+    baseUrl ??= 'https://api.dev.jarvis.cx';
   }
 
   final Dio _dio;
@@ -24,29 +24,20 @@ class _AppServiceClient implements AppServiceClient {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<AuthenticationResponse> login(
-    String email,
-    String password,
-    String imei,
-    String deviceType,
-  ) async {
+  Future<SignInResponse> signIn(SignInRequest request) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = {
-      'email': email,
-      'password': password,
-      'imei': imei,
-      'deviceType': deviceType,
-    };
-    final _options = _setStreamType<AuthenticationResponse>(Options(
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
+    final _options = _setStreamType<SignInResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
     )
         .compose(
           _dio.options,
-          '/customer/login',
+          '/api/v1/auth/sign-in',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -56,9 +47,43 @@ class _AppServiceClient implements AppServiceClient {
           baseUrl,
         )));
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late AuthenticationResponse _value;
+    late SignInResponse _value;
     try {
-      _value = AuthenticationResponse.fromJson(_result.data!);
+      _value = SignInResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<SignUpResponse> signUp(SignUpRequest request) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
+    final _options = _setStreamType<SignUpResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/api/v1/auth/sign-up',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late SignUpResponse _value;
+    try {
+      _value = SignUpResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

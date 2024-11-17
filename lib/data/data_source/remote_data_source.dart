@@ -3,7 +3,8 @@ import 'package:jarvis/data/request/request.dart';
 import 'package:jarvis/data/responses/responses.dart';
 
 abstract class RemoteDataSource {
-  Future<AuthenticationResponse> login(LoginRequest loginRequest);
+  Future<SignInResponse> signIn(SignInRequest signInRequest);
+  Future<SignUpResponse> signUp(SignUpRequest signUpRequest);
 }
 
 class RemoteDataSourceImplementer implements RemoteDataSource {
@@ -12,8 +13,12 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   RemoteDataSourceImplementer(this._appServiceClient);
 
   @override
-  Future<AuthenticationResponse> login(LoginRequest loginRequest) async {
-    return await _appServiceClient.login(loginRequest.email,
-        loginRequest.password, loginRequest.imei, loginRequest.deviceType);
+  Future<SignInResponse> signIn(SignInRequest signInRequest) async {
+    return await _appServiceClient.signIn(signInRequest);
+  }
+
+  @override
+  Future<SignUpResponse> signUp(SignUpRequest signUpRequest) async {
+    return await _appServiceClient.signUp(signUpRequest);
   }
 }

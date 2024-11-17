@@ -2,73 +2,73 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:jarvis/app/app_prefs.dart';
 import 'package:jarvis/domain/repository/repository.dart';
-import 'package:jarvis/domain/usecase/sign_in_usecase.dart';
-import 'package:jarvis/presentation/authencation/sign_in/sign_in_viewmodel.dart';
+import 'package:jarvis/domain/usecase/sign_up_usecase.dart';
+import 'package:jarvis/presentation/authencation/sign_up/sign_up_viewmodel.dart';
+import 'package:jarvis/presentation/common/dialog_util.dart';
 import 'package:jarvis/presentation/resources/assets_manager.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
 import 'package:jarvis/presentation/resources/route_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 
-class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+class SignUpView extends StatefulWidget {
+  const SignUpView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<SignUpView> createState() => _SignUpViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _SignUpViewState extends State<SignUpView> {
   final getIt = GetIt.instance;
-  late SignInViewModel _loginViewModel;
+  late SignUpViewModel _signUpViewModel;
 
+  final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   _bind() {
-    _loginViewModel.start();
-    _emailController.addListener(() => _loginViewModel.setEmail(_emailController.text));
-    _passwordController.addListener(() => _loginViewModel.setPassword(_passwordController.text));
+    _signUpViewModel.start();
 
-    _loginViewModel.loginStream.listen((isSuccess) {
+    _emailController.addListener(() => _signUpViewModel.setEmail(_emailController.text));
+    _passwordController.addListener(() => _signUpViewModel.setPassword(_passwordController.text));
+    _userNameController.addListener(() => _signUpViewModel.setUsername(_userNameController.text));
+
+    _signUpViewModel.signUpStream.listen((isSuccess) {
       if (isSuccess) {
-        _loginViewModel.navigateReplaceNamed(context, Routes.mainRoute);
+        showCustomDialog(
+          context: context,
+          type: DialogType.success,
+          title: 'Sign up successfully',
+          message: 'You are being redirected to the Sign in page!',
+        ).then((_) {
+          _signUpViewModel.navigateReplaceNamed(context, Routes.mainRoute);
+        });
       }
     });
 
-    _loginViewModel.errorStream.listen((errorMessage) {
-      _showErrorDialog(errorMessage);
+    _signUpViewModel.errorStream.listen((errorMessage) {
+      showCustomDialog(
+          context: context,
+          type: DialogType.error,
+          title: 'Sign in failed',
+          message: errorMessage,
+        );
     });
   }
-
-  void _showErrorDialog(String message) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Login Failed'),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
-    }
 
   @override
   void initState() {
     super.initState();
-    // Khởi tạo LoginViewModel với LoginUseCase
-    _loginViewModel = SignInViewModel(SignInUseCase(getIt<Repository>()), getIt<AppPreferences>());
+    _signUpViewModel = SignUpViewModel(SignUpUseCase(getIt<Repository>()), getIt<AppPreferences>());
     _bind();
   }
 
-  @override
+   @override
   void dispose() {
-    _loginViewModel.dispose();
+    _signUpViewModel.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _userNameController.dispose();
     super.dispose();
   }
 
@@ -76,12 +76,9 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Colors.teal,
-              Colors.white,
-            ],
+            colors: [ColorManager.teal, ColorManager.white],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -95,26 +92,35 @@ class _LoginViewState extends State<LoginView> {
                 const SizedBox(height: AppSize.s16),
                 const CircleAvatar(
                   radius: AppSize.s40,
-                  backgroundImage: AssetImage(ImageAssets.splashLogo),
+                  backgroundImage: AssetImage(ImageAssets.splashLogo), // Logo placeholder
                 ),
                 const SizedBox(height: AppSize.s24),
                 const Text(
-                  'Login',
+                  'Register',
                   style: TextStyle(
                     fontSize: AppSize.s28,
                     fontWeight: FontWeightManager.bold,
                   ),
                 ),
                 const SizedBox(height: AppSize.s8),
-                Text(
-                  'Please Login to continue',
-                  style: TextStyle(fontSize: AppSize.s16, color: ColorManager.grey),
+                const Text(
+                  'Please Register to continue',
+                  style: TextStyle(fontSize: AppSize.s16, color: Colors.grey),
                 ),
                 const SizedBox(height: AppSize.s24),
+                _buildTextField(
+                  controller: _userNameController,
+                  hintText: 'Username',
+                  icon: Icons.person,
+                  name: 'username'
+                ),
+                const SizedBox(height: AppSize.s16),
                 _buildTextField(
                   controller: _emailController,
                   hintText: 'Email',
                   icon: Icons.email,
+                  name: 'email',
+
                 ),
                 const SizedBox(height: AppSize.s16),
                 _buildTextField(
@@ -122,21 +128,13 @@ class _LoginViewState extends State<LoginView> {
                   hintText: 'Password',
                   icon: Icons.lock,
                   obscureText: true,
-                ),
-                const SizedBox(height: AppSize.s8),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {
-                      _loginViewModel.navigateNamed(context, Routes.forgotPasswordRoute);
-                    },
-                    child: const Text('Forgot password?'),
-                  ),
+                  name: 'password'
                 ),
                 const SizedBox(height: AppSize.s16),
                 ElevatedButton(
-                  onPressed: () async {
-                    await _loginViewModel.login();
+                  onPressed: () {
+                    // TODO: Implement registration functionality
+                    _signUpViewModel.signUp();
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: AppSize.s16),
@@ -148,29 +146,43 @@ class _LoginViewState extends State<LoginView> {
                   ),
                   child: Container(
                     alignment: Alignment.center,
-                    height: AppSize.s20,
+                    height: AppSize.s14,
                     child: Text(
-                      'Login',
+                      'Register',
                       style: TextStyle(fontSize: FontSize.s16, color: ColorManager.white),
                     ),
                   ),
                 ),
+                const SizedBox(height: 8),
+                const Text(
+                  'By continuing, you agree to our ',
+                  style: TextStyle(fontSize: AppSize.s14, color: Colors.grey),
+                ),
+                TextButton(
+                  onPressed: () {
+                    // TODO: Implement privacy policy functionality
+                  },
+                  child: const Text(
+                    'Privacy policy',
+                    style: TextStyle(decoration: TextDecoration.underline),
+                  ),
+                ),
                 const SizedBox(height: AppSize.s16),
                 const Text('Or Login With'),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSize.s8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _buildSocialButton(ImageAssets.gg_ic),
-                    const SizedBox(width: AppSize.s16),
                   ],
                 ),
                 const SizedBox(height: AppSize.s16),
                 TextButton(
                   onPressed: () {
-                    _loginViewModel.navigateNamed(context, Routes.signUpRoute);
+                    // TODO: Navigate to Login screen
+                    Navigator.pop(context);
                   },
-                  child: const Text('Don\'t have an account? Register'),
+                  child: const Text('Already have an account? Login'),
                 ),
               ],
             ),
@@ -180,14 +192,15 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-  Widget _buildTextField({
+    Widget _buildTextField({
     required TextEditingController controller,
     required String hintText,
     required IconData icon,
+    required String name,
     bool obscureText = false,
   }) {
     return StreamBuilder<bool>(
-      stream: hintText == 'Email' ? _loginViewModel.isEmailValid : _loginViewModel.isPasswordValid,
+      stream: getItemValidate(name),
       builder: (context, snapshot) {
         return TextField(
           controller: controller,
@@ -217,5 +230,18 @@ class _LoginViewState extends State<LoginView> {
         backgroundImage: AssetImage(assetPath),
       ),
     );
+  }
+  
+  Stream<bool> getItemValidate(String name) {
+    switch (name) {
+      case 'username':
+        return _signUpViewModel.isUsernameValid;
+      case 'email':
+        return _signUpViewModel.isEmailValid;
+      case 'password':
+        return _signUpViewModel.isPasswordValid;
+      default:
+        return Stream.value(true);
+    }
   }
 }

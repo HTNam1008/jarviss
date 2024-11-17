@@ -1,11 +1,10 @@
-import 'package:appinio_animated_toggle_tab/appinio_animated_toggle_tab.dart';
 import 'package:flutter/material.dart';
+import 'package:jarvis/presentation/common/animated_toggle_tab/animated_toggle_tab.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/prompt/create_prompt/create_prompt_view.dart';
 import 'package:jarvis/presentation/prompt/edit_prompt/edit_prompt_view.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
-import 'package:jarvis/presentation/resources/route_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 
 class PromptView extends StatefulWidget {
@@ -49,7 +48,7 @@ class _PromptViewState extends State<PromptView> {
     return Scaffold(
       appBar: CustomHeaderBar(
         centerTitle: true,
-        centerWidget: Text(
+        centerWidget: const Text(
           "Prompt Libraries",
           style: TextStyle(
             fontSize: AppSize.s20,
@@ -73,7 +72,7 @@ class _PromptViewState extends State<PromptView> {
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
-                      return CreatePromptView();
+                      return const CreatePromptView();
                     },
                   );
                 },
@@ -154,9 +153,9 @@ class _PromptViewState extends State<PromptView> {
                   child: TextField(
                     decoration: InputDecoration(
                       hintText: 'Search',
-                      prefixIcon: Icon(Icons.search),
+                      prefixIcon: const Icon(Icons.search),
                       suffixIcon: IconButton(
-                        icon: Icon(Icons.mic),
+                        icon: const Icon(Icons.mic),
                         onPressed: () {},
                       ),
                       border: OutlineInputBorder(
@@ -196,20 +195,20 @@ class _PromptViewState extends State<PromptView> {
       context: context,
       builder: (context) {
         return Container(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(Icons.edit),
-                title: Text('Edit'),
+                leading: const Icon(Icons.edit),
+                title: const Text('Edit'),
                 onTap: () {
-                  showDialog(context: context, builder: (builder) => EditPromptView());
+                  showDialog(context: context, builder: (builder) => const EditPromptView());
                 },
               ),
               ListTile(
-                leading: Icon(Icons.delete),
-                title: Text('Delete'),
+                leading: const Icon(Icons.delete),
+                title: const Text('Delete'),
                 onTap: () {
                   Navigator.pop(context);
                 },
@@ -309,7 +308,10 @@ class _PromptViewState extends State<PromptView> {
                 ),
               ],
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: AppSize.s8),
+            contentPadding: const EdgeInsets.only(left: AppSize.s8),
+            onTap: () {
+              // Khi nhấn vào item, chuyển đến một trang mới
+            },
           ),
         );
       },

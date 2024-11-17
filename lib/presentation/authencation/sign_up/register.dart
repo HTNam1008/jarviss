@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jarvis/presentation/register/register_viewmodel.dart';
+import 'package:jarvis/presentation/authencation/sign_up/register_viewmodel.dart';
 import 'package:jarvis/presentation/resources/assets_manager.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';

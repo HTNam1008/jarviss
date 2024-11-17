@@ -4,19 +4,19 @@ import 'package:jarvis/presentation/chatbot/create_bot/create_bot_view.dart';
 import 'package:jarvis/presentation/chatbot/edit_bot/edit_bot_view.dart';
 import 'package:jarvis/presentation/chatbot/main_chatbot_view.dart';
 import 'package:jarvis/presentation/chatbot/preview_bot/preview_bot.dart';
-import 'package:jarvis/presentation/forgot_password/forgot_password.dart';
+import 'package:jarvis/presentation/authencation/forgot_password/forgot_password.dart';
 import 'package:jarvis/presentation/getting_started/getting_started.dart';
 import 'package:jarvis/presentation/knowledge/knowledge_create/knowledge_create.dart';
 import 'package:jarvis/presentation/knowledge/knowledge_delete/knowledge_delete.dart';
 import 'package:jarvis/presentation/knowledge/knowledge_detail/knowledge_detail.dart';
 import 'package:jarvis/presentation/knowledge/knowledge_edit/knowledge_edit.dart';
-import 'package:jarvis/presentation/login/login.dart';
+import 'package:jarvis/presentation/authencation/sign_in/sign_in.dart';
 import 'package:jarvis/presentation/main/main_view.dart';
 import 'package:jarvis/presentation/profile/detail_profile_view.dart';
 import 'package:jarvis/presentation/profile/profile_view.dart';
 import 'package:jarvis/presentation/prompt/create_prompt/create_prompt_view.dart';
 import 'package:jarvis/presentation/prompt/main_prompt_view.dart';
-import 'package:jarvis/presentation/register/register.dart';
+import 'package:jarvis/presentation/authencation/sign_up/sign_up.dart';
 import 'package:jarvis/presentation/resources/strings_manager.dart';
 import 'package:jarvis/presentation/splash/splash.dart';
 import 'package:jarvis/presentation/upgrade/upgrade.dart';
@@ -25,9 +25,9 @@ class Routes {
   static const String splashRoute = "/";
   static const String gettingStartedRoute = "/gettingStarted";
   static const String onBoardingRoute = "/onBoarding";
-  static const String loginRoute = "/login";
-  static const String registerRoute = "/register";
-  static const String forgotPasswordRoute = "/forgotPassword";
+  static const String signInRoute = "/sign-in";
+  static const String signUpRoute = "/sign-up";
+  static const String forgotPasswordRoute = "/forgot-password";
   static const String mainRoute = "/main";
   static const String chatbotMainRoute = "/chatbotMain";
   static const String chatbotRoute = "/chatbot";
@@ -52,14 +52,14 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const SplashView());
       case Routes.gettingStartedRoute:
         return MaterialPageRoute(builder: (_) => GettingStartedView());
-      case Routes.loginRoute:
-        return MaterialPageRoute(builder: (_) => const LoginView());
-      case Routes.registerRoute:
-        return MaterialPageRoute(builder: (_) => const RegisterView());
+      case Routes.signInRoute:
+        return MaterialPageRoute(builder: (_) => const SignInView());
+      case Routes.signUpRoute:
+        return MaterialPageRoute(builder: (_) => const SignUpView());
       case Routes.forgotPasswordRoute:
         return MaterialPageRoute(builder: (_) => const ForgotPasswordView());
       case Routes.mainRoute:
-        return MaterialPageRoute(builder: (_) => MainView());
+        return MaterialPageRoute(builder: (_) => const MainView());
       case Routes.chatbotMainRoute:
         return MaterialPageRoute(builder: (_) => const ChatBotMainView());
       case Routes.chatbotRoute:
