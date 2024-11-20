@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:jarvis/presentation/common/animated_toggle_tab/animated_toggle_tab.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/prompt/create_prompt/create_prompt_view.dart';
@@ -6,6 +9,11 @@ import 'package:jarvis/presentation/prompt/edit_prompt/edit_prompt_view.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
+
+import '../../domain/model/prompt.dart';
+import '../../domain/usecase/get_public_prompts_usecase.dart';
+import '../base/baseviewmodel.dart';
+
 
 class PromptView extends StatefulWidget {
   const PromptView({super.key});
@@ -18,6 +26,26 @@ class _PromptViewState extends State<PromptView> {
   int _selectedIndexTab = 0;
   bool _isFavourite = false;
   bool _isPublicPrompts = false;
+  late final PromptViewModel _viewModel;
+  bool _isInitialized = false;
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = GetIt.instance<PromptViewModel>();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInitialized) {
+      _viewModel.getPrompts("all");
+      _isInitialized = true;
+    }
+  }
 
   // Danh sách dữ liệu cho các tab
   final List<List<String>> _myPromptDataTab = [
@@ -226,12 +254,14 @@ class _PromptViewState extends State<PromptView> {
   }
 
   List<Widget> _generateListTab(List<List<String>> promptData) {
-    return List.generate(promptData.length, (index) {
+    final categories = _viewModel.getPromptCategories();
+    return List.generate(categories.length, (index) {
       final bool isSelected = _selectedIndexTab == index;
       return GestureDetector(
         onTap: () {
           setState(() {
             _selectedIndexTab = index;
+            _viewModel.getPrompts(categories[index]); // Trigger new category filter
           });
         },
         child: Container(
@@ -242,7 +272,7 @@ class _PromptViewState extends State<PromptView> {
             borderRadius: BorderRadius.circular(16),
           ),
           child: Text(
-            'Tab ${index + 1}',
+            categories[index],
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: isSelected ? Colors.white : Colors.black,
@@ -253,73 +283,159 @@ class _PromptViewState extends State<PromptView> {
     });
   }
 
+  @override
   Widget _generateListData(List<List<String>> promptData) {
-    return ListView.builder(
-      itemCount: promptData[_selectedIndexTab].length,
-      itemBuilder: (context, index) {
-        return Container(
-          margin: EdgeInsets.symmetric(vertical: AppSize.s6, horizontal: AppSize.s8),
-          padding: EdgeInsets.all(AppSize.s4),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(AppSize.s12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
-                spreadRadius: 1,
-                blurRadius: 4,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
-          child: ListTile(
-            title: Text(promptData[_selectedIndexTab][index],
-              style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: AppSize.s14,
-              ),
-            ),
-            subtitle: Text('A brief description or tagline for the bot.',
-            style: TextStyle(
-              fontSize: AppSize.s14,
-              color: Colors.grey,
-              ),
-            ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                GestureDetector(
-                  onTap: (){
-                    setState(() {
-                    _isFavourite = !_isFavourite;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0, top: 8.0, bottom: 8.0),
-                    child: Icon(
-                      Icons.star,
-                      color: _isFavourite ? Colors.yellow : Colors.grey,
+    return StreamBuilder<List<Prompt>>(
+        stream: _viewModel.promptsStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                final prompt = snapshot.data![index];
+                return Container(
+                  margin: EdgeInsets.symmetric(
+                      vertical: AppSize.s6, horizontal: AppSize.s8),
+                  padding: EdgeInsets.all(AppSize.s4),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(AppSize.s12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        spreadRadius: 1,
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: ListTile(
+                    title: Text(prompt.title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: AppSize.s14,
+                      ),
                     ),
+                    subtitle: Text(
+                      prompt.description ?? '',
+                      style: TextStyle(
+                        fontSize: AppSize.s14,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _isFavourite = !_isFavourite;
+                            });
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8.0,
+                                top: 8.0,
+                                bottom: 8.0),
+                            child: Icon(
+                              Icons.star,
+                              color: _isFavourite ? Colors.yellow : Colors.grey,
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            _showActions(context,
+                                promptData[_selectedIndexTab][index]);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(Icons.more_vert, color: Colors.grey,),
+                          ),
+                        ),
+                      ],
+                    ),
+                    contentPadding: const EdgeInsets.only(left: AppSize.s8),
+                    onTap: () {
+                      // Khi nhấn vào item, chuyển đến một trang mới
+                    },
                   ),
-                ),
-                GestureDetector(
-                  onTap: (){
-                    _showActions(context, promptData[_selectedIndexTab][index]);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(Icons.more_vert, color: Colors.grey,),
-                  ),
-                ),
-              ],
-            ),
-            contentPadding: const EdgeInsets.only(left: AppSize.s8),
-            onTap: () {
-              // Khi nhấn vào item, chuyển đến một trang mới
-            },
-          ),
-        );
-      },
+                );
+              },
+            );
+          }
+          if (snapshot.hasError) {
+            return const Center(child: Text('Error loading prompts'));
+          }
+          // Add a default return for loading state
+          return const Center(child: CircularProgressIndicator());
+        },
     );
+  }
+
+
+  @override
+  void dispose() {
+    _viewModel.dispose();
+    super.dispose();
+  }
+}
+
+class PromptViewModel extends BaseViewModel {
+  final GetPublicPromptsUseCase _getPublicPromptsUseCase;
+  final StreamController<List<Prompt>> _promptsStreamController = StreamController<List<Prompt>>();
+  final StreamController<String> _errorStreamController = StreamController<String>();
+
+  Stream<List<Prompt>> get promptsStream => _promptsStreamController.stream;
+  Stream<String> get errorStream => _errorStreamController.stream;
+
+  PromptViewModel(this._getPublicPromptsUseCase);
+
+  Future<void> getPrompts(String category) async {
+    String normalizedCategory = category.toLowerCase();
+    normalizedCategory = normalizedCategory == 'all' ? category : normalizedCategory;
+
+    (await _getPublicPromptsUseCase.execute(normalizedCategory)).fold(
+            (failure) {
+          _errorStreamController.add(failure.message);
+        },
+            (prompts) {
+          _promptsStreamController.add(prompts);
+        }
+    );
+  }
+
+  List<String> getPromptCategories() {
+    return [
+      'All',
+      'Marketing',
+      'Business',
+      'SEO',
+      'Writing',
+      'Coding',
+      'Career',
+      'Chatbot',
+      'Education',
+      'Fun',
+      'Productivity',
+      'Other'
+    ];
+  }
+  @override
+  void dispose() {
+    _promptsStreamController.close();
+    _errorStreamController.close();
+    super.dispose();
+  }
+
+  @override
+  Future<void> navigateNamed(BuildContext context, String route) {
+    // TODO: implement navigateNamed
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> navigateReplaceNamed(BuildContext context, String route) {
+    // TODO: implement navigateReplaceNamed
+    throw UnimplementedError();
   }
 }

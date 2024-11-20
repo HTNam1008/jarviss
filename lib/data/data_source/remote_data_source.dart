@@ -8,6 +8,9 @@ abstract class RemoteDataSource {
   Future<SignInResponse> signIn(SignInRequest signInRequest);
   Future<SignUpResponse> signUp(SignUpRequest signUpRequest);
   Future<void> signOut();
+  Future<RefreshTokenResponse> refreshToken(RefreshTokenRequest refreshTokenRequest);
+  Future<GetPromptsResponse> getPrompts(String? category, bool isPublic);
+
   Future<RefreshTokenResponse> refreshToken(String refreshTokenRequest);
   Future<SendMessageResponse> sendMessage(SendMessageRequest sendMessageRequest);
 }
@@ -36,9 +39,14 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   Future<RefreshTokenResponse> refreshToken(String refreshTokenRequest) async {
     return await _appServiceClient.refreshToken(refreshTokenRequest);
   }
-  
+
   @override
   Future<SendMessageResponse> sendMessage(SendMessageRequest sendMessageRequest) async {
     return await _appServiceClient.sendMessage(sendMessageRequest);
+  }
+
+  @override
+  Future<GetPromptsResponse> getPrompts(String? category, bool isPublic) async {
+    return await _appServiceClient.getPrompts(category, isPublic);
   }
 }

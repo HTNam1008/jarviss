@@ -36,4 +36,11 @@ abstract class AppServiceClient {
   Future<SendMessageResponse> sendMessage(
     @Body() SendMessageRequest request,
   );
+
+  @GET("/api/v1/prompts")
+  Future<GetPromptsResponse> getPrompts(
+      @Query("category") String? category,
+      @Query("isPublic") bool isPublic
+      );
+
 }

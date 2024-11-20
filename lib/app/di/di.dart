@@ -23,6 +23,12 @@ import 'package:jarvis/presentation/authencation/sign_up/sign_up_viewmodel.dart'
 import 'package:jarvis/presentation/chat/chat_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../data/repository/prompt_repository_impl.dart';
+import '../../domain/repository/prompt_repository.dart';
+import '../../domain/usecase/get_public_prompts_usecase.dart';
+import '../../presentation/prompt/main_prompt_view.dart';
+
+
 final getIt = GetIt.instance;
 
 Future<void> setupLocator() async {
@@ -101,6 +107,19 @@ Future<void> setupLocator() async {
       getIt<AppPreferences>(),
     ),
   );
+
+  getIt.registerLazySingleton<PromptRepository>(
+        () => PromptRepositoryImpl(getIt<RemoteDataSource>(), getIt<NetworkInfo>()),
+  );
+
+  getIt.registerFactory<GetPublicPromptsUseCase>(
+        () => GetPublicPromptsUseCase(getIt<PromptRepository>()),
+  );
+
+  getIt.registerFactory<PromptViewModel>(
+        () => PromptViewModel(getIt<GetPublicPromptsUseCase>()),
+  );
+
 
   getIt.registerFactory<SendMessageUseCase>(
     () => SendMessageUseCase(getIt<Repository>()),
