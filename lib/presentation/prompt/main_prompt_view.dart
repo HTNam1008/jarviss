@@ -84,6 +84,15 @@ class _PromptViewState extends State<PromptView> {
           ),
         ),
         actions: [
+          IconButton(
+            icon: Icon(Icons.star),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => FavoritePromptsModal(viewModel: _viewModel),
+              );
+            },
+          ),
           Padding(
             padding: EdgeInsets.all(AppSize.s6),
             child: Center(
@@ -223,7 +232,7 @@ class _PromptViewState extends State<PromptView> {
     );
   }
 
-  void _showActions(BuildContext context, String botName) {
+  void _showActions(BuildContext context, String promptName) {
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -236,6 +245,7 @@ class _PromptViewState extends State<PromptView> {
                 leading: const Icon(Icons.edit),
                 title: const Text('Edit'),
                 onTap: () {
+                  Navigator.pop(context);
                   showDialog(context: context, builder: (builder) => const EditPromptView());
                 },
               ),
@@ -328,9 +338,7 @@ class _PromptViewState extends State<PromptView> {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            setState(() {
-                              _isFavourite = !_isFavourite;
-                            });
+                            _viewModel.toggleFavorite(prompt);
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(left: 8.0,
@@ -338,14 +346,13 @@ class _PromptViewState extends State<PromptView> {
                                 bottom: 8.0),
                             child: Icon(
                               Icons.star,
-                              color: _isFavourite ? Colors.yellow : Colors.grey,
+                              color: prompt.isFavorite ? Colors.yellow : Colors.grey,
                             ),
                           ),
                         ),
                         GestureDetector(
                           onTap: () {
-                            _showActions(context,
-                                promptData[_selectedIndexTab][index]);
+                            _showActions(context, prompt.title);
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -382,27 +389,73 @@ class _PromptViewState extends State<PromptView> {
 
 class PromptViewModel extends BaseViewModel {
   final GetPublicPromptsUseCase _getPublicPromptsUseCase;
+  final AddPromptToFavoriteUseCase _addPromptToFavoriteUseCase;
   final StreamController<List<Prompt>> _promptsStreamController = StreamController<List<Prompt>>();
   final StreamController<String> _errorStreamController = StreamController<String>();
+  bool showFavorites = false;
+  List<Prompt> prompts = [];
+
+  // Create a separate stream controller for favorites
+  final StreamController<List<Prompt>> _favoritesStreamController = StreamController<List<Prompt>>.broadcast();
+  List<Prompt> favoritePrompts = [];
 
   Stream<List<Prompt>> get promptsStream => _promptsStreamController.stream;
+  Stream<List<Prompt>> get favoritesStream => _favoritesStreamController.stream;
   Stream<String> get errorStream => _errorStreamController.stream;
 
-  PromptViewModel(this._getPublicPromptsUseCase);
+  PromptViewModel(this._getPublicPromptsUseCase, this._addPromptToFavoriteUseCase);
 
-  Future<void> getPrompts(String category) async {
-    String normalizedCategory = category.toLowerCase();
-    normalizedCategory = normalizedCategory == 'all' ? category : normalizedCategory;
+  Future<void> getPrompts(String category, {bool? isFavorite}) async {
+    final input = GetPublicPromptsUseCaseInput(category, isFavorite: isFavorite);
 
-    (await _getPublicPromptsUseCase.execute(normalizedCategory)).fold(
-            (failure) {
-          _errorStreamController.add(failure.message);
-        },
-            (prompts) {
+    (await _getPublicPromptsUseCase.execute(input)).fold(
+            (failure) => _errorStreamController.add(failure.message),
+            (fetchedPrompts) {
+          prompts = fetchedPrompts;
           _promptsStreamController.add(prompts);
         }
     );
   }
+  Future<void> getFavoritePrompts() async {
+    final input = GetPublicPromptsUseCaseInput("all", isFavorite: true);
+
+    (await _getPublicPromptsUseCase.execute(input)).fold(
+            (failure) => _errorStreamController.add(failure.message),
+            (fetchedPrompts) {
+          favoritePrompts = fetchedPrompts;
+          _favoritesStreamController.add(favoritePrompts);
+        }
+    );
+  }
+  Future<void> toggleFavorite(Prompt prompt) async {
+    final result = await _addPromptToFavoriteUseCase.execute(prompt.id);
+
+    result.fold(
+            (failure) => _errorStreamController.add(failure.message),
+            (_) {
+          final index = prompts.indexWhere((p) => p.id == prompt.id);
+          if (index != -1) {
+            prompts[index] = Prompt(
+              id: prompt.id,
+              title: prompt.title,
+              description: prompt.description,
+              category: prompt.category,
+              isPublic: prompt.isPublic,
+              userName: prompt.userName,
+              isFavorite: !prompt.isFavorite,
+            );
+            _promptsStreamController.add(prompts);
+          }
+        }
+    );
+  }
+
+  void toggleFavoriteFilter() {
+    showFavorites = !showFavorites;
+    getPrompts(_getCurrentCategory());
+  }
+
+  String _getCurrentCategory() => 'all';
 
   List<String> getPromptCategories() {
     return [
@@ -421,9 +474,11 @@ class PromptViewModel extends BaseViewModel {
     ];
   }
   @override
+  @override
   void dispose() {
     _promptsStreamController.close();
     _errorStreamController.close();
+    _favoritesStreamController.close();
     super.dispose();
   }
 
@@ -437,5 +492,117 @@ class PromptViewModel extends BaseViewModel {
   Future<void> navigateReplaceNamed(BuildContext context, String route) {
     // TODO: implement navigateReplaceNamed
     throw UnimplementedError();
+  }
+}
+
+class FavoritePromptsModal extends StatefulWidget {
+  final PromptViewModel viewModel;
+
+  const FavoritePromptsModal({
+    Key? key,
+    required this.viewModel,
+  }) : super(key: key);
+
+  @override
+  State<FavoritePromptsModal> createState() => _FavoritePromptsModalState();
+}
+
+class _FavoritePromptsModalState extends State<FavoritePromptsModal> {
+  @override
+  void initState() {
+    super.initState();
+    widget.viewModel.getFavoritePrompts();  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Container(
+        width: double.infinity,
+        height: MediaQuery.of(context).size.height * 0.8,
+        padding: const EdgeInsets.all(AppSize.s16),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Favorite Prompts",
+                  style: TextStyle(
+                    fontSize: AppSize.s20,
+                    fontWeight: FontWeightManager.semiBold,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSize.s16),
+            Expanded(
+              child: StreamBuilder<List<Prompt>>(
+                stream: widget.viewModel.favoritesStream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data!.isEmpty) {
+                      return const Center(
+                        child: Text("No favorite prompts yet"),
+                      );
+                    }
+                    return ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        final prompt = snapshot.data![index];
+                        return Container(
+                          margin: const EdgeInsets.symmetric(vertical: AppSize.s6),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(AppSize.s12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 1,
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: ListTile(
+                            title: Text(
+                              prompt.title,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: AppSize.s14,
+                              ),
+                            ),
+                            subtitle: Text(
+                              prompt.description ?? '',
+                              style: const TextStyle(
+                                fontSize: AppSize.s14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.star, color: Colors.yellow),
+                              onPressed: () {
+                                widget.viewModel.toggleFavorite(prompt);
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return const Center(child: Text('Error loading favorites'));
+                  }
+                  return const Center(child: CircularProgressIndicator());
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

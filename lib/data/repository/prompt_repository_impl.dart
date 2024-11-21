@@ -14,14 +14,29 @@ class PromptRepositoryImpl implements PromptRepository {
   PromptRepositoryImpl(this._remoteDataSource, this._networkInfo);
 
   @override
-  Future<Either<Failure, List<Prompt>>> getPublicPrompts(String category) async {
+  Future<Either<Failure, List<Prompt>>> getPublicPrompts(String category, {bool? isFavorite}) async {
     if (await _networkInfo.isConnected) {
       try {
         final response = await _remoteDataSource.getPrompts(
-            category.toLowerCase() == "all" ? null : category,
-            true
+          category.toLowerCase() == "all" ? null : category.toLowerCase(),
+          true,
+          isFavorite: isFavorite,
         );
         return Right(response.items.map((e) => e.toDomain()).toList());
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> addToFavorites(String promptId) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        await _remoteDataSource.addToFavorites(promptId);
+        return const Right(null);
       } catch (error) {
         return Left(ErrorHandler.handle(error).failure);
       }

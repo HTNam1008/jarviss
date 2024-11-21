@@ -117,7 +117,13 @@ Future<void> setupLocator() async {
   );
 
   getIt.registerFactory<PromptViewModel>(
-        () => PromptViewModel(getIt<GetPublicPromptsUseCase>()),
+        () => PromptViewModel(
+      getIt<GetPublicPromptsUseCase>(),
+      getIt<AddPromptToFavoriteUseCase>(),
+    ),
+  );
+  getIt.registerFactory<AddPromptToFavoriteUseCase>(
+        () => AddPromptToFavoriteUseCase(getIt<PromptRepository>()),
   );
 
 

@@ -40,7 +40,10 @@ abstract class AppServiceClient {
   @GET("/api/v1/prompts")
   Future<GetPromptsResponse> getPrompts(
       @Query("category") String? category,
-      @Query("isPublic") bool isPublic
+      @Query("isPublic") bool isPublic,
+      @Query("isFavorite") bool? isFavorite,
       );
 
+  @POST("/api/v1/prompts/{id}/favorite")
+  Future<void> addPromptToFavorite(@Path("id") String promptId);
 }
