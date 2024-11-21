@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:jarvis/app/app.dart';
 import 'package:jarvis/app/di/di.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  setupLocator();
+  await setupLocator();
   runApp(MyApp());
 }

@@ -24,9 +24,14 @@ class ChatViewModel extends BaseViewModel
   final StreamController<String?> _errorStreamController =
       StreamController<String?>.broadcast();
   
+  final StreamController<int> _remainingUsageStreamController =
+      StreamController<int>.broadcast();
+
   final List<Message> _messages = [];
 
   String? _conversationId;
+
+  int _remainingUsage = 50;
 
   ChatViewModel(this._sendMessageUseCase);
   
@@ -97,6 +102,9 @@ class ChatViewModel extends BaseViewModel
         final assistantMessage = responseMessage;
         _messages.add(assistantMessage);
         _messagesStreamController.add(List.from(_messages)); // Cập nhật stream
+
+        _remainingUsage = assistantMessage.remainingUsage;
+        _remainingUsageStreamController.add(_remainingUsage);
       },
     );
   }
@@ -109,6 +117,9 @@ class ChatViewModel extends BaseViewModel
   Stream<String?> get errorStream => _errorStreamController.stream;
   
   @override
+  Stream<int> get remainingUsageStream => _remainingUsageStreamController.stream;
+
+  @override
   void start() {
 
   }
@@ -117,6 +128,7 @@ class ChatViewModel extends BaseViewModel
   void dispose() {
     _messagesStreamController.close();
     _errorStreamController.close();
+    _remainingUsageStreamController.close();
     super.dispose();
   }
   
@@ -143,4 +155,5 @@ abstract class ChatViewModelInputs {
 abstract class ChatViewModelOutputs {
   Stream<List<Message>> get messagesStream;
   Stream<String?> get errorStream;
+  Stream<int> get remainingUsageStream;
 }
