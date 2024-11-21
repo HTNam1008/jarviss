@@ -7,17 +7,20 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:jarvis/app/app_prefs.dart';
 import 'package:jarvis/data/data_source/remote_data_source.dart';
 import 'package:jarvis/data/network/app_api.dart';
+import 'package:jarvis/data/network/auth_interceptor.dart';
 import 'package:jarvis/data/network/dio_factory.dart';
 import 'package:jarvis/data/network/network_info.dart';
 import 'package:jarvis/data/repository/repository_impl.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 import 'package:jarvis/domain/usecase/refresh_token_usecase.dart';
+import 'package:jarvis/domain/usecase/send_message_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_in_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_out_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_up_usecase.dart';
 import 'package:jarvis/presentation/authencation/sign_in/sign_in_viewmodel.dart';
 import 'package:jarvis/presentation/authencation/sign_out/sign_out_viewmodel.dart';
 import 'package:jarvis/presentation/authencation/sign_up/sign_up_viewmodel.dart';
+import 'package:jarvis/presentation/chat/chat_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final getIt = GetIt.instance;
@@ -97,5 +100,13 @@ Future<void> setupLocator() async {
       getIt<SignOutUseCase>(),
       getIt<AppPreferences>(),
     ),
+  );
+
+  getIt.registerFactory<SendMessageUseCase>(
+    () => SendMessageUseCase(getIt<Repository>()),
+  );
+
+  getIt.registerFactory<ChatViewModel>(
+    () => ChatViewModel(getIt<SendMessageUseCase>()),
   );
 }

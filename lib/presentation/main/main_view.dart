@@ -199,7 +199,9 @@ class _MainViewState extends State<MainView> {
                 dropdownColor: ColorManager.teal,
                 style: TextStyle(color: ColorManager.white),
                 underline: const SizedBox(),
-                onChanged: (String? newValue) {},
+                onChanged: (String? newValue) {
+                  
+                },
                 items: <String>['GPT-4.0', 'GPT-3.5', 'Gemini'].map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
