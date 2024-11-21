@@ -2,7 +2,6 @@
 
 import 'package:dartz/dartz.dart';
 import 'package:jarvis/data/network/failure.dart';
-import 'package:jarvis/data/request/request.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 import 'package:jarvis/domain/usecase/base_usecase.dart';
@@ -14,7 +13,7 @@ class RefreshTokenUseCase implements BaseUseCase<RefreshTokenUseCaseInput, Token
 
   @override
   Future<Either<Failure, Token>> execute(RefreshTokenUseCaseInput input) async {
-    return await _repository.refreshToken(RefreshTokenRequest(refreshToken: input.refreshToken));
+    return await _repository.refreshToken(input.refreshToken);
   }
 }
 

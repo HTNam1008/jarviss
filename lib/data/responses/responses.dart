@@ -1,3 +1,4 @@
+import 'package:jarvis/domain/model/model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'responses.g.dart';
@@ -55,11 +56,11 @@ class SignUpResponse {
 @JsonSerializable()
 class TokenResponse {
   final String accessToken;
-  final String refreshToken;
+  final String? refreshToken;
 
   TokenResponse({
     required this.accessToken,
-    required this.refreshToken,
+    this.refreshToken,
   });
 
   factory TokenResponse.fromJson(Map<String, dynamic> json) =>
@@ -92,9 +93,9 @@ class SignOutResponse {
 
 @JsonSerializable()
 class RefreshTokenResponse {
-  final TokenResponse newToken;
+  final TokenResponse token;
 
-  RefreshTokenResponse({required this.newToken});
+  RefreshTokenResponse({required this.token});
 
   factory RefreshTokenResponse.fromJson(Map<String, dynamic> json) =>
       _$RefreshTokenResponseFromJson(json);

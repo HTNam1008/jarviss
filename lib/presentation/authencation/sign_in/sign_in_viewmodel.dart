@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:jarvis/app/app_prefs.dart';
+import 'package:jarvis/app/extensions.dart';
 import 'package:jarvis/domain/usecase/sign_in_usecase.dart';
 import 'package:jarvis/presentation/base/baseviewmodel.dart';
 import 'package:jarvis/presentation/common/freezed_data_classes.dart';
@@ -74,7 +75,7 @@ class SignInViewModel extends BaseViewModel
       (token) {
         print('SignIn successful. Access Token: ${token.accessToken}');
         _appPreferences.setAccessToken(token.accessToken); 
-        _appPreferences.setRefreshToken(token.refreshToken); 
+        _appPreferences.setRefreshToken(token.refreshToken.orEmpty()); 
         _signInStreamController.add(true); 
       },
     );

@@ -25,6 +25,8 @@ class _SignInViewState extends State<SignInView> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  bool isSignIn = false;
+
   _bind() {
     _signInViewModel.start();
     _emailController.addListener(() => _signInViewModel.setEmail(_emailController.text));
@@ -32,14 +34,14 @@ class _SignInViewState extends State<SignInView> {
 
     _signInViewModel.signInStream.listen((isSuccess) {
       if (isSuccess) {
-        showCustomDialog(
-          context: context,
-          type: DialogType.success,
-          title: 'Sign in successfully',
-          message: 'Welcome to the Jarvis app!',
-        ).then((_) {
+        // showCustomDialog(
+        //   context: context,
+        //   type: DialogType.success,
+        //   title: 'Sign in successfully',
+        //   message: 'Welcome to the Jarvis app!',
+        // ).then((_) {
           _signInViewModel.navigateReplaceNamed(context, Routes.mainRoute);
-        });
+        // });
       }
     });
 
@@ -47,7 +49,7 @@ class _SignInViewState extends State<SignInView> {
       showCustomDialog(
           context: context,
           type: DialogType.error,
-          title: 'Sign in failed',
+          title: 'Sign in failed!',
           message: errorMessage,
         );
     });
@@ -133,7 +135,13 @@ class _SignInViewState extends State<SignInView> {
                 const SizedBox(height: AppSize.s16),
                 ElevatedButton(
                   onPressed: () async {
+                    setState(() {
+                      isSignIn = true;
+                    });
                     await _signInViewModel.signIn();
+                    setState(() {
+                      isSignIn = false;
+                    });
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: AppSize.s16),
@@ -152,6 +160,8 @@ class _SignInViewState extends State<SignInView> {
                     ),
                   ),
                 ),
+                const SizedBox(height: AppSize.s16),
+                isSignIn ? CircularProgressIndicator() : SizedBox.shrink(),
                 const SizedBox(height: AppSize.s16),
                 const Text('Or Sign In With'),
                 const SizedBox(height: 8),

@@ -1,4 +1,5 @@
 import 'package:jarvis/app/extensions.dart';
+import 'package:jarvis/data/responses/ai_chat/send_message_response.dart';
 import 'package:jarvis/data/responses/responses.dart';
 import 'package:jarvis/domain/model/model.dart';
 
@@ -42,6 +43,18 @@ extension SignUpResponseMapper on SignUpResponse {
 
 extension RefreshTokenResponseMapper on RefreshTokenResponse {
   Token toDomain() {
-    return newToken.toDomain();
+    return token.toDomain();
+  }
+}
+
+// extension MessageResponseMapper on MessageResponse {
+//   Message toDomain(bool isUser) {
+//     return Message(conversationId: conversationId, message: message, remainingUsage: remainingUsage, isUser: isUser);
+//   }
+// }
+
+extension SendMessageResponseMapper on SendMessageResponse {
+  Message toDomain({bool isUser = false}) {
+    return Message(conversationId: conversationId, message: message, remainingUsage: remainingUsage, isUser: isUser);
   }
 }
