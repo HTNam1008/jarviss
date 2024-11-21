@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 class User {
   final String id;
   final String email;
@@ -20,10 +21,39 @@ class User {
 
 class Token {
   final String accessToken;
-  final String refreshToken;
+  final String? refreshToken;
 
   Token({
     required this.accessToken,
-    required this.refreshToken,
+    this.refreshToken,
   });
+}
+
+class Message {
+  final String conversationId;
+  final String message;
+  final int remainingUsage;
+  final bool isUser;
+  final DateTime timestamp = DateTime.now();
+  
+  Message({
+    required this.conversationId,
+    required this.message,
+    required this.remainingUsage,
+    required this.isUser,
+  });
+
+  Message copyWith({
+    String? conversationId,
+    String? message,
+    int? remainingUsage,
+    bool? isUser,
+  }) {
+    return Message(
+      conversationId: conversationId ?? this.conversationId,
+      message: message ?? this.message,
+      remainingUsage: remainingUsage ?? this.remainingUsage,
+      isUser: isUser ?? this.isUser,
+    );
+  }
 }

@@ -6,7 +6,7 @@ part of 'app_api.dart';
 // RetrofitGenerator
 // **************************************************************************
 
-// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element
+// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations
 
 class _AppServiceClient implements AppServiceClient {
   _AppServiceClient(
@@ -117,12 +117,9 @@ class _AppServiceClient implements AppServiceClient {
   }
 
   @override
-  Future<RefreshTokenResponse> refreshToken(
-      RefreshTokenRequest refreshToken) async {
+  Future<RefreshTokenResponse> refreshToken(String refreshToken) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{
-      r'refreshToken': refreshToken.toJson()
-    };
+    final queryParameters = <String, dynamic>{r'refreshToken': refreshToken};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<RefreshTokenResponse>(Options(
@@ -145,6 +142,40 @@ class _AppServiceClient implements AppServiceClient {
     late RefreshTokenResponse _value;
     try {
       _value = RefreshTokenResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<SendMessageResponse> sendMessage(SendMessageRequest request) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
+    final _options = _setStreamType<SendMessageResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/api/v1/ai-chat/messages',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late SendMessageResponse _value;
+    try {
+      _value = SendMessageResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

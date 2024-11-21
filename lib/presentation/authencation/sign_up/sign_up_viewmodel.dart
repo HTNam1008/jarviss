@@ -85,7 +85,6 @@ class SignUpViewModel extends BaseViewModel
       },
       (user) {
         print('Login successful. User: $user');
-        // _appPreferences.setToken(token.accessToken); 
         _signUpStreamController.add(true); 
       },
     );

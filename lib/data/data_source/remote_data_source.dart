@@ -1,12 +1,15 @@
 import 'package:jarvis/data/network/app_api.dart';
+import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.dart';
 import 'package:jarvis/data/request/request.dart';
+import 'package:jarvis/data/responses/ai_chat/send_message_response.dart';
 import 'package:jarvis/data/responses/responses.dart';
 
 abstract class RemoteDataSource {
   Future<SignInResponse> signIn(SignInRequest signInRequest);
   Future<SignUpResponse> signUp(SignUpRequest signUpRequest);
   Future<void> signOut();
-  Future<RefreshTokenResponse> refreshToken(RefreshTokenRequest refreshTokenRequest);
+  Future<RefreshTokenResponse> refreshToken(String refreshTokenRequest);
+  Future<SendMessageResponse> sendMessage(SendMessageRequest sendMessageRequest);
 }
 
 class RemoteDataSourceImplementer implements RemoteDataSource {
@@ -30,7 +33,12 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   }
 
   @override
-  Future<RefreshTokenResponse> refreshToken(RefreshTokenRequest refreshTokenRequest) async {
+  Future<RefreshTokenResponse> refreshToken(String refreshTokenRequest) async {
     return await _appServiceClient.refreshToken(refreshTokenRequest);
+  }
+  
+  @override
+  Future<SendMessageResponse> sendMessage(SendMessageRequest sendMessageRequest) async {
+    return await _appServiceClient.sendMessage(sendMessageRequest);
   }
 }
