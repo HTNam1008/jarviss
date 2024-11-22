@@ -12,6 +12,7 @@ abstract class RemoteDataSource {
   Future<SendMessageResponse> sendMessage(SendMessageRequest sendMessageRequest);
   Future<GetPromptsResponse> getPrompts(String? category, bool isPublic, {bool? isFavorite});
   Future<void> addToFavorites(String promptId);
+  Future<PromptResponse> createPrompt(CreatePromptRequest request);
 }
 
 class RemoteDataSourceImplementer implements RemoteDataSource {
@@ -52,5 +53,9 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   @override
   Future<void> addToFavorites(String promptId) async {
     return await _appServiceClient.addPromptToFavorite(promptId);
+  }
+
+  Future<PromptResponse> createPrompt(CreatePromptRequest request) async {
+    return await _appServiceClient.createPrompt(request);
   }
 }

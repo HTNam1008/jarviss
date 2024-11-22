@@ -46,4 +46,7 @@ abstract class AppServiceClient {
 
   @POST("/api/v1/prompts/{id}/favorite")
   Future<void> addPromptToFavorite(@Path("id") String promptId);
+
+  @POST("/api/v1/prompts")
+  Future<PromptResponse> createPrompt(@Body() CreatePromptRequest request);
 }

@@ -49,3 +49,26 @@ class RefreshTokenRequest {
 
   Map<String, dynamic> toJson() => _$RefreshTokenRequestToJson(this);
 }
+@JsonSerializable()
+class CreatePromptRequest {
+  final String title;
+  final String content;
+  final String description;
+  final String category;
+  final String language;
+  final bool isPublic;
+
+  CreatePromptRequest({
+    required this.title,
+    required this.content,
+    required this.description,
+    required this.category,
+    required this.language,
+    required this.isPublic
+  });
+
+  factory CreatePromptRequest.fromJson(Map<String, dynamic> json) =>
+      _$CreatePromptRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CreatePromptRequestToJson(this);
+}

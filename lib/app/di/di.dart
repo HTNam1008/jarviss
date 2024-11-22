@@ -12,6 +12,7 @@ import 'package:jarvis/data/network/dio_factory.dart';
 import 'package:jarvis/data/network/network_info.dart';
 import 'package:jarvis/data/repository/repository_impl.dart';
 import 'package:jarvis/domain/repository/repository.dart';
+import 'package:jarvis/domain/usecase/create_prompt_usecase.dart';
 import 'package:jarvis/domain/usecase/refresh_token_usecase.dart';
 import 'package:jarvis/domain/usecase/send_message_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_in_usecase.dart';
@@ -116,14 +117,23 @@ Future<void> setupLocator() async {
         () => GetPublicPromptsUseCase(getIt<PromptRepository>()),
   );
 
+  getIt.registerFactory<GetPrivatePromptsUseCase>(
+        () => GetPrivatePromptsUseCase(getIt<PromptRepository>()),
+  );
+
   getIt.registerFactory<PromptViewModel>(
         () => PromptViewModel(
       getIt<GetPublicPromptsUseCase>(),
       getIt<AddPromptToFavoriteUseCase>(),
+      getIt<CreatePromptUseCase>(),
+      getIt<GetPrivatePromptsUseCase>()
     ),
   );
   getIt.registerFactory<AddPromptToFavoriteUseCase>(
         () => AddPromptToFavoriteUseCase(getIt<PromptRepository>()),
+  );
+  getIt.registerFactory<CreatePromptUseCase>(
+        () => CreatePromptUseCase(getIt<PromptRepository>()),
   );
 
 

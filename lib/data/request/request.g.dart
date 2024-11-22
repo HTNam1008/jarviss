@@ -42,3 +42,24 @@ Map<String, dynamic> _$RefreshTokenRequestToJson(
     <String, dynamic>{
       'refreshToken': instance.refreshToken,
     };
+
+CreatePromptRequest _$CreatePromptRequestFromJson(Map<String, dynamic> json) =>
+    CreatePromptRequest(
+      title: json['title'] as String,
+      content: json['content'] as String,
+      description: json['description'] as String,
+      category: json['category'] as String,
+      language: json['language'] as String,
+      isPublic: json['isPublic'] as bool,
+    );
+
+Map<String, dynamic> _$CreatePromptRequestToJson(
+        CreatePromptRequest instance) =>
+    <String, dynamic>{
+      'title': instance.title,
+      'content': instance.content,
+      'description': instance.description,
+      'category': instance.category,
+      'language': instance.language,
+      'isPublic': instance.isPublic,
+    };

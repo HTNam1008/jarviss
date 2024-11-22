@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -10,7 +11,9 @@ import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 
+import '../../data/request/request.dart';
 import '../../domain/model/prompt.dart';
+import '../../domain/usecase/create_prompt_usecase.dart';
 import '../../domain/usecase/get_public_prompts_usecase.dart';
 import '../base/baseviewmodel.dart';
 
@@ -42,6 +45,7 @@ class _PromptViewState extends State<PromptView> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_isInitialized) {
+      _viewModel.getPrivatePrompts("all"); // Add this
       _viewModel.getPrompts("all");
       _isInitialized = true;
     }
@@ -140,11 +144,15 @@ class _PromptViewState extends State<PromptView> {
           children: [
             Padding(
               padding: const EdgeInsets.only(top: AppSize.s12),
-              child: AppinioAnimatedToggleTab(
+              child:  AppinioAnimatedToggleTab(
                 callback: (int i) {
                   setState(() {
-                    _isPublicPrompts = !_isPublicPrompts;
-                    _selectedIndexTab = 0;
+                    _isPublicPrompts = i == 1;
+                    if (i == 1) {
+                      _viewModel.getPrompts(_viewModel._getCurrentCategory());
+                    } else {
+                      _viewModel.getPrivatePrompts(_viewModel._getCurrentCategory());
+                    }
                   });
                 },
                 tabTexts: const [
@@ -295,8 +303,11 @@ class _PromptViewState extends State<PromptView> {
 
   @override
   Widget _generateListData(List<List<String>> promptData) {
-    return StreamBuilder<List<Prompt>>(
-        stream: _viewModel.promptsStream,
+    final Stream<List<Prompt>> activeStream = _isPublicPrompts ?
+    _viewModel.promptsStream :
+    _viewModel.privatePromptsStream;
+      return StreamBuilder<List<Prompt>>(
+        stream: activeStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return ListView.builder(
@@ -376,9 +387,8 @@ class _PromptViewState extends State<PromptView> {
           // Add a default return for loading state
           return const Center(child: CircularProgressIndicator());
         },
-    );
-  }
-
+      );
+    }
 
   @override
   void dispose() {
@@ -389,21 +399,29 @@ class _PromptViewState extends State<PromptView> {
 
 class PromptViewModel extends BaseViewModel {
   final GetPublicPromptsUseCase _getPublicPromptsUseCase;
+  final GetPrivatePromptsUseCase _getPrivatePromptsUseCase;
   final AddPromptToFavoriteUseCase _addPromptToFavoriteUseCase;
-  final StreamController<List<Prompt>> _promptsStreamController = StreamController<List<Prompt>>();
-  final StreamController<String> _errorStreamController = StreamController<String>();
+  final CreatePromptUseCase _createPromptUseCase;
+
+
+  final StreamController<List<Prompt>> _promptsStreamController = StreamController<List<Prompt>>.broadcast();
+  final StreamController<String> _errorStreamController = StreamController<String>.broadcast();
   bool showFavorites = false;
   List<Prompt> prompts = [];
 
   // Create a separate stream controller for favorites
   final StreamController<List<Prompt>> _favoritesStreamController = StreamController<List<Prompt>>.broadcast();
+  final StreamController<List<Prompt>> _privatePromptsStreamController = StreamController<List<Prompt>>.broadcast();
   List<Prompt> favoritePrompts = [];
+  List<Prompt> privatePrompts = [];
 
   Stream<List<Prompt>> get promptsStream => _promptsStreamController.stream;
   Stream<List<Prompt>> get favoritesStream => _favoritesStreamController.stream;
+  Stream<List<Prompt>> get privatePromptsStream => _privatePromptsStreamController.stream;
+
   Stream<String> get errorStream => _errorStreamController.stream;
 
-  PromptViewModel(this._getPublicPromptsUseCase, this._addPromptToFavoriteUseCase);
+  PromptViewModel(this._getPublicPromptsUseCase, this._addPromptToFavoriteUseCase, this._createPromptUseCase, this._getPrivatePromptsUseCase);
 
   Future<void> getPrompts(String category, {bool? isFavorite}) async {
     final input = GetPublicPromptsUseCaseInput(category, isFavorite: isFavorite);
@@ -416,6 +434,18 @@ class PromptViewModel extends BaseViewModel {
         }
     );
   }
+  Future<void> getPrivatePrompts(String category, {bool? isFavorite}) async {
+    final input = GetPublicPromptsUseCaseInput(category, isFavorite: isFavorite);
+
+    (await _getPrivatePromptsUseCase.execute(input)).fold(
+            (failure) => _errorStreamController.add(failure.message),
+            (prompts) {
+          privatePrompts = prompts;
+          _privatePromptsStreamController.add(privatePrompts); // Stream is updated
+        }
+    );
+  }
+
   Future<void> getFavoritePrompts() async {
     final input = GetPublicPromptsUseCaseInput("all", isFavorite: true);
 
@@ -449,6 +479,23 @@ class PromptViewModel extends BaseViewModel {
         }
     );
   }
+  Future<void> createPrompt(String title, String content, String description,
+      String category, String language, bool isPublic) async {
+    final request = CreatePromptRequest(
+        title: title,
+        content: content,
+        description: description,
+        category: category,
+        language: language,
+        isPublic: isPublic
+    );
+
+    (await _createPromptUseCase.execute(request)).fold(
+            (failure) => _errorStreamController.add(failure.message),
+            (prompt) {
+        }
+    );
+  }
 
   void toggleFavoriteFilter() {
     showFavorites = !showFavorites;
@@ -473,7 +520,6 @@ class PromptViewModel extends BaseViewModel {
       'Other'
     ];
   }
-  @override
   @override
   void dispose() {
     _promptsStreamController.close();

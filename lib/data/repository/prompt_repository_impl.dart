@@ -6,6 +6,7 @@ import '../network/failure.dart';
 import '../network/network_info.dart';
 import '../../domain/model/prompt.dart';
 import '../../domain/repository/prompt_repository.dart';
+import '../request/request.dart';
 
 class PromptRepositoryImpl implements PromptRepository {
   final RemoteDataSource _remoteDataSource;
@@ -32,11 +33,42 @@ class PromptRepositoryImpl implements PromptRepository {
   }
 
   @override
+  Future<Either<Failure, List<Prompt>>> getPrivatePrompts(String category, {bool? isFavorite}) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.getPrompts(
+          category.toLowerCase() == "all" ? null : category.toLowerCase(),
+          false,
+          isFavorite: isFavorite,
+        );
+        return Right(response.items.map((e) => e.toDomain()).toList());
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> addToFavorites(String promptId) async {
     if (await _networkInfo.isConnected) {
       try {
         await _remoteDataSource.addToFavorites(promptId);
         return const Right(null);
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  Future<Either<Failure, Prompt>> createPrompt(CreatePromptRequest request) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.createPrompt(request);
+        return Right(response.toDomain());
       } catch (error) {
         return Left(ErrorHandler.handle(error).failure);
       }
