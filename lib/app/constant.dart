@@ -13,6 +13,7 @@ class ConstantAPI {
   static const signOut = '/api/v1/auth/sign-out';
   static const refreshToken = '/api/v1/auth/refresh';
   static const sendMessage = '/api/v1/ai-chat/messages';
+  static const tokenUsage = '/api/v1/tokens/usage';
 }
 
 class ConstantAssistantID {
@@ -25,5 +26,5 @@ class ConstantAssistantID {
 }
 
 class ConstantAssistantModel {
-  static const String DIFY = "Dify";
+  static const String DIFY = "dify";
 }

@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:jarvis/app/constant.dart';
+import 'package:jarvis/data/request/ai_chat/send_message/assistant.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/presentation/chat/chat_viewmodel.dart';
 import 'package:jarvis/presentation/common/app_drawer.dart';
@@ -41,7 +42,6 @@ class _ChatViewState extends State<ChatView> {
   ];
 
   late String selectedModel;
-  
   @override
   void initState() {
     super.initState();
@@ -108,7 +108,6 @@ class _ChatViewState extends State<ChatView> {
                     )),
                 StreamBuilder<int>(
                   stream: _viewModel.remainingUsageStream,
-                  initialData: 50, // Giá trị mặc định
                   builder: (context, snapshot) {
                     int remainingUsage = snapshot.data ?? 50;
                     return Container(
@@ -288,7 +287,7 @@ class _ChatViewState extends State<ChatView> {
   void _sendMessage() {
     String message = _chatController.text.trim();
     if (message.isNotEmpty) {
-      _viewModel.sendMessage(message);
+      _viewModel.sendMessage(message, selectedModel);
       _chatController.clear();
     }
   }

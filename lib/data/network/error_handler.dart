@@ -131,10 +131,8 @@ class ResponseCode {
   static const int FORBIDDEN = 403; // failure, api reject the request
   static const int BAD_REQUEST = 400; // failure, api reject the request
   static const int UNAUTHORISED = 401; //failure, user is not authorised
-  static const int NOT_FOUND =
-      404; // failure, api url is incorrect and not found
-  static const int INTERNAL_SERVER_ERROR =
-      500; // failure, crash happened in server side
+  static const int NOT_FOUND = 404; // failure, api url is incorrect and not found
+  static const int INTERNAL_SERVER_ERROR = 500; // failure, crash happened in server side
 
   // local status code
   static const int DEFAULT = -1;
