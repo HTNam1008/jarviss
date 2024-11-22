@@ -11,7 +11,6 @@ class SplashViewModel extends BaseViewModel {
     return await _appPreferences.getAccessToken();
   }
 
-  // Thêm các phương thức khác nếu cần
   Future<void> clearAccessToken() async {
     await _appPreferences.clearTokens();
   }

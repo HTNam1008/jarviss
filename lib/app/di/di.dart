@@ -16,6 +16,7 @@ import 'package:jarvis/domain/usecase/send_message_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_in_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_out_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_up_usecase.dart';
+import 'package:jarvis/domain/usecase/usage_token_usecase.dart';
 import 'package:jarvis/presentation/authencation/sign_in/sign_in_viewmodel.dart';
 import 'package:jarvis/presentation/authencation/sign_out/sign_out_viewmodel.dart';
 import 'package:jarvis/presentation/authencation/sign_up/sign_up_viewmodel.dart';
@@ -106,8 +107,12 @@ Future<void> setupLocator() async {
     () => SendMessageUseCase(getIt<Repository>()),
   );
 
+    getIt.registerFactory<UsageTokenUseCase>(
+    () => UsageTokenUseCase(getIt<Repository>()),
+  );
+
   getIt.registerFactory<ChatViewModel>(
-    () => ChatViewModel(getIt<SendMessageUseCase>()),
+    () => ChatViewModel(getIt<SendMessageUseCase>(), getIt<UsageTokenUseCase>()),
   );
 
   getIt.registerFactory<SplashViewModel>(
