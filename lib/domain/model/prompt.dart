@@ -1,6 +1,7 @@
 class Prompt {
   final String id;
   final String title;
+  final String content;
   final String description;
   final String category;
   final bool isPublic;
@@ -10,6 +11,7 @@ class Prompt {
   Prompt({
     required this.id,
     required this.title,
+    required this.content,
     required this.description,
     required this.category,
     required this.isPublic,

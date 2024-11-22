@@ -49,4 +49,13 @@ abstract class AppServiceClient {
 
   @POST("/api/v1/prompts")
   Future<PromptResponse> createPrompt(@Body() CreatePromptRequest request);
+
+  @PATCH("/api/v1/prompts/{id}")
+  Future<void> updatePrompt(
+      @Path("id") String promptId,
+      @Body() UpdatePromptRequest request
+      );
+
+  @DELETE("/api/v1/prompts/{id}")
+  Future<void> deletePrompt(@Path("id") String promptId);
 }

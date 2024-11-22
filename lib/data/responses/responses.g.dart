@@ -121,6 +121,7 @@ PromptResponse _$PromptResponseFromJson(Map<String, dynamic> json) =>
     PromptResponse(
       id: json['id'] as String,
       title: json['title'] as String,
+      content: json['content'] as String,
       description: json['description'] as String,
       category: json['category'] as String,
       isPublic: json['isPublic'] as bool,
@@ -132,6 +133,7 @@ Map<String, dynamic> _$PromptResponseToJson(PromptResponse instance) =>
     <String, dynamic>{
       'id': instance.id,
       'title': instance.title,
+      'content': instance.content,
       'description': instance.description,
       'category': instance.category,
       'isPublic': instance.isPublic,

@@ -72,3 +72,26 @@ class CreatePromptRequest {
 
   Map<String, dynamic> toJson() => _$CreatePromptRequestToJson(this);
 }
+
+@JsonSerializable()
+class UpdatePromptRequest {
+  final String? title;
+  final String? content;
+  final String description;
+  final String category;
+  final String language;
+  final bool isPublic;
+
+  UpdatePromptRequest({
+    this.title,
+    this.content,
+    required this.description,
+    required this.category,
+    required this.language,
+    required this.isPublic
+  });
+
+  factory UpdatePromptRequest.fromJson(Map<String, dynamic> json) =>
+      _$UpdatePromptRequestFromJson(json);
+  Map<String, dynamic> toJson() => _$UpdatePromptRequestToJson(this);
+}

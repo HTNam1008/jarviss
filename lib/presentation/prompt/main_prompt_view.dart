@@ -3,6 +3,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:jarvis/domain/usecase/delete_prompt_usecase.dart';
+import 'package:jarvis/domain/usecase/update%20_prompt_usecase.dart';
 import 'package:jarvis/presentation/common/animated_toggle_tab/animated_toggle_tab.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/prompt/create_prompt/create_prompt_view.dart';
@@ -240,7 +242,7 @@ class _PromptViewState extends State<PromptView> {
     );
   }
 
-  void _showActions(BuildContext context, String promptName) {
+  void _showActions(BuildContext context,  Prompt prompt) {
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -254,7 +256,10 @@ class _PromptViewState extends State<PromptView> {
                 title: const Text('Edit'),
                 onTap: () {
                   Navigator.pop(context);
-                  showDialog(context: context, builder: (builder) => const EditPromptView());
+                  showDialog(
+                    context: context,
+                    builder: (context) => EditPromptView(prompt: prompt),
+                  );
                 },
               ),
               ListTile(
@@ -262,6 +267,7 @@ class _PromptViewState extends State<PromptView> {
                 title: const Text('Delete'),
                 onTap: () {
                   Navigator.pop(context);
+                  _showDeleteConfirmation(context, prompt);
                 },
               ),
             ],
@@ -271,6 +277,29 @@ class _PromptViewState extends State<PromptView> {
     );
   }
 
+  void _showDeleteConfirmation(BuildContext context, Prompt prompt) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Prompt'),
+        content: Text('Are you sure you want to delete "${prompt.title}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              _viewModel.deletePrompt(prompt.id);
+              Navigator.pop(context);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
   List<Widget> _generateListTab(List<List<String>> promptData) {
     final categories = _viewModel.getPromptCategories();
     return List.generate(categories.length, (index) {
@@ -363,7 +392,7 @@ class _PromptViewState extends State<PromptView> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            _showActions(context, prompt.title);
+                            _showActions(context, prompt);
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -402,6 +431,9 @@ class PromptViewModel extends BaseViewModel {
   final GetPrivatePromptsUseCase _getPrivatePromptsUseCase;
   final AddPromptToFavoriteUseCase _addPromptToFavoriteUseCase;
   final CreatePromptUseCase _createPromptUseCase;
+  final UpdatePromptUseCase _updatePromptUseCase;
+  final DeletePromptUseCase _deletePromptUseCase;
+
 
 
   final StreamController<List<Prompt>> _promptsStreamController = StreamController<List<Prompt>>.broadcast();
@@ -421,7 +453,7 @@ class PromptViewModel extends BaseViewModel {
 
   Stream<String> get errorStream => _errorStreamController.stream;
 
-  PromptViewModel(this._getPublicPromptsUseCase, this._addPromptToFavoriteUseCase, this._createPromptUseCase, this._getPrivatePromptsUseCase);
+  PromptViewModel(this._getPublicPromptsUseCase, this._addPromptToFavoriteUseCase, this._createPromptUseCase, this._getPrivatePromptsUseCase, this._updatePromptUseCase, this._deletePromptUseCase);
 
   Future<void> getPrompts(String category, {bool? isFavorite}) async {
     final input = GetPublicPromptsUseCaseInput(category, isFavorite: isFavorite);
@@ -468,6 +500,7 @@ class PromptViewModel extends BaseViewModel {
             prompts[index] = Prompt(
               id: prompt.id,
               title: prompt.title,
+              content: prompt.content,
               description: prompt.description,
               category: prompt.category,
               isPublic: prompt.isPublic,
@@ -492,8 +525,22 @@ class PromptViewModel extends BaseViewModel {
 
     (await _createPromptUseCase.execute(request)).fold(
             (failure) => _errorStreamController.add(failure.message),
-            (prompt) {
-        }
+            (_) => getPrompts(_getCurrentCategory())
+    );
+  }
+
+  Future<void> updatePrompt(String id, String title,String content, String description, String category, bool isPublic, String language) async {
+    final request = UpdatePromptUseCaseInput(id, title, content, description, category, language, isPublic);
+    (await _updatePromptUseCase.execute(request)).fold(
+            (failure) => _errorStreamController.add(failure.message),
+            (_) => getPrompts(_getCurrentCategory())
+    );
+  }
+
+  Future<void> deletePrompt(String id) async {
+    (await _deletePromptUseCase.execute(id)).fold(
+            (failure) => _errorStreamController.add(failure.message),
+            (_) => getPrompts(_getCurrentCategory())
     );
   }
 

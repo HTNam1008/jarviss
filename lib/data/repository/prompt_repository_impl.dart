@@ -76,4 +76,32 @@ class PromptRepositoryImpl implements PromptRepository {
       return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
     }
   }
+  @override
+  Future<Either<Failure, void>> updatePrompt(String promptId, UpdatePromptRequest request) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        await _remoteDataSource.updatePrompt(promptId, request);
+        return const Right(null);
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deletePrompt(String promptId) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        await _remoteDataSource.deletePrompt(promptId);
+        return const Right(null);
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
 }

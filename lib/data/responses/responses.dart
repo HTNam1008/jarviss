@@ -137,6 +137,7 @@ class GetPromptsResponse {
 class PromptResponse {
   final String id;
   final String title;
+  final String content;
   final String description;
   final String category;
   final bool isPublic;
@@ -146,6 +147,7 @@ class PromptResponse {
   PromptResponse({
     required this.id,
     required this.title,
+    required this.content,
     required this.description,
     required this.category,
     required this.isPublic,
@@ -157,6 +159,7 @@ class PromptResponse {
     return PromptResponse(
         id: json['_id'],
         title: json['title'],
+        content: json['content']?? '',
         description: json['description'] ?? '',
         category: json['category'],
         isPublic: json['isPublic'],

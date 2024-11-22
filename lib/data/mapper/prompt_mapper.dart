@@ -11,11 +11,12 @@ extension PromptResponseMapper on PromptResponse {
     return Prompt(
       id: id.orEmpty(),
       title: title,
-        description: description ?? '',
-        category: category,
-        isPublic: isPublic ?? false,
-        userName: userName ?? '',
-        isFavorite: isFavorite ?? false,
+      content: content ?? '',
+      description: description ?? '',
+      category: category,
+      isPublic: isPublic ?? false,
+      userName: userName ?? '',
+      isFavorite: isFavorite ?? false,
     );
   }
 }
