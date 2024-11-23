@@ -24,11 +24,12 @@ class _AppServiceClient implements AppServiceClient {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<SignInResponse> signIn(dynamic request) async {
+  Future<SignInResponse> signIn(SignInRequest request) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = request;
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
     final _options = _setStreamType<SignInResponse>(Options(
       method: 'POST',
       headers: _headers,
@@ -57,11 +58,12 @@ class _AppServiceClient implements AppServiceClient {
   }
 
   @override
-  Future<SignUpResponse> signUp(dynamic request) async {
+  Future<SignUpResponse> signUp(SignUpRequest request) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = request;
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
     final _options = _setStreamType<SignUpResponse>(Options(
       method: 'POST',
       headers: _headers,
