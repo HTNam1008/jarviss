@@ -1,8 +1,6 @@
 // lib/presentation/viewmodel/chat_viewmodel.dart
 
 import 'dart:async';
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:jarvis/app/constant.dart';
 import 'package:jarvis/app/functions.dart';
@@ -54,8 +52,9 @@ class ChatViewModel extends BaseViewModel
           name: msg.assistant!.name,
         );
       } else {
-        assistant = Assistant(id: "gpt-4o", model: "Dify", name: "GPT-4o");
+        assistant = Assistant(id: "gpt-4o", model: "dify", name: "GPT-4o");
       }
+      
       return ChatMessage(
         role: msg.isUser ? MessageRole.user : MessageRole.model,
         content: msg.message,
@@ -87,8 +86,8 @@ class ChatViewModel extends BaseViewModel
       metadata: metadata,
       assistant: assistant,
     );
-    print("input: ${jsonEncode(input.toJson())}");
-    // Tạo tin nhắn của người dùng
+    // print("input: ${jsonEncode(input.toJson())}");
+    
     final userMessage = Message(
       message: content,
       isUser: true,
@@ -96,7 +95,6 @@ class ChatViewModel extends BaseViewModel
       remainingUsage: 0,
       assistant: assistant,
     );
-
 
     _messages.add(userMessage);
     _messagesStreamController.add(List.from(_messages));

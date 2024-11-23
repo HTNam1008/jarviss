@@ -8,7 +8,7 @@ import 'package:jarvis/app/constant.dart';
 import 'package:jarvis/data/request/ai_chat/send_message/assistant.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/presentation/chat/chat_viewmodel.dart';
-import 'package:jarvis/presentation/common/app_drawer.dart';
+import 'package:jarvis/presentation/left_side_bar/app_drawer.dart';
 import 'package:jarvis/presentation/common/chat_input_box.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
@@ -36,7 +36,7 @@ class _ChatViewState extends State<ChatView> {
     ConstantAssistantID.GPT_4_O,
     ConstantAssistantID.GPT_4_O_MINI,
     ConstantAssistantID.CLAUDE_3_HAIKU_20240307,
-    ConstantAssistantID.CLAUDE_3_SONNET_20240229,
+    ConstantAssistantID.CLAUDE_35_SONNET_20240229,
     ConstantAssistantID.GEMINI_15_FLASH_LATEST,
     ConstantAssistantID.GEMINI_15_PRO_LATEST,
   ];

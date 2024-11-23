@@ -1,5 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:jarvis/data/request/ai_chat/send_message/assistant.dart';
+import 'package:jarvis/data/request/ai_chat/send_message/chat_message.dart';
+import 'package:jarvis/data/responses/ai_chat/get_conversations_response.dart';
 
 class User {
   final String id;
@@ -75,3 +77,33 @@ class Message {
     );
   }
 }
+
+class Conversations {
+  final String? cursor;
+  final bool has_more;
+  final int limit;
+  final List<ItemConversation>? items;
+
+  Conversations({
+    this.cursor,
+    required this.has_more,
+    required this.limit,
+    this.items,
+  });
+}
+
+class ConversationHistory {
+  final String cursor;
+  final bool has_more;
+  final int limit;
+  final List<ChatMessage> items;
+
+  ConversationHistory({
+    required this.cursor,
+    required this.has_more,
+    required this.limit,
+    required this.items,
+  });
+}
+
+

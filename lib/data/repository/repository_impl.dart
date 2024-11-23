@@ -4,8 +4,12 @@ import 'package:jarvis/data/mapper/mapper.dart';
 import 'package:jarvis/data/network/error_handler.dart';
 import 'package:jarvis/data/network/failure.dart';
 import 'package:jarvis/data/network/network_info.dart';
+import 'package:jarvis/data/request/ai_chat/conversation/conversation_history_request.dart';
+import 'package:jarvis/data/request/ai_chat/conversation/conversations_request.dart';
+import 'package:jarvis/data/request/ai_chat/send_message/assistant.dart';
 import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.dart';
-import 'package:jarvis/data/request/ai_chat/authentication/request.dart';
+import 'package:jarvis/data/request/authentication/request.dart';
+import 'package:jarvis/data/responses/ai_chat/get_conversations_response.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 
@@ -95,6 +99,36 @@ class RepositoryImpl implements Repository {
     if (await _networkInfo.isConnected) {
       try {
         final response = await _remoteDataSource.getTokenUsage();
+
+        return Right(response.toDomain());
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, Conversations>> getConversations(ConversationsRequest conversationsRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.getConversations(conversationsRequest);
+
+        return Right(response.toDomain());
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, ConversationHistory>> getConversationHistory(ConversationHistoryRequest conversationHistoryRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.getConversationHistory(conversationHistoryRequest);
 
         return Right(response.toDomain());
       } catch (error) {

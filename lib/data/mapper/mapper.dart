@@ -1,4 +1,9 @@
 import 'package:jarvis/app/extensions.dart';
+import 'package:jarvis/data/request/ai_chat/send_message/assistant.dart';
+import 'package:jarvis/data/request/ai_chat/send_message/chat_message.dart';
+import 'package:jarvis/data/request/ai_chat/send_message/message_role.dart';
+import 'package:jarvis/data/responses/ai_chat/get_conversation_history_response.dart';
+import 'package:jarvis/data/responses/ai_chat/get_conversations_response.dart';
 import 'package:jarvis/data/responses/ai_chat/send_message_response.dart';
 import 'package:jarvis/data/responses/responses.dart';
 import 'package:jarvis/data/responses/token/token_usage_response.dart';
@@ -65,3 +70,54 @@ extension TokenUsageResponseMapper on TokenUsageResponse {
     return TokenUsage(availaleTokens: availableTokens, totalToken: totalTokens, unlimited: unlimited, date: date);
   }
 }
+
+extension ConversationsResponseMapper on ConversationsResponse {
+  Conversations toDomain() {
+    return Conversations(cursor: cursor, has_more: has_more, limit: limit, items: items);
+  }
+}
+
+extension ConversationHistoryMapper on ConversationHistoryResponse {
+  ConversationHistory toDomain() {
+    List<ChatMessage> chatMessages = [];
+    Assistant assistant = Assistant(model: 'dify', name: 'GPT-4o', id: 'gpt-4o');
+
+    for (var detail in items) {
+      if (detail.query != null && detail.query!.isNotEmpty) {
+        ChatMessage userMessage = ChatMessage(
+          assistant: assistant,
+          content: detail.query!,
+          files: null,
+          role: MessageRole.user,
+          // createdAt: detail.createdAt != null
+          //     ? DateTime.fromMillisecondsSinceEpoch(detail.createdAt! * 1000)
+          //     : null,
+        );
+
+        chatMessages.add(userMessage);
+      }
+
+      if (detail.answer != null && detail.answer!.isNotEmpty) {
+        ChatMessage assistantMessage = ChatMessage(
+          assistant: assistant,
+          content: detail.answer!,
+          files: null,
+          role: MessageRole.model,
+          // createdAt: detail.createdAt != null
+          //     ? DateTime.fromMillisecondsSinceEpoch(detail.createdAt! * 1000)
+          //     : null,
+        );
+
+        chatMessages.add(assistantMessage);
+      }
+    }
+
+    return ConversationHistory(
+      cursor: cursor,
+      has_more: has_more,
+      limit: limit,
+      items: chatMessages,
+    );
+  }
+}
+
