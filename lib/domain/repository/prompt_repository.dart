@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
-import '../../data/request/request.dart';
-import '../model/prompt.dart';
-import '../../data/network/failure.dart';
+import 'package:jarvis/data/network/failure.dart';
+import 'package:jarvis/data/request/authentication/request.dart';
+import 'package:jarvis/domain/model/prompt.dart';
 
 abstract class PromptRepository {
   Future<Either<Failure, List<Prompt>>> getPublicPrompts(String category,  {bool? isFavorite, String? query, int? limit});

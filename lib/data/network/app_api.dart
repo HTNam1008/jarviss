@@ -10,9 +10,6 @@ import 'package:jarvis/data/responses/responses.dart';
 import 'package:jarvis/data/request/authentication/request.dart';
 import 'package:jarvis/data/responses/token/token_usage_response.dart';
 import 'package:retrofit/retrofit.dart';
-
-import '../request/request.dart';
-
 part 'app_api.g.dart';
 
 @RestApi(baseUrl: Constant.baseUrl)

@@ -1,14 +1,12 @@
-import 'dart:developer';
-
 import 'package:dartz/dartz.dart';
 import 'package:jarvis/data/mapper/prompt_mapper.dart';
-import '../data_source/remote_data_source.dart';
-import '../network/error_handler.dart';
-import '../network/failure.dart';
-import '../network/network_info.dart';
-import '../../domain/model/prompt.dart';
-import '../../domain/repository/prompt_repository.dart';
-import '../request/request.dart';
+import 'package:jarvis/data/request/authentication/request.dart';
+import 'package:jarvis/data/data_source/remote_data_source.dart';
+import 'package:jarvis/data/network/error_handler.dart';
+import 'package:jarvis/data/network/failure.dart';
+import 'package:jarvis/data/network/network_info.dart';
+import 'package:jarvis/domain/model/prompt.dart';
+import 'package:jarvis/domain/repository/prompt_repository.dart';
 
 class PromptRepositoryImpl implements PromptRepository {
   final RemoteDataSource _remoteDataSource;

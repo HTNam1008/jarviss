@@ -307,8 +307,8 @@ class _ChatInputBoxState extends State<ChatInputBox> {
             ),
           ),
           IconButton(
-            icon: Icon(Icons.send, color: isSending != null ? (isSending! ? Colors.grey : Colors.teal) : Colors.grey),
-            onPressed: isSending != null ? (isSending! ? null : onSend) : null,
+            icon: Icon(Icons.send, color: widget.isSending != null ? (widget.isSending! ? Colors.grey : Colors.teal) : Colors.grey),
+            onPressed: widget.isSending != null ? (widget.isSending! ? null : widget.onSend) : null,
           ),
         ],
       ),
