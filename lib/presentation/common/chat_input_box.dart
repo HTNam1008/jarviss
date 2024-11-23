@@ -30,11 +30,13 @@ class _ChatInputBoxState extends State<ChatInputBox> {
   final LayerLink _layerLink = LayerLink();
   OverlayEntry? _overlayEntry;
   bool _hasShownOverlay = false;
+  String _searchQuery = '';
 
   @override
   void initState() {
     super.initState();
     _focusNode.addListener(_onFocusChange);
+    widget.controller.addListener(_onTextChanged);
   }
 
   @override
@@ -47,23 +49,21 @@ class _ChatInputBoxState extends State<ChatInputBox> {
 
   void _onFocusChange() {
     if (_focusNode.hasFocus && !_hasShownOverlay) {
-      _fetchPromptSuggestions();
+      _fetchInitialPrompts();
       _hasShownOverlay = true;
     }
   }
 
-  void _fetchPromptSuggestions() async {
+  void _fetchInitialPrompts() async {
     try {
-      await _promptViewModel.getPrompts("Marketing",limit: 3);
+      await _promptViewModel.getPrompts(
+        "marketing",
+        limit: 3,
+      );
 
-      // Safely get first 3 prompts
       if (mounted) {
         setState(() {
-          final allPrompts = _promptViewModel.prompts;
-          final endIndex = allPrompts.length > 3 ? 3 : allPrompts.length;
-          _promptSuggestions = allPrompts.sublist(0, endIndex);
-
-          // Only show overlay if we have suggestions
+          _promptSuggestions = _promptViewModel.prompts;
           if (_promptSuggestions.isNotEmpty) {
             _showOverlay();
           }
@@ -73,6 +73,52 @@ class _ChatInputBoxState extends State<ChatInputBox> {
       print('Error fetching prompts: $e');
     }
   }
+
+  void _onTextChanged() {
+    final text = widget.controller.text;
+
+    if (text.startsWith('/')) {
+      // Extract search query after slash
+      final query = text.substring(1).trim();
+
+      if (query.isEmpty) {
+        _removeOverlay();
+        return;
+      }
+
+      if (query != _searchQuery) {
+        _searchQuery = query;
+        _searchPrompts(query);
+      }
+    } else {
+      _removeOverlay();
+      _searchQuery = '';
+    }
+  }
+
+  void _searchPrompts(String query) async {
+    try {
+      await _promptViewModel.getPrompts(
+        "All",
+        query: query,
+        limit: 5,
+      );
+
+      if (mounted) {
+        setState(() {
+          _promptSuggestions = _promptViewModel.prompts;
+          if (_promptSuggestions.isNotEmpty) {
+            _showOverlay();
+          } else {
+            _removeOverlay();
+          }
+        });
+      }
+    } catch (e) {
+      print('Error searching prompts: $e');
+    }
+  }
+
 
   void _showOverlay() {
     _removeOverlay();
@@ -87,7 +133,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
           borderRadius: BorderRadius.circular(AppSize.s8),
           child: Container(
             constraints: const BoxConstraints(
-              maxHeight: 200,
+              maxHeight: 300,
             ),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -103,7 +149,9 @@ class _ChatInputBoxState extends State<ChatInputBox> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Suggested prompts',
+                        _searchQuery.isNotEmpty
+                            ? 'Search results for "/$_searchQuery"'
+                            : 'Suggested prompts',
                         style: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 12,
@@ -140,48 +188,71 @@ class _ChatInputBoxState extends State<ChatInputBox> {
                   ),
                 ),
                 const Divider(height: 1),
-                ..._promptSuggestions.map((prompt) =>
-                    InkWell(
-                      onTap: () {
-                        widget.controller.text = prompt.content;
-                        _removeOverlay();
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: Colors.grey.shade200,
-                              width: 1,
-                            ),
+                Flexible(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: _promptSuggestions.length,
+                    itemBuilder: (context, index) {
+                      final prompt = _promptSuggestions[index];
+                      return InkWell(
+                        onTap: () {
+                          widget.controller.text = prompt.content;
+                          _removeOverlay();
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
                           ),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.north,
-                              color: ColorManager.teal,
-                              size: 16,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                prompt.title,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                color: Colors.grey.shade200,
+                                width: 1,
                               ),
                             ),
-                          ],
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.north,
+                                color: ColorManager.teal,
+                                size: 16,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      prompt.title,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    if (prompt.description.isNotEmpty)
+                                      Text(
+                                        prompt.description,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey[600],
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
-                ).toList(),
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
           ),
