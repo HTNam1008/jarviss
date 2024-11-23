@@ -90,3 +90,53 @@ Map<String, dynamic> _$RefreshTokenResponseToJson(
     <String, dynamic>{
       'token': instance.token,
     };
+
+PromptCategoryResponse _$PromptCategoryResponseFromJson(
+        Map<String, dynamic> json) =>
+    PromptCategoryResponse(
+      value: json['value'] as String?,
+      label: json['label'] as String,
+    );
+
+Map<String, dynamic> _$PromptCategoryResponseToJson(
+        PromptCategoryResponse instance) =>
+    <String, dynamic>{
+      'value': instance.value,
+      'label': instance.label,
+    };
+
+GetPromptsResponse _$GetPromptsResponseFromJson(Map<String, dynamic> json) =>
+    GetPromptsResponse(
+      items: (json['items'] as List<dynamic>)
+          .map((e) => PromptResponse.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$GetPromptsResponseToJson(GetPromptsResponse instance) =>
+    <String, dynamic>{
+      'items': instance.items,
+    };
+
+PromptResponse _$PromptResponseFromJson(Map<String, dynamic> json) =>
+    PromptResponse(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      content: json['content'] as String,
+      description: json['description'] as String,
+      category: json['category'] as String,
+      isPublic: json['isPublic'] as bool,
+      userName: json['userName'] as String,
+      isFavorite: json['isFavorite'] as bool,
+    );
+
+Map<String, dynamic> _$PromptResponseToJson(PromptResponse instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+      'content': instance.content,
+      'description': instance.description,
+      'category': instance.category,
+      'isPublic': instance.isPublic,
+      'userName': instance.userName,
+      'isFavorite': instance.isFavorite,
+    };

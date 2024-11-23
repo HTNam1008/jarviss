@@ -13,6 +13,7 @@ import 'package:jarvis/data/repository/repository_impl.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 import 'package:jarvis/domain/usecase/get_conversation_history_usecase.dart';
 import 'package:jarvis/domain/usecase/get_conversations_usecase.dart';
+import 'package:jarvis/domain/usecase/create_prompt_usecase.dart';
 import 'package:jarvis/domain/usecase/refresh_token_usecase.dart';
 import 'package:jarvis/domain/usecase/send_message_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_in_usecase.dart';
@@ -27,20 +28,27 @@ import 'package:jarvis/presentation/left_side_bar/app_drawer_viewmodel.dart';
 import 'package:jarvis/presentation/splash/splash_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../data/repository/prompt_repository_impl.dart';
+import '../../domain/repository/prompt_repository.dart';
+import '../../domain/usecase/delete_prompt_usecase.dart';
+import '../../domain/usecase/get_public_prompts_usecase.dart';
+import '../../domain/usecase/update _prompt_usecase.dart';
+import '../../presentation/prompt/main_prompt_view.dart';
+
 final getIt = GetIt.instance;
 
 Future<void> setupLocator() async {
   // Register SharedPreferences
   final sharedPreferences = await SharedPreferences.getInstance();
   getIt.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
-   // Đăng ký FlutterSecureStorage
+  // Đăng ký FlutterSecureStorage
   getIt.registerLazySingleton<FlutterSecureStorage>(
     () => const FlutterSecureStorage(),
   );
 
   // Register AppPreferences
-  getIt.registerLazySingleton<AppPreferences>(
-      () => AppPreferences(getIt<SharedPreferences>(), getIt<FlutterSecureStorage>()));
+  getIt.registerLazySingleton<AppPreferences>(() => AppPreferences(
+      getIt<SharedPreferences>(), getIt<FlutterSecureStorage>()));
 
   // Register DioFactory
   getIt.registerLazySingleton<DioFactory>(
@@ -82,7 +90,7 @@ Future<void> setupLocator() async {
   getIt.registerFactory<SignUpUseCase>(
     () => SignUpUseCase(getIt<Repository>()),
   );
-  
+
   getIt.registerFactory<RefreshTokenUseCase>(
     () => RefreshTokenUseCase(getIt<Repository>()),
   );
@@ -110,6 +118,42 @@ Future<void> setupLocator() async {
     () => SendMessageUseCase(getIt<Repository>()),
   );
 
+  getIt.registerLazySingleton<PromptRepository>(
+    () => PromptRepositoryImpl(getIt<RemoteDataSource>(), getIt<NetworkInfo>()),
+  );
+
+  getIt.registerFactory<GetPublicPromptsUseCase>(
+    () => GetPublicPromptsUseCase(getIt<PromptRepository>()),
+  );
+
+  getIt.registerFactory<GetPrivatePromptsUseCase>(
+    () => GetPrivatePromptsUseCase(getIt<PromptRepository>()),
+  );
+
+  getIt.registerFactory<PromptViewModel>(
+    () => PromptViewModel(
+        getIt<GetPublicPromptsUseCase>(),
+        getIt<AddPromptToFavoriteUseCase>(),
+        getIt<CreatePromptUseCase>(),
+        getIt<GetPrivatePromptsUseCase>(),
+        getIt<UpdatePromptUseCase>(),
+        getIt<DeletePromptUseCase>()),
+  );
+  getIt.registerFactory<AddPromptToFavoriteUseCase>(
+    () => AddPromptToFavoriteUseCase(getIt<PromptRepository>()),
+  );
+  getIt.registerFactory<CreatePromptUseCase>(
+    () => CreatePromptUseCase(getIt<PromptRepository>()),
+  );
+
+  getIt.registerFactory<DeletePromptUseCase>(
+    () => DeletePromptUseCase(getIt<PromptRepository>()),
+  );
+
+  getIt.registerFactory<UpdatePromptUseCase>(
+    () => UpdatePromptUseCase(getIt<PromptRepository>()),
+  );
+
   getIt.registerFactory<UsageTokenUseCase>(
     () => UsageTokenUseCase(getIt<Repository>()),
   );
@@ -119,7 +163,8 @@ Future<void> setupLocator() async {
   );
 
   getIt.registerFactory<ChatViewModel>(
-    () => ChatViewModel(getIt<SendMessageUseCase>(), getIt<UsageTokenUseCase>(), getIt<GetConversationHistoryUsecase>()),
+    () => ChatViewModel(getIt<SendMessageUseCase>(), getIt<UsageTokenUseCase>(),
+        getIt<GetConversationHistoryUsecase>()),
   );
 
   getIt.registerFactory<SplashViewModel>(

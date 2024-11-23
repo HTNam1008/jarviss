@@ -1,189 +1,160 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 
-class EditPromptView extends StatelessWidget {
-  const EditPromptView({super.key});
+import '../../../domain/model/prompt.dart';
+import '../main_prompt_view.dart';
+
+
+class EditPromptView extends StatefulWidget {
+  final Prompt prompt;
+  const EditPromptView({required this.prompt, super.key});
+
+  @override
+  State<EditPromptView> createState() => _EditPromptViewState();
+}
+
+class _EditPromptViewState extends State<EditPromptView> {
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _titleController;
+  late final TextEditingController _descriptionController;
+  late final TextEditingController _categoryController;
+  late final TextEditingController _contentController;
+
+
+  late bool _isPublic;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _contentController = TextEditingController(text: widget.prompt.content);
+    _titleController = TextEditingController(text: widget.prompt.title);
+    _descriptionController = TextEditingController(text: widget.prompt.description);
+    _categoryController = TextEditingController(text: widget.prompt.category);
+    _isPublic = widget.prompt.isPublic;
+  }
+
+  @override
+  void dispose() {
+    _contentController.dispose();
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _categoryController.dispose();
+    super.dispose();
+  }
+
+  void _handleUpdate() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      await GetIt.instance<PromptViewModel>().updatePrompt(
+          widget.prompt.id,
+          _titleController.text,
+          _contentController.text,
+          _descriptionController.text,
+          _categoryController.text,
+          _isPublic,
+          'English'
+      );
+
+      if (mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Prompt updated successfully'))
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error updating prompt: $e'))
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: CustomHeaderBar(
-        centerWidget: const Text(
-          'Edit Prompt',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context); // Go back to the previous screen
-          },
-        ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              /*Container(
-                padding: EdgeInsets.only(top: 30.0),
-                child: Center(
-                  child: CircleAvatar(
-                    radius: 40.0,
-                    backgroundImage: AssetImage('assets/images/avt.png'),
-                  ),
-                ),
-              ),*/
-              const SizedBox(height: 20.0),
-              _buildInputField('Prompt Name', 'MyPrompt 1', context),
-              _buildInputField('Description', 'Description for MyPrompt 1...', context, maxLines: 5),
-              _buildInputField('Prompt', 'Prompt for MyPrompt 1', context, maxLines: 3),
-              _buildPromptField(),
-              const SizedBox(height: 40.0),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    minimumSize: Size(double.infinity, 50), // Full width button
-                  ),
-                  onPressed: () {
-                    // Logic to preview bot
-                  },
-                  child: const Text(
-                    'Save',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20.0),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInputField(String label, String preFilledText, BuildContext context, {int maxLines = 1}) {
-    TextEditingController controller = TextEditingController(text: preFilledText);
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-      child: Theme(
-        data: Theme.of(context).copyWith(
-          inputDecorationTheme: InputDecorationTheme(
-            floatingLabelStyle: const TextStyle(
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-        ),
-        child: TextField(
-          controller: controller,
-          maxLines: maxLines,
-          style: const TextStyle(
-            fontSize: 14.0,
-            color: Colors.black,
-          ),
-          decoration: InputDecoration(
-            labelText: label,
-            floatingLabelBehavior: FloatingLabelBehavior.auto,
-            labelStyle: const TextStyle(
-              fontSize: 14.0,
-              color: Colors.black,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.0),
-              borderSide: const BorderSide(
-                color: Colors.teal,
-                width: 1.0,
-              ),
-            ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
-          ),
-        ),
-      ),
-    );
-  }
-
-
-  Widget _buildPromptField() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+    return Dialog(
       child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10.0),
-          border: Border.all(color: Colors.grey),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+        padding: const EdgeInsets.all(AppPadding.p20),
+        child: Form(
+          key: _formKey,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                'Prompt',
+              const Text(
+                'Edit Prompt',
                 style: TextStyle(
-                  fontSize: 14.0,
-                  color: Colors.black,
+                  fontSize: AppSize.s20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 6.0),
+              const SizedBox(height: AppSize.s20),
+              TextFormField(
+                controller: _titleController,
+                decoration: const InputDecoration(labelText: 'Title'),
+                validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+              ),
+              const SizedBox(height: AppSize.s16),
+              TextFormField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(labelText: 'Description'),
+                validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+              ),
+              const SizedBox(height: AppSize.s16),
+              TextFormField(
+                controller: _contentController,
+                decoration: const InputDecoration(labelText: 'Content'),
+                validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+              ),
+              const SizedBox(height: AppSize.s16),
+              TextFormField(
+                controller: _categoryController,
+                decoration: const InputDecoration(labelText: 'Category'),
+                validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+              ),
+              const SizedBox(height: AppSize.s16),
+              SwitchListTile(
+                title: const Text('Public'),
+                value: _isPublic,
+                onChanged: (bool value) {
+                  setState(() => _isPublic = value);
+                },
+              ),
+              const SizedBox(height: AppSize.s24),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: ColorManager.teal), // Set border color and width
-                      borderRadius: BorderRadius.circular(AppSize.s8),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-                    child: Text(
-                      '4 units',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.green.shade800,
+                  Expanded(
+                    child: TextButton(
+                      onPressed: _isLoading ? null : () => Navigator.pop(context),
+                      style: TextButton.styleFrom(
+                        foregroundColor: ColorManager.teal,
+                        padding: const EdgeInsets.symmetric(vertical: AppPadding.p12),
+                        backgroundColor: ColorManager.teal.withOpacity(0.1),
                       ),
+                      child: const Text('Cancel'),
                     ),
                   ),
-                  const SizedBox(width: 10.0),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
+                  const SizedBox(width: AppSize.s16),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _handleUpdate,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorManager.teal,
+                        padding: const EdgeInsets.symmetric(vertical: AppPadding.p12),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-                    ),
-                    onPressed: () {
-                      // Add Prompt logic
-                    },
-                    child: const Text(
-                      'Add',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                      child: _isLoading
+                          ? const CircularProgressIndicator()
+                          : const Text('Update'),
                     ),
                   ),
                 ],
