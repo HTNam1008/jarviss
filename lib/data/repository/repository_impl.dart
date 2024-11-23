@@ -4,8 +4,8 @@ import 'package:jarvis/data/mapper/mapper.dart';
 import 'package:jarvis/data/network/error_handler.dart';
 import 'package:jarvis/data/network/failure.dart';
 import 'package:jarvis/data/network/network_info.dart';
-import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.dart';
 import 'package:jarvis/data/request/ai_chat/authentication/request.dart';
+import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 
