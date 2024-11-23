@@ -14,11 +14,12 @@ class ConstantAPI {
   static const refreshToken = '/api/v1/auth/refresh';
   static const sendMessage = '/api/v1/ai-chat/messages';
   static const tokenUsage = '/api/v1/tokens/usage';
+  static const getConversations = '/api/v1/ai-chat/conversations';
 }
 
 class ConstantAssistantID {
     static const String CLAUDE_3_HAIKU_20240307 = 'Claude 3 Haiku';
-    static const String CLAUDE_3_SONNET_20240229 = 'Claude 3 Sonnet';
+    static const String CLAUDE_35_SONNET_20240229 = 'Claude 3.5 Sonnet';
     static const String GEMINI_15_FLASH_LATEST = "Gemini 1.5 Flash";
     static const String GEMINI_15_PRO_LATEST = "Gemini 1.5 Pro";
     static const String GPT_4_O = "GPT-4o";

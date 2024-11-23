@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/strings_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 
 class ChatInputBox extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSend;
+  final bool? isSending;
 
   ChatInputBox({
     required this.controller,
-    required this.onSend,
+    required this.onSend, 
+    this.isSending,
   });
 
   @override
@@ -44,8 +45,8 @@ class ChatInputBox extends StatelessWidget {
             ),
           ),
           IconButton(
-            icon: Icon(Icons.send, color: ColorManager.teal),
-            onPressed: onSend,
+            icon: Icon(Icons.send, color: isSending != null ? (isSending! ? Colors.grey : Colors.teal) : Colors.grey),
+            onPressed: isSending != null ? (isSending! ? null : onSend) : null,
           ),
         ],
       ),

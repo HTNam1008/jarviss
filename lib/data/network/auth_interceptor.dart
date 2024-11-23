@@ -1,8 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:jarvis/app/app_prefs.dart';
 import 'package:jarvis/app/constant.dart';
 import 'package:jarvis/data/network/app_api.dart';
+import 'package:jarvis/presentation/resources/navigator_manager.dart';
+import 'package:jarvis/presentation/resources/route_manager.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class AuthInterceptor extends Interceptor {
@@ -58,7 +61,7 @@ class AuthInterceptor extends Interceptor {
     try {
       final refreshToken = await _appPreferences.getRefreshToken();
       if (refreshToken.isEmpty) return false;
-
+      print("refresh token: $refreshToken");
       // Use a new Dio instance without interceptors for refresh token
       Dio refreshDio = Dio();
       refreshDio.options = BaseOptions(
@@ -96,8 +99,11 @@ class AuthInterceptor extends Interceptor {
   }
 
   void _navigateToLogin() {
-    // Navigate to the sign-in screen
-    print("navigate to sign in");
-    // Implement navigation logic here using navigatorKey or any other method
+  _appPreferences.clearTokens();
+  Navigator.pushNamedAndRemoveUntil(
+      navigatorKey.currentContext!,
+      Routes.signInRoute,
+      (route) => false, // This will remove all previous routes
+    );
   }
 }
