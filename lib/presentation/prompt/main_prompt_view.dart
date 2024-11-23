@@ -340,29 +340,37 @@ class _PromptViewState extends State<PromptView> {
   List<Widget> _generateListTab() {
     final categories = _viewModel.getPromptCategories();
     return categories.map((category) {
-      final bool isSelected = _currentCategory == category;
-      return GestureDetector(
-        onTap: () {
-          setState(() {
-            _currentCategory = category;
-            _viewModel.setCurrentCategory(category);
-          });
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-          margin: const EdgeInsets.symmetric(horizontal: 4.0),
-          decoration: BoxDecoration(
-            color: isSelected ? Colors.teal : Colors.white,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Text(
-            category,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: isSelected ? Colors.white : Colors.black,
+      return StreamBuilder<String>(
+          stream: _viewModel.currentCategoryStream,
+          initialData: _viewModel.currentCategory,
+          builder: (context, snapshot)
+      {
+        final bool isSelected = _currentCategory == category;
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              _currentCategory = category;
+              _viewModel.setCurrentCategory(category);
+            });
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+                horizontal: 16.0, vertical: 10.0),
+            margin: const EdgeInsets.symmetric(horizontal: 4.0),
+            decoration: BoxDecoration(
+              color: isSelected ? Colors.teal : Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text(
+              category,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: isSelected ? Colors.white : Colors.black,
+              ),
             ),
           ),
-        ),
+        );
+      }
       );
     }).toList();
   }
@@ -520,6 +528,11 @@ class PromptViewModel extends BaseViewModel {
   final StreamController<String> _errorStreamController = StreamController<String>.broadcast();
   final StreamController<List<Prompt>> _favoritesStreamController = StreamController<List<Prompt>>.broadcast();
   final StreamController<List<Prompt>> _privatePromptsStreamController = StreamController<List<Prompt>>.broadcast();
+  final StreamController<String> _currentCategoryController = StreamController<String>.broadcast();
+
+
+  Stream<String> get currentCategoryStream => _currentCategoryController.stream;
+  String get currentCategory => _currentCategory;
   List<Prompt> favoritePrompts = [];
   List<Prompt> privatePrompts = [];
   String _searchQuery = '';
@@ -532,27 +545,26 @@ class PromptViewModel extends BaseViewModel {
   PromptViewModel(this._getPublicPromptsUseCase, this._addPromptToFavoriteUseCase, this._createPromptUseCase, this._getPrivatePromptsUseCase, this._updatePromptUseCase, this._deletePromptUseCase);
 
   // Helper method to refresh the current view based on mode and category
-  void refreshCurrentView(category) {
-    log(category.toString());
+  void refreshCurrentView() {
     if (_isPublicMode) {
-      getPrompts(category, query: _searchQuery);
+      getPrompts(_currentCategory, query: _searchQuery);
     } else {
-      getPrivatePrompts(category, query: _searchQuery);
+      getPrivatePrompts(_currentCategory, query: _searchQuery);
     }
   }
 
   void setSearchQuery(String query) {
     _searchQuery = query;
-    refreshCurrentView(this._currentCategory);  // Refresh with new search query
+    refreshCurrentView();  // Refresh with new search query
   }
 
   void executeSearch() {
-    refreshCurrentView(this._currentCategory); // Only refresh when search is executed
+    refreshCurrentView(); // Only refresh when search is executed
   }
 
   void clearSearch() {
     _searchQuery = '';
-    refreshCurrentView(this._currentCategory);
+    refreshCurrentView();
   }
 
   Future<void> getPrompts(String category, {bool? isFavorite, String? query}) async {
@@ -632,7 +644,7 @@ class PromptViewModel extends BaseViewModel {
             else{
               _privatePromptsStreamController.add(prompts);
             }
-            refreshCurrentView(_currentCategory);
+            refreshCurrentView();
           }
         }
     );
@@ -651,7 +663,7 @@ class PromptViewModel extends BaseViewModel {
     (await _createPromptUseCase.execute(request)).fold(
             (failure) => _errorStreamController.add(failure.message),
             (_) {
-              refreshCurrentView(_currentCategory); // Refresh the list after creating
+              refreshCurrentView(); // Refresh the list after creating
             }
     );
   }
@@ -661,7 +673,7 @@ class PromptViewModel extends BaseViewModel {
     (await _updatePromptUseCase.execute(request)).fold(
             (failure) => _errorStreamController.add(failure.message),
             (_) {
-                 refreshCurrentView(_currentCategory); // Refresh the list after updating
+                 refreshCurrentView(); // Refresh the list after updating
             }
     );
   }
@@ -670,7 +682,7 @@ class PromptViewModel extends BaseViewModel {
     (await _deletePromptUseCase.execute(id)).fold(
             (failure) => _errorStreamController.add(failure.message),
             (_) {
-              refreshCurrentView(this._currentCategory); // Refresh the list after updating
+              refreshCurrentView(); // Refresh the list after updating
             }
     );
   }
@@ -698,7 +710,7 @@ class PromptViewModel extends BaseViewModel {
 
   void toggleFavoriteFilter() {
     showFavorites = !showFavorites;
-    getPrompts('all');
+    getPrompts('All');
   }
 
   List<String> getPromptCategories() {

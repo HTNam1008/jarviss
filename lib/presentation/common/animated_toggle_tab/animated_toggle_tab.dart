@@ -96,9 +96,9 @@ class _AppinioAnimatedToggleTabState extends State<AppinioAnimatedToggleTab> {
                         index = i;
                         widget.callback(i);
                         if (i == 0) {
-                          GetIt.instance<PromptViewModel>().getPrivatePrompts("all");
+                          GetIt.instance<PromptViewModel>().getPrivatePrompts("All");
                         } else {
-                          GetIt.instance<PromptViewModel>().getPrompts("all");
+                          GetIt.instance<PromptViewModel>().getPrompts("All");
                         }
                       });
                     },
