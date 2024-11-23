@@ -17,19 +17,17 @@ class PromptRepositoryImpl implements PromptRepository {
   PromptRepositoryImpl(this._remoteDataSource, this._networkInfo);
 
   @override
-  Future<Either<Failure, List<Prompt>>> getPublicPrompts(String category, {bool? isFavorite, String? query}) async {
+  Future<Either<Failure, List<Prompt>>> getPublicPrompts(String category, {bool? isFavorite, String? query,int? limit}) async {
     if (await _networkInfo.isConnected) {
       try {
-        // Only pass category if it's not "all"
         final categoryParam = category.toLowerCase() == "all" ? null : category.toLowerCase();
-
         final response = await _remoteDataSource.getPrompts(
-            categoryParam,
-            true,
-            isFavorite: isFavorite,
-            query: query
+          categoryParam,
+          true,
+          isFavorite: isFavorite,
+          query: query,
+          limit: limit,
         );
-        log("hello"+response.toString());
         return Right(response.items.map((e) => e.toDomain()).toList());
       } catch (error) {
         return Left(ErrorHandler.handle(error).failure);

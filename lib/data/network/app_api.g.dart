@@ -189,6 +189,7 @@ class _AppServiceClient implements AppServiceClient {
     bool isPublic,
     bool? isFavorite,
     String? query,
+    int? limit,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -196,6 +197,7 @@ class _AppServiceClient implements AppServiceClient {
       r'isPublic': isPublic,
       r'isFavorite': isFavorite,
       r'query': query,
+      r'limit': limit,
     };
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};

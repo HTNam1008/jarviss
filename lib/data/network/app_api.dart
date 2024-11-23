@@ -46,6 +46,7 @@ abstract class AppServiceClient {
       @Query("isPublic") bool isPublic,
       @Query("isFavorite") bool? isFavorite,
       @Query("query") String? query,
+      @Query("limit") int? limit, // Add limit parameter
       );
 
   @POST("/api/v1/prompts/{id}/favorite")

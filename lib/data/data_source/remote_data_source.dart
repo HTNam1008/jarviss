@@ -16,7 +16,7 @@ abstract class RemoteDataSource {
   Future<RefreshTokenResponse> refreshToken(String refreshTokenRequest);
   Future<SendMessageResponse> sendMessage(SendMessageRequest sendMessageRequest);
   Future<TokenUsageResponse> getTokenUsage();
-  Future<GetPromptsResponse> getPrompts(String? category, bool isPublic,  {bool? isFavorite, String? query});
+  Future<GetPromptsResponse> getPrompts(String? category, bool isPublic,  {bool? isFavorite, String? query, int? limit,});
   Future<void> addToFavorites(String promptId);
   Future<PromptResponse> createPrompt(CreatePromptRequest request);
   Future<void> updatePrompt(String promptId, UpdatePromptRequest request);
@@ -59,8 +59,8 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   }
 
   @override
-  Future<GetPromptsResponse> getPrompts(String? category, bool isPublic,  {bool? isFavorite, String? query}) async {
-    return await _appServiceClient.getPrompts(category, isPublic, isFavorite, query);
+  Future<GetPromptsResponse> getPrompts(String? category, bool isPublic,  {bool? isFavorite, String? query, int? limit}) async {
+    return await _appServiceClient.getPrompts(category, isPublic, isFavorite, query, limit,);
   }
 
   @override

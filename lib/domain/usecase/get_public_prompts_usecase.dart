@@ -16,7 +16,7 @@ class GetPublicPromptsUseCase implements BaseUseCase<GetPublicPromptsUseCaseInpu
   @override
   Future<Either<Failure, List<Prompt>>> execute(GetPublicPromptsUseCaseInput input) async {
 
-    return await _repository.getPublicPrompts(input.category, isFavorite: input.isFavorite, query: input.query);
+    return await _repository.getPublicPrompts(input.category, isFavorite: input.isFavorite, query: input.query, limit: input.limit);
   }
 }
 
@@ -35,9 +35,10 @@ class GetPublicPromptsUseCaseInput {
   final String category;
   final bool? isFavorite;
   final String? query;  // Add query parameter
+  final int? limit;
 
 
-  GetPublicPromptsUseCaseInput(this.category, {this.isFavorite, this.query});
+  GetPublicPromptsUseCaseInput(this.category, {this.isFavorite, this.query, this.limit});
 }
 
 class AddPromptToFavoriteUseCase implements BaseUseCase<String, void> {

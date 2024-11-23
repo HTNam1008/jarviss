@@ -538,8 +538,8 @@ class PromptViewModel extends BaseViewModel {
   Stream<List<Prompt>> get promptsStream => _promptsStreamController.stream;
   Stream<List<Prompt>> get favoritesStream => _favoritesStreamController.stream;
   Stream<List<Prompt>> get privatePromptsStream => _privatePromptsStreamController.stream;
-
   Stream<String> get errorStream => _errorStreamController.stream;
+
   PromptViewModel(this._getPublicPromptsUseCase, this._addPromptToFavoriteUseCase, this._createPromptUseCase, this._getPrivatePromptsUseCase, this._updatePromptUseCase, this._deletePromptUseCase);
 
   // Helper method to refresh the current view based on mode and category
@@ -565,17 +565,18 @@ class PromptViewModel extends BaseViewModel {
     refreshCurrentView();
   }
 
-  Future<void> getPrompts(String category, {bool? isFavorite, String? query}) async {
+  Future<void> getPrompts(String category, {bool? isFavorite, String? query, int? limit}) async {
     final input = GetPublicPromptsUseCaseInput(
         category.toLowerCase(),
         isFavorite: isFavorite,
-        query: query?.isNotEmpty == true ? query : null
+        query: query?.isNotEmpty == true ? query : null,
+        limit: (limit != null) == true ? limit : 50
     );
 
     (await _getPublicPromptsUseCase.execute(input)).fold(
             (failure) => _errorStreamController.add(failure.message),
             (fetchedPrompts) {
-          prompts = fetchedPrompts.sublist(0,100);
+          prompts = fetchedPrompts;
           log(prompts.toString());
           _promptsStreamController.add(prompts);
         }

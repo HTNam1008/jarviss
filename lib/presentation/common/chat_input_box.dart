@@ -54,7 +54,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
 
   void _fetchPromptSuggestions() async {
     try {
-      await _promptViewModel.getPrompts("Marketing");
+      await _promptViewModel.getPrompts("Marketing",limit: 3);
 
       // Safely get first 3 prompts
       if (mounted) {
