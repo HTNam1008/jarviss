@@ -4,11 +4,16 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:jarvis/app/constant.dart';
+import 'package:jarvis/data/request/ai_chat/send_message/assistant.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/presentation/chat/chat_viewmodel.dart';
+import 'package:jarvis/presentation/common/app_drawer.dart';
 import 'package:jarvis/presentation/common/chat_input_box.dart';
+import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
+import 'package:jarvis/presentation/resources/route_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 
 
@@ -25,9 +30,22 @@ class _ChatViewState extends State<ChatView> {
   late final StreamSubscription<String?> _errorSubscription;
   final getIt = GetIt.instance;
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  final List<String> assistantModels = [
+    ConstantAssistantID.GPT_4_O,
+    ConstantAssistantID.GPT_4_O_MINI,
+    ConstantAssistantID.CLAUDE_3_HAIKU_20240307,
+    ConstantAssistantID.CLAUDE_3_SONNET_20240229,
+    ConstantAssistantID.GEMINI_15_FLASH_LATEST,
+    ConstantAssistantID.GEMINI_15_PRO_LATEST,
+  ];
+
+  late String selectedModel;
   @override
   void initState() {
     super.initState();
+    selectedModel = assistantModels[0];
     _viewModel = getIt<ChatViewModel>();
     _viewModel.start();
 
@@ -51,9 +69,66 @@ class _ChatViewState extends State<ChatView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('Jarvis Chat'),
-      // ),
+      key: _scaffoldKey,
+      drawer: const AppDrawer(),
+      appBar: CustomHeaderBar(
+              centerWidget: DropdownButton<String>(
+              value: selectedModel,
+              dropdownColor: ColorManager.teal,
+              style: TextStyle(color: ColorManager.white),
+              underline: const SizedBox(),
+              onChanged: (String? newValue) {
+                if (newValue != null) {
+                  setState(() {
+                    selectedModel = newValue;
+                  });
+                }
+              },
+              items: assistantModels.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+            leading: IconButton(
+              icon: const Icon(Icons.menu, color: Colors.white),
+              onPressed: () {
+                _scaffoldKey.currentState?.openDrawer();
+              },
+            ),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(Routes.upgradeProRoute);
+                    },
+                    child: Text(
+                      "Upgrade",
+                      style: TextStyle(color: Colors.blue.shade100, fontSize: AppSize.s16),
+                    )),
+                StreamBuilder<int>(
+                  stream: _viewModel.remainingUsageStream,
+                  builder: (context, snapshot) {
+                    int remainingUsage = snapshot.data ?? 50;
+                    return Container(
+                      margin: const EdgeInsets.only(right: AppSize.s8),
+                      padding: const EdgeInsets.symmetric(horizontal: AppSize.s12, vertical: AppSize.s6),
+                      decoration: BoxDecoration(
+                        color: Colors.teal[400],
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      child: Row(
+                        children: [
+                          Text('$remainingUsage', style: TextStyle(color: ColorManager.white, fontSize: AppSize.s16)),
+                          const SizedBox(width: AppSize.s4),
+                          Icon(Icons.star, color: ColorManager.white, size: AppSize.s16),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
       body: SafeArea(
         child: Column(
           children: [
@@ -212,7 +287,7 @@ class _ChatViewState extends State<ChatView> {
   void _sendMessage() {
     String message = _chatController.text.trim();
     if (message.isNotEmpty) {
-      _viewModel.sendMessage(message);
+      _viewModel.sendMessage(message, selectedModel);
       _chatController.clear();
     }
   }

@@ -5,7 +5,8 @@ import 'package:jarvis/app/constant.dart';
 import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.dart';
 import 'package:jarvis/data/responses/ai_chat/send_message_response.dart';
 import 'package:jarvis/data/responses/responses.dart';
-import 'package:jarvis/data/request/request.dart';
+import 'package:jarvis/data/request/ai_chat/authentication/request.dart';
+import 'package:jarvis/data/responses/token/token_usage_response.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'app_api.g.dart';
@@ -59,4 +60,7 @@ abstract class AppServiceClient {
 
   @DELETE("/api/v1/prompts/{id}")
   Future<void> deletePrompt(@Path("id") String promptId);
+
+  @GET(ConstantAPI.tokenUsage)
+  Future<TokenUsageResponse> getTokenUsage();
 }

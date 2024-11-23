@@ -1,3 +1,6 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:jarvis/data/request/ai_chat/send_message/assistant.dart';
+
 class User {
   final String id;
   final String email;
@@ -28,6 +31,20 @@ class Token {
   });
 }
 
+class TokenUsage {
+  final int availaleTokens;
+  final int totalToken;
+  final bool unlimited;
+  final DateTime date;
+
+  TokenUsage({
+    required this.availaleTokens,
+    required this.totalToken,
+    required this.unlimited,
+    required this.date,
+  });
+}
+
 class Message {
   final String conversationId;
   final String message;
@@ -35,11 +52,14 @@ class Message {
   final bool isUser;
   final DateTime timestamp = DateTime.now();
 
+  final Assistant? assistant;
+
   Message({
     required this.conversationId,
     required this.message,
     required this.remainingUsage,
     required this.isUser,
+    this.assistant,
   });
 
   Message copyWith({

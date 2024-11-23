@@ -2,9 +2,10 @@ import 'dart:developer';
 
 import 'package:jarvis/data/network/app_api.dart';
 import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.dart';
-import 'package:jarvis/data/request/request.dart';
+import 'package:jarvis/data/request/ai_chat/authentication/request.dart';
 import 'package:jarvis/data/responses/ai_chat/send_message_response.dart';
 import 'package:jarvis/data/responses/responses.dart';
+import 'package:jarvis/data/responses/token/token_usage_response.dart';
 
 abstract class RemoteDataSource {
   Future<SignInResponse> signIn(SignInRequest signInRequest);
@@ -12,6 +13,7 @@ abstract class RemoteDataSource {
   Future<void> signOut();
   Future<RefreshTokenResponse> refreshToken(String refreshTokenRequest);
   Future<SendMessageResponse> sendMessage(SendMessageRequest sendMessageRequest);
+  Future<TokenUsageResponse> getTokenUsage();
   Future<GetPromptsResponse> getPrompts(String? category, bool isPublic,  {bool? isFavorite, String? query});
   Future<void> addToFavorites(String promptId);
   Future<PromptResponse> createPrompt(CreatePromptRequest request);
@@ -47,6 +49,11 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   @override
   Future<SendMessageResponse> sendMessage(SendMessageRequest sendMessageRequest) async {
     return await _appServiceClient.sendMessage(sendMessageRequest);
+  }
+
+  @override
+  Future<TokenUsageResponse> getTokenUsage() async {
+    return await _appServiceClient.getTokenUsage();
   }
 
   @override

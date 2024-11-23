@@ -2,9 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:jarvis/app/app_prefs.dart';
 import 'package:jarvis/app/constant.dart';
-import 'package:jarvis/data/data_source/remote_data_source.dart';
 import 'package:jarvis/data/network/app_api.dart';
-import 'package:jarvis/data/request/request.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class AuthInterceptor extends Interceptor {
