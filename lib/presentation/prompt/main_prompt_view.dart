@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:jarvis/domain/usecase/delete_prompt_usecase.dart';
@@ -448,7 +449,14 @@ class _PromptViewState extends State<PromptView> {
   }
 
   Widget _buildPromptItem(Prompt prompt) {
-    return Container(
+    return InkWell(
+        onTap: () {
+      showDialog(
+        context: context,
+        builder: (context) => PromptDetailDialog(prompt: prompt),
+      );
+      },
+      child: Container(
       margin: const EdgeInsets.symmetric(vertical: AppSize.s6, horizontal: AppSize.s8),
       padding: const EdgeInsets.all(AppSize.s4),
       decoration: BoxDecoration(
@@ -495,6 +503,7 @@ class _PromptViewState extends State<PromptView> {
           ],
         ),
       ),
+    ),
     );
   }
   @override
@@ -854,6 +863,183 @@ class _FavoritePromptsModalState extends State<FavoritePromptsModal> {
                   return const Center(child: CircularProgressIndicator());
                 },
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class PromptDetailDialog extends StatelessWidget {
+  final Prompt prompt;
+
+  const PromptDetailDialog({
+    required this.prompt,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppSize.s12),
+      ),
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.9,
+        padding: const EdgeInsets.all(AppSize.s20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header with title and close button
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        prompt.title,
+                        style: const TextStyle(
+                          fontSize: AppSize.s20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: AppSize.s4),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSize.s8,
+                              vertical: AppSize.s4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: ColorManager.teal.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(AppSize.s12),
+                            ),
+                            child: Text(
+                              prompt.category.toUpperCase(),
+                              style: TextStyle(
+                                fontSize: AppSize.s12,
+                                color: ColorManager.teal,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: AppSize.s8),
+                          Text(
+                            'By ${prompt.userName}',
+                            style: TextStyle(
+                              fontSize: AppSize.s12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.close),
+                  iconSize: AppSize.s20,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSize.s16),
+
+            // Description
+            if (prompt.description.isNotEmpty) ...[
+              Text(
+                'Description',
+                style: TextStyle(
+                  fontSize: AppSize.s14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[800],
+                ),
+              ),
+              const SizedBox(height: AppSize.s8),
+              Text(
+                prompt.description,
+                style: TextStyle(
+                  fontSize: AppSize.s14,
+                  color: Colors.grey[600],
+                ),
+              ),
+              const SizedBox(height: AppSize.s16),
+            ],
+
+            // Content
+            Text(
+              'Content',
+              style: TextStyle(
+                fontSize: AppSize.s14,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[800],
+              ),
+            ),
+            const SizedBox(height: AppSize.s8),
+            Container(
+              padding: const EdgeInsets.all(AppSize.s12),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                borderRadius: BorderRadius.circular(AppSize.s8),
+                border: Border.all(color: Colors.grey.shade200),
+              ),
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.3,
+              ),
+              child: SingleChildScrollView(
+                child: Text(
+                  prompt.content,
+                  style: const TextStyle(fontSize: AppSize.s14),
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSize.s20),
+
+            // Actions
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                // Favorite button
+                IconButton(
+                  onPressed: () {
+                    GetIt.instance<PromptViewModel>().toggleFavorite(prompt);
+                  },
+                  icon: Icon(
+                    prompt.isFavorite ? Icons.star : Icons.star_border,
+                    color: prompt.isFavorite ? Colors.amber : Colors.grey,
+                  ),
+                ),
+                const SizedBox(width: AppSize.s8),
+                // Copy button
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Clipboard.setData(ClipboardData(text: prompt.content));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Prompt content copied to clipboard'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.copy, size: 16),
+                  label: const Text('Copy'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorManager.teal,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSize.s16,
+                      vertical: AppSize.s8,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
