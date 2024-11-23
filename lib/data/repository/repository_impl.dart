@@ -4,39 +4,135 @@ import 'package:jarvis/data/mapper/mapper.dart';
 import 'package:jarvis/data/network/error_handler.dart';
 import 'package:jarvis/data/network/failure.dart';
 import 'package:jarvis/data/network/network_info.dart';
-import 'package:jarvis/data/request/request.dart';
+import 'package:jarvis/data/request/ai_chat/conversation/conversation_history_request.dart';
+import 'package:jarvis/data/request/ai_chat/conversation/conversations_request.dart';
+import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.dart';
+import 'package:jarvis/data/request/authentication/request.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 
-class RepositoryImpl implements  Repository {
+class RepositoryImpl implements Repository {
   final RemoteDataSource _remoteDataSource;
   final NetworkInfo _networkInfo;
 
   RepositoryImpl(this._remoteDataSource, this._networkInfo);
 
   @override
-  Future<Either<Failure, Authentication>> login(
-      LoginRequest loginRequest) async {
+  Future<Either<Failure, Token>> signIn(SignInRequest signInRequest) async {
     if (await _networkInfo.isConnected) {
       try {
-        // its safe to call
-        final response = await _remoteDataSource.login(loginRequest);
+        final response = await _remoteDataSource.signIn(signInRequest);
 
-        if (response.status == ApiInternalStatus.SUCCESS) {
-          // return data (success)
-          // return right
-          return Right(response.toDomain());
-        } else {
-          // return business logic error
-          // return left
-          return Left(Failure(response.status ?? ApiInternalStatus.FAILURE,
-              response.message ?? ResponseMessage.DEFAULT));
-        }
+        return Right(response.toDomain());
       } catch (error) {
         return Left(ErrorHandler.handle(error).failure);
       }
     } else {
-      // return connection error
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, User>> signUp(SignUpRequest signUpRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.signUp(signUpRequest);
+
+        return Right(response.toDomain());
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> signOut() async {
+    if (await _networkInfo.isConnected) {
+      try {
+        await _remoteDataSource.signOut();
+        
+        return const Right(null);
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+  
+  @override
+  Future<Either<Failure, Token>> refreshToken(String refreshTokenRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.refreshToken(refreshTokenRequest);
+
+        return Right(response.toDomain());
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, Message>> sendMessage(SendMessageRequest sendMessageRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.sendMessage(sendMessageRequest);
+
+        return Right(response.toDomain(isUser: false));
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, TokenUsage>> getTokenUsage() async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.getTokenUsage();
+
+        return Right(response.toDomain());
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, Conversations>> getConversations(ConversationsRequest conversationsRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.getConversations(conversationsRequest);
+
+        return Right(response.toDomain());
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, ConversationHistory>> getConversationHistory(ConversationHistoryRequest conversationHistoryRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.getConversationHistory(conversationHistoryRequest);
+
+        return Right(response.toDomain());
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
       return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
     }
   }

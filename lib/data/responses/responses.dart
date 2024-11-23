@@ -1,69 +1,170 @@
+import 'package:jarvis/domain/model/model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'responses.g.dart';
 
 @JsonSerializable()
-class BaseResponse {
-  @JsonKey(name: "status")
-  int? status;
+class UserResponse {
+  final String email;
+  final String password;
+  final String username;
+  final bool isActive;
+  final List<String> usedAuthOptions;
+  final List<String> roles;
+  final String? createdBy;
+  final String? updatedBy;
+  final String? hashedRefreshToken;
+  final String createdAt;
+  final String updatedAt;
+  final String? deletedAt;
+  final String id;
 
-  @JsonKey(name: "message")
-  String? message;
+  UserResponse({
+    required this.email,
+    required this.password,
+    required this.username,
+    required this.isActive,
+    required this.usedAuthOptions,
+    required this.roles,
+    this.createdBy,
+    this.updatedBy,
+    this.hashedRefreshToken,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    required this.id,
+  });
+
+  factory UserResponse.fromJson(Map<String, dynamic> json) =>
+      _$UserResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserResponseToJson(this);
 }
 
 @JsonSerializable()
-class CustomerResponse {
-  @JsonKey(name: "id")
-  String? id;
+class SignUpResponse {
+  final UserResponse user;
 
-  @JsonKey(name: "name")
-  String? name;
+  SignUpResponse({required this.user});
 
-  @JsonKey(name: "numOfNotifications")
-  int? numOfNotifications;
+  factory SignUpResponse.fromJson(Map<String, dynamic> json) =>
+      _$SignUpResponseFromJson(json);
 
-  CustomerResponse(this.id, this.name, this.numOfNotifications);
-
-  //from json
-  factory CustomerResponse.fromJson(Map<String, dynamic> json) => _$CustomerResponseFromJson(json);
-
-  // to json
-  Map<String, dynamic> toJson() => _$CustomerResponseToJson(this);
+  Map<String, dynamic> toJson() => _$SignUpResponseToJson(this);
 }
 
 @JsonSerializable()
-class ContactsResponse {
-  @JsonKey(name: "phone")
-  String? phone;
+class TokenResponse {
+  final String accessToken;
+  final String? refreshToken;
 
-  @JsonKey(name: "link")
-  String? link;
+  TokenResponse({
+    required this.accessToken,
+    this.refreshToken,
+  });
 
-  @JsonKey(name: "email")
-  String? email;
+  factory TokenResponse.fromJson(Map<String, dynamic> json) =>
+      _$TokenResponseFromJson(json);
 
-  ContactsResponse(this.phone, this.link, this.email);
-
-  //from json
-  factory ContactsResponse.fromJson(Map<String, dynamic> json) => _$ContactsResponseFromJson(json);
-
-  // to json
-  Map<String, dynamic> toJson() => _$ContactsResponseToJson(this);
+  Map<String, dynamic> toJson() => _$TokenResponseToJson(this);
 }
 
 @JsonSerializable()
-class AuthenticationResponse extends BaseResponse {
-  @JsonKey(name: "customer")
-  CustomerResponse? customer;
+class SignInResponse {
+  final TokenResponse token;
 
-  @JsonKey(name: "contacts")
-  ContactsResponse? contacts;
+  SignInResponse({required this.token});
 
-  AuthenticationResponse(this.contacts, this.customer);
+  factory SignInResponse.fromJson(Map<String, dynamic> json) =>
+      _$SignInResponseFromJson(json);
 
-  //from json
-  factory AuthenticationResponse.fromJson(Map<String, dynamic> json) => _$AuthenticationResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$SignInResponseToJson(this);
+}
 
-  // to json
-  Map<String, dynamic> toJson() => _$AuthenticationResponseToJson(this);
+@JsonSerializable()
+class SignOutResponse {
+  SignOutResponse();
+  
+  factory SignOutResponse.fromJson(Map<String, dynamic> json) =>
+      _$SignOutResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SignOutResponseToJson(this);
+}
+
+@JsonSerializable()
+class RefreshTokenResponse {
+  final TokenResponse token;
+
+  RefreshTokenResponse({required this.token});
+
+  factory RefreshTokenResponse.fromJson(Map<String, dynamic> json) =>
+      _$RefreshTokenResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RefreshTokenResponseToJson(this);
+}
+
+@JsonSerializable()
+class PromptCategoryResponse {
+  final String? value;
+  final String label;
+
+  PromptCategoryResponse({this.value, required this.label});
+
+  factory PromptCategoryResponse.fromJson(Map<String, dynamic> json) {
+    return PromptCategoryResponse(
+        value: json['value'],
+        label: json['label']
+    );
+  }
+}
+
+@JsonSerializable()
+class GetPromptsResponse {
+  final List<PromptResponse> items;
+
+  GetPromptsResponse({required this.items});
+
+  factory GetPromptsResponse.fromJson(Map<String, dynamic> json) {
+    return GetPromptsResponse(
+      items: (json['items'] as List)
+          .map((e) => PromptResponse.fromJson(e))
+          .toList(),
+    );
+  }
+}
+
+@JsonSerializable()
+class PromptResponse {
+  final String id;
+  final String title;
+  final String content;
+  final String description;
+  final String category;
+  final bool isPublic;
+  final String userName;
+  final bool isFavorite;
+
+  PromptResponse({
+    required this.id,
+    required this.title,
+    required this.content,
+    required this.description,
+    required this.category,
+    required this.isPublic,
+    required this.userName,
+    required this.isFavorite
+  });
+
+  factory PromptResponse.fromJson(Map<String, dynamic> json) {
+    return PromptResponse(
+        id: json['_id'],
+        title: json['title'],
+        content: json['content']?? '',
+        description: json['description'] ?? '',
+        category: json['category'],
+        isPublic: json['isPublic'],
+        userName: json['userName'],
+        isFavorite: json['isFavorite']
+    );
+  }
 }

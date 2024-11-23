@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:jarvis/presentation/base/baseviewmodel.dart';
-import 'package:jarvis/presentation/resources/route_manager.dart';
 
 class GettingStartedViewModel extends BaseViewModel {
   @override
@@ -19,6 +18,5 @@ class GettingStartedViewModel extends BaseViewModel {
   @override
   Future<void> navigateNamed(BuildContext context, String route) async {
     Navigator.pushNamed(context, route);
-
   }
 }

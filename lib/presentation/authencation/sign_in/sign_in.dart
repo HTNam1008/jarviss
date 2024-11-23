@@ -1,39 +1,73 @@
 import 'package:flutter/material.dart';
-import 'package:jarvis/presentation/login/login_viewmodel.dart';
+import 'package:get_it/get_it.dart';
+import 'package:jarvis/app/app_prefs.dart';
+import 'package:jarvis/domain/repository/repository.dart';
+import 'package:jarvis/domain/usecase/sign_in_usecase.dart';
+import 'package:jarvis/presentation/authencation/sign_in/sign_in_viewmodel.dart';
+import 'package:jarvis/presentation/common/dialog_util.dart';
 import 'package:jarvis/presentation/resources/assets_manager.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
 import 'package:jarvis/presentation/resources/route_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 
-class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+class SignInView extends StatefulWidget {
+  const SignInView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<SignInView> createState() => _SignInViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
-  final LoginViewModel _loginViewModel = LoginViewModel(null); // TODO: pass for loginUseCase
+class _SignInViewState extends State<SignInView> {
+  final getIt = GetIt.instance;
+  late SignInViewModel _signInViewModel;
 
-  final TextEditingController _userNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  bool isSignIn = false;
+
   _bind() {
-    _loginViewModel.start();
-    _userNameController.addListener(() => _loginViewModel.setUserName(_userNameController.text));
-    _passwordController.addListener(() => _loginViewModel.setPassword(_passwordController.text));
+    _signInViewModel.start();
+    _emailController.addListener(() => _signInViewModel.setEmail(_emailController.text));
+    _passwordController.addListener(() => _signInViewModel.setPassword(_passwordController.text));
+
+    _signInViewModel.signInStream.listen((isSuccess) {
+      if (isSuccess) {
+        // showCustomDialog(
+        //   context: context,
+        //   type: DialogType.success,
+        //   title: 'Sign in successfully',
+        //   message: 'Welcome to the Jarvis app!',
+        // ).then((_) {
+          _signInViewModel.navigateReplaceNamed(context, Routes.mainRoute);
+        // });
+      }
+    });
+
+    _signInViewModel.errorStream.listen((errorMessage) {
+      showCustomDialog(
+          context: context,
+          type: DialogType.error,
+          title: 'Sign in failed!',
+          message: errorMessage,
+        );
+    });
   }
 
   @override
   void initState() {
-    _bind();
     super.initState();
+    // Khởi tạo signInViewModel với signInUseCase
+    _signInViewModel = SignInViewModel(SignInUseCase(getIt<Repository>()), getIt<AppPreferences>());
+    _bind();
   }
 
   @override
   void dispose() {
-    _loginViewModel.dispose();
+    _signInViewModel.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -64,7 +98,7 @@ class _LoginViewState extends State<LoginView> {
                 ),
                 const SizedBox(height: AppSize.s24),
                 const Text(
-                  'Login',
+                  'Sign In',
                   style: TextStyle(
                     fontSize: AppSize.s28,
                     fontWeight: FontWeightManager.bold,
@@ -72,14 +106,14 @@ class _LoginViewState extends State<LoginView> {
                 ),
                 const SizedBox(height: AppSize.s8),
                 Text(
-                  'Please Login to continue',
+                  'Please Sign In to continue',
                   style: TextStyle(fontSize: AppSize.s16, color: ColorManager.grey),
                 ),
                 const SizedBox(height: AppSize.s24),
                 _buildTextField(
-                  controller: _userNameController,
-                  hintText: 'Username/Email',
-                  icon: Icons.person,
+                  controller: _emailController,
+                  hintText: 'Email',
+                  icon: Icons.email,
                 ),
                 const SizedBox(height: AppSize.s16),
                 _buildTextField(
@@ -93,36 +127,43 @@ class _LoginViewState extends State<LoginView> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () {
-                      _loginViewModel.navigateNamed(context, Routes.forgotPasswordRoute);
+                      _signInViewModel.navigateNamed(context, Routes.forgotPasswordRoute);
                     },
                     child: const Text('Forgot password?'),
                   ),
                 ),
                 const SizedBox(height: AppSize.s16),
                 ElevatedButton(
-                  onPressed: () {
-                    // TODO: Implement login functionality
-                    _loginViewModel.navigateReplaceNamed(context, Routes.mainRoute);
+                  onPressed: () async {
+                    setState(() {
+                      isSignIn = true;
+                    });
+                    await _signInViewModel.signIn();
+                    setState(() {
+                      isSignIn = false;
+                    });
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: AppSize.s16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppSize.s28),
                     ),
-                    backgroundColor: ColorManager.teal, // Make button background transparent
-                    shadowColor: Colors.transparent, // Remove shadow for a clean gradient effect
+                    backgroundColor: ColorManager.teal,
+                    shadowColor: Colors.transparent,
                   ),
                   child: Container(
                     alignment: Alignment.center,
                     height: AppSize.s20,
                     child: Text(
-                      'Login',
+                      'Sign In',
                       style: TextStyle(fontSize: FontSize.s16, color: ColorManager.white),
                     ),
                   ),
                 ),
                 const SizedBox(height: AppSize.s16),
-                const Text('Or Login With'),
+                isSignIn ? CircularProgressIndicator() : SizedBox.shrink(),
+                const SizedBox(height: AppSize.s16),
+                const Text('Or Sign In With'),
                 const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -134,7 +175,7 @@ class _LoginViewState extends State<LoginView> {
                 const SizedBox(height: AppSize.s16),
                 TextButton(
                   onPressed: () {
-                    _loginViewModel.navigateNamed(context, Routes.registerRoute);
+                    _signInViewModel.navigateNamed(context, Routes.signUpRoute);
                   },
                   child: const Text('Don\'t have an account? Register'),
                 ),
@@ -152,18 +193,24 @@ class _LoginViewState extends State<LoginView> {
     required IconData icon,
     bool obscureText = false,
   }) {
-    return TextField(
-      controller: controller,
-      obscureText: obscureText,
-      decoration: InputDecoration(
-        prefixIcon: Icon(icon),
-        hintText: hintText,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
-        filled: true,
-        fillColor: Colors.white,
-      ),
+    return StreamBuilder<bool>(
+      stream: hintText == 'Email' ? _signInViewModel.isEmailValid : _signInViewModel.isPasswordValid,
+      builder: (context, snapshot) {
+        return TextField(
+          controller: controller,
+          obscureText: obscureText,
+          decoration: InputDecoration(
+            prefixIcon: Icon(icon),
+            hintText: hintText,
+            errorText: (snapshot.data == false) ? 'Invalid $hintText' : null,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+            filled: true,
+            fillColor: Colors.white,
+          ),
+        );
+      },
     );
   }
 

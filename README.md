@@ -1,16 +1,11 @@
-# flutter_application_1
+# Advanced Mobile
 
-A new Flutter project.
+Final Project Flutter
 
-## Getting Started
+## Milestone 1: Mock UI
 
-This project is a starting point for a Flutter application.
+Link demo: https://drive.google.com/file/d/17gH4uoRa0VL2we6ZDSFF3QtE3Eqrxzvx/view?usp=sharing
 
-A few resources to get you started if this is your first Flutter project:
+## Milestone 2: 
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Link demo 1: https://drive.google.com/file/d/1L0h7rxfhdxXryCWq04Vva-rbGlqcWEdQ/view?usp=sharing

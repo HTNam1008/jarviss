@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jarvis/presentation/authencation/sign_out/sign_out.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
 
 class DetailProfileView extends StatelessWidget {
@@ -19,7 +20,7 @@ class DetailProfileView extends StatelessWidget {
         ),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -30,8 +31,8 @@ class DetailProfileView extends StatelessWidget {
           child: Column(
             children: [
               Container(
-                padding: EdgeInsets.only(top: 20.0),
-                child: Column(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: const Column(
                   children: [
                     CircleAvatar(
                       radius: 40.0,
@@ -71,7 +72,7 @@ class DetailProfileView extends StatelessWidget {
             ),
           ),
           onPressed: () {
-            // Logout logic
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const SignOutView()));
           },
           child: const Text('Log out',style: TextStyle(
             fontWeight: FontWeight.w600,
@@ -97,7 +98,7 @@ class DetailProfileView extends StatelessWidget {
           children: [
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
@@ -112,8 +113,8 @@ class DetailProfileView extends StatelessWidget {
                     ),
                   ),
                   editable
-                      ? Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
+                      ? const Padding(
+                    padding: EdgeInsets.only(left: 8.0),
                     child: Icon(
                       Icons.arrow_forward_ios,
                       size: 16.0,
@@ -123,7 +124,7 @@ class DetailProfileView extends StatelessWidget {
                       : Padding(
                     padding: const EdgeInsets.only(left: 8.0),
                     child: IconButton(
-                      icon: Icon(Icons.copy, size: 20.0, color: Colors.grey),
+                      icon: const Icon(Icons.copy, size: 20.0, color: Colors.grey),
                       onPressed: () {
                         // Copy User ID to clipboard
                         ScaffoldMessenger.of(context).showSnackBar(

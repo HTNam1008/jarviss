@@ -1,33 +1,39 @@
-import 'dart:io';
+import "package:jarvis/app/constant.dart";
 
-import 'package:device_info/device_info.dart';
-import 'package:flutter/services.dart';
-import 'package:jarvis/domain/model/model.dart';
-
-Future<DeviceInfo> getDeviceDetails() async {
-  String name = "unknown";
-  String version = "unknown";
-  String identifier = "unknown";
-
-  DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
-
-  try {
-    if (Platform.isAndroid) {
-      // return android device info
-      var build = await deviceInfoPlugin.androidInfo;
-      name = "${build.brand} ${build.model}";
-      identifier = build.androidId;
-      version = build.version.codename;
-    } else if (Platform.isIOS) {
-      // return ios device info
-      var build = await deviceInfoPlugin.iosInfo;
-      name = "${build.name} ${build.model}";
-      identifier = build.identifierForVendor;
-      version = build.systemVersion;
+String getModelId(String modelConstant) {
+    switch (modelConstant) {
+        case ConstantAssistantID.CLAUDE_3_HAIKU_20240307:
+            return 'claude-3-haiku-20240307';
+        case ConstantAssistantID.CLAUDE_35_SONNET_20240229:
+            return 'claude-3-5-sonnet-20240229';
+        case ConstantAssistantID.GEMINI_15_FLASH_LATEST:
+            return 'gemini-1.5-flash-latest';
+        case ConstantAssistantID.GEMINI_15_PRO_LATEST:
+            return 'gemini-1.5-pro-latest';
+        case ConstantAssistantID.GPT_4_O:
+            return 'gpt-4o';
+        case ConstantAssistantID.GPT_4_O_MINI:
+            return 'gpt-4o-mini';
+        default:
+            return 'unknown_model';
     }
-  } on PlatformException {
-    // return default data here
-    return DeviceInfo(name, version, identifier);
-  }
-  return DeviceInfo(name, version, identifier);
+}
+
+String getModelName(String modelConstant) {
+    switch (modelConstant) {
+        case ConstantAssistantID.CLAUDE_3_HAIKU_20240307:
+            return 'Claude 3 Haiku';
+        case ConstantAssistantID.CLAUDE_35_SONNET_20240229:
+            return 'Claude 3 Sonnet';
+        case ConstantAssistantID.GEMINI_15_FLASH_LATEST:
+            return 'Gemini 1.5 Flash';
+        case ConstantAssistantID.GEMINI_15_PRO_LATEST:
+            return 'Gemini 1.5 Pro';
+        case ConstantAssistantID.GPT_4_O:
+            return 'GPT-4o';
+        case ConstantAssistantID.GPT_4_O_MINI:
+            return 'GPT-4o mini';
+        default:
+            return 'Unknown Model';
+    }
 }

@@ -62,7 +62,7 @@ class _GettingStartedViewState extends State<GettingStartedView> {
                 SizedBox(height: AppSize.s40),
                 ElevatedButton(
                   onPressed: () {
-                    _viewModel.navigateNamed(context, Routes.loginRoute);
+                    _viewModel.navigateNamed(context, Routes.signInRoute);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.teal,
