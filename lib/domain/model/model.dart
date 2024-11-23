@@ -52,7 +52,7 @@ class Message {
   final String message;
   final int remainingUsage;
   final bool isUser;
-  final DateTime timestamp = DateTime.now();
+  final DateTime? timestamp;
   final Assistant? assistant;
   
   Message({
@@ -60,6 +60,7 @@ class Message {
     required this.message,
     required this.remainingUsage,
     required this.isUser,
+    this.timestamp,
     this.assistant,
   });
 
@@ -68,12 +69,14 @@ class Message {
     String? message,
     int? remainingUsage,
     bool? isUser,
+    DateTime? timestamp,
   }) {
     return Message(
       conversationId: conversationId ?? this.conversationId,
       message: message ?? this.message,
       remainingUsage: remainingUsage ?? this.remainingUsage,
       isUser: isUser ?? this.isUser,
+      timestamp: timestamp ?? this.timestamp,
     );
   }
 }
@@ -93,16 +96,16 @@ class Conversations {
 }
 
 class ConversationHistory {
-  final String cursor;
+  final String? cursor;
   final bool has_more;
   final int limit;
-  final List<ChatMessage> items;
+  final List<Message>? items;
 
   ConversationHistory({
-    required this.cursor,
+    this.cursor,
     required this.has_more,
     required this.limit,
-    required this.items,
+    this.items,
   });
 }
 

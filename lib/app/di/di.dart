@@ -11,6 +11,7 @@ import 'package:jarvis/data/network/dio_factory.dart';
 import 'package:jarvis/data/network/network_info.dart';
 import 'package:jarvis/data/repository/repository_impl.dart';
 import 'package:jarvis/domain/repository/repository.dart';
+import 'package:jarvis/domain/usecase/get_conversation_history_usecase.dart';
 import 'package:jarvis/domain/usecase/get_conversations_usecase.dart';
 import 'package:jarvis/domain/usecase/refresh_token_usecase.dart';
 import 'package:jarvis/domain/usecase/send_message_usecase.dart';
@@ -109,12 +110,16 @@ Future<void> setupLocator() async {
     () => SendMessageUseCase(getIt<Repository>()),
   );
 
-    getIt.registerFactory<UsageTokenUseCase>(
+  getIt.registerFactory<UsageTokenUseCase>(
     () => UsageTokenUseCase(getIt<Repository>()),
   );
 
+  getIt.registerFactory<GetConversationHistoryUsecase>(
+    () => GetConversationHistoryUsecase(getIt<Repository>()),
+  );
+
   getIt.registerFactory<ChatViewModel>(
-    () => ChatViewModel(getIt<SendMessageUseCase>(), getIt<UsageTokenUseCase>()),
+    () => ChatViewModel(getIt<SendMessageUseCase>(), getIt<UsageTokenUseCase>(), getIt<GetConversationHistoryUsecase>()),
   );
 
   getIt.registerFactory<SplashViewModel>(

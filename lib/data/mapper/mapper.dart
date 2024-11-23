@@ -61,7 +61,7 @@ extension RefreshTokenResponseMapper on RefreshTokenResponse {
 
 extension SendMessageResponseMapper on SendMessageResponse {
   Message toDomain({bool isUser = false}) {
-    return Message(conversationId: conversationId, message: message, remainingUsage: remainingUsage, isUser: isUser);
+    return Message(conversationId: conversationId, message: message, remainingUsage: remainingUsage, isUser: isUser, timestamp: DateTime.now());
   }
 }
 
@@ -79,45 +79,42 @@ extension ConversationsResponseMapper on ConversationsResponse {
 
 extension ConversationHistoryMapper on ConversationHistoryResponse {
   ConversationHistory toDomain() {
-    List<ChatMessage> chatMessages = [];
+    List<Message> messages = [];
     Assistant assistant = Assistant(model: 'dify', name: 'GPT-4o', id: 'gpt-4o');
 
     for (var detail in items) {
+      // Nếu có query từ người dùng
       if (detail.query != null && detail.query!.isNotEmpty) {
-        ChatMessage userMessage = ChatMessage(
+        Message userMessage = Message(
+          conversationId: detail.id ?? '',
+          message: detail.query!,
+          remainingUsage: 0,
+          isUser: true,
           assistant: assistant,
-          content: detail.query!,
-          files: null,
-          role: MessageRole.user,
-          // createdAt: detail.createdAt != null
-          //     ? DateTime.fromMillisecondsSinceEpoch(detail.createdAt! * 1000)
-          //     : null,
+          timestamp: detail.createdAt != null
+              ? DateTime.fromMillisecondsSinceEpoch(detail.createdAt! * 1000)
+              : DateTime.now(),
         );
-
-        chatMessages.add(userMessage);
+        messages.add(userMessage);
       }
 
+      // Nếu có answer từ trợ lý
       if (detail.answer != null && detail.answer!.isNotEmpty) {
-        ChatMessage assistantMessage = ChatMessage(
+        Message assistantMessage = Message(
+          conversationId: detail.id ?? '',
+          message: detail.answer!,
+          remainingUsage: 0, 
+          isUser: false,
+          timestamp: detail.createdAt != null
+              ? DateTime.fromMillisecondsSinceEpoch(detail.createdAt! * 1000)
+              : DateTime.now(),
           assistant: assistant,
-          content: detail.answer!,
-          files: null,
-          role: MessageRole.model,
-          // createdAt: detail.createdAt != null
-          //     ? DateTime.fromMillisecondsSinceEpoch(detail.createdAt! * 1000)
-          //     : null,
         );
-
-        chatMessages.add(assistantMessage);
+        messages.add(assistantMessage);
       }
     }
 
-    return ConversationHistory(
-      cursor: cursor,
-      has_more: has_more,
-      limit: limit,
-      items: chatMessages,
-    );
+    return ConversationHistory(has_more: has_more, limit: limit, cursor: cursor, items: messages);
   }
 }
 

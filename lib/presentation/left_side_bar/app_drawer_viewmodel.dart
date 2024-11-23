@@ -9,9 +9,7 @@ import 'package:jarvis/presentation/base/baseviewmodel.dart';
 
 class AppDrawerViewModel extends BaseViewModel implements AppDrawerViewModelInputs, AppDrawerViewModelOutputs {
   final GetConversationsUsecase _getConversationsUsecase;
-  AppDrawerViewModel(this._getConversationsUsecase) {
-    // getConversations();
-  }
+  AppDrawerViewModel(this._getConversationsUsecase);
 
   final StreamController<Conversations> _conversationsStreamController =
       StreamController<Conversations>.broadcast();
@@ -42,8 +40,8 @@ class AppDrawerViewModel extends BaseViewModel implements AppDrawerViewModelInpu
   }
 
   @override
-  Future<void> navigateReplaceNamed(BuildContext context, String route) {
-    throw UnimplementedError();
+  Future<void> navigateReplaceNamed(BuildContext context, String route) async{
+    await Navigator.pushReplacementNamed(context, route);
   }
 
   // inputs

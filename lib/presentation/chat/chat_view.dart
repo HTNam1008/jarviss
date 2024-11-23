@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 // lib/presentation/chat_view.dart
 
 import 'dart:async';
@@ -5,20 +6,27 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:jarvis/app/constant.dart';
-import 'package:jarvis/data/request/ai_chat/send_message/assistant.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/presentation/chat/chat_viewmodel.dart';
-import 'package:jarvis/presentation/left_side_bar/app_drawer.dart';
 import 'package:jarvis/presentation/common/chat_input_box.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
+import 'package:jarvis/presentation/left_side_bar/app_drawer.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
 import 'package:jarvis/presentation/resources/route_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 
-
 class ChatView extends StatefulWidget {
-  const ChatView({super.key});
+  final String? conversationId;
+  final String? assistantId;
+  final String? assistantModel;
+
+  const ChatView({
+    super.key,
+    this.conversationId,
+    this.assistantId,
+    this.assistantModel,
+  });
 
   @override
   State<ChatView> createState() => _ChatViewState();
@@ -28,6 +36,7 @@ class _ChatViewState extends State<ChatView> {
   final TextEditingController _chatController = TextEditingController();
   late final ChatViewModel _viewModel;
   late final StreamSubscription<String?> _errorSubscription;
+  late final ScrollController _scrollController;
   final getIt = GetIt.instance;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -42,10 +51,14 @@ class _ChatViewState extends State<ChatView> {
   ];
 
   late String selectedModel;
+  bool _isSending = false;
+  bool isScrollBottom = true;
+
   @override
   void initState() {
     super.initState();
-    selectedModel = assistantModels[0];
+    _scrollController = ScrollController();
+    selectedModel = assistantModels[1];
     _viewModel = getIt<ChatViewModel>();
     _viewModel.start();
 
@@ -56,6 +69,52 @@ class _ChatViewState extends State<ChatView> {
         );
       }
     });
+
+    if (widget.conversationId != null /* && widget.assistantId != null && widget.assistantModel != null */) {
+      _viewModel.loadConversationMessages(
+        widget.conversationId!,
+/*         widget.assistantId!,
+        widget.assistantModel!, */
+      );
+    }
+
+    _scrollController.addListener(_onScroll);
+
+    /* WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToBottom();
+    }); */
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent + 100,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+    }
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels <=
+        _scrollController.position.minScrollExtent) {
+      if (_viewModel.hasMore && !_viewModel.isLoadingMore) {
+        _fetchMoreConversations();
+      }
+    }
+  }
+
+  Future<void> _fetchMoreConversations() async {
+    if (_viewModel.cursor == null) return;
+    _viewModel.isLoadingMore = true;
+    isScrollBottom = true;
+    _viewModel.loadConversationMessages(widget.conversationId!);
+  }
+
+  @override
+  void didUpdateWidget(covariant ChatView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _scrollToBottom();
   }
 
   @override
@@ -63,6 +122,7 @@ class _ChatViewState extends State<ChatView> {
     _viewModel.dispose();
     _chatController.dispose();
     _errorSubscription.cancel();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -136,10 +196,23 @@ class _ChatViewState extends State<ChatView> {
               child: StreamBuilder<List<Message>>(
                 stream: _viewModel.messagesStream,
                 builder: (context, snapshot) {
-                  if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                    return _buildChatMessages(snapshot.data!);
+                  if (widget.conversationId == null ) {
+                    if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                      isScrollBottom = true;
+                      return _buildChatMessages(snapshot.data!);
+                    } else {
+                      return _buildInitialContent();
+                    }
                   } else {
-                    return _buildInitialContent();
+                    if (snapshot.connectionState == ConnectionState.waiting && _viewModel.messages.isEmpty) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    }
+                    else {
+                      return _buildChatMessages(_viewModel.messages);
+                    } 
                   }
                 },
               ),
@@ -147,6 +220,7 @@ class _ChatViewState extends State<ChatView> {
             ChatInputBox(
               controller: _chatController,
               onSend: _sendMessage,
+              isSending: _isSending,
             ),
           ],
         ),
@@ -210,7 +284,15 @@ class _ChatViewState extends State<ChatView> {
   }
 
   Widget _buildChatMessages(List<Message> messages) {
+    if (isScrollBottom) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToBottom();
+        isScrollBottom = false;
+      });
+    }
+
     return ListView.builder(
+      controller: _scrollController,
       padding: const EdgeInsets.all(AppSize.s16),
       itemCount: messages.length,
       itemBuilder: (context, index) {
@@ -243,7 +325,6 @@ class _ChatViewState extends State<ChatView> {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Avatar hoặc biểu tượng
                     if (!message.isUser)
                       const CircleAvatar(
                         radius: 10,
@@ -255,15 +336,15 @@ class _ChatViewState extends State<ChatView> {
                         ),
                       ),
                     if (!message.isUser) const SizedBox(width: 4),
-                    Text(
-                      '${message.timestamp.hour}:${message.timestamp.minute.toString().padLeft(2, '0')}',
+                    message.timestamp !=null ? Text(
+                      '${message.timestamp!.hour}:${message.timestamp!.minute.toString().padLeft(2, '0')}',
                       style: TextStyle(
                         color: message.isUser
                             ? Colors.white70
                             : Colors.black54,
                         fontSize: AppSize.s12,
                       ),
-                    ),
+                    ) : const SizedBox.shrink(),
                     // const SizedBox(width: 4),
                     // Text(
                     //   'Usage: ${message.remainingUsage}',
@@ -284,11 +365,20 @@ class _ChatViewState extends State<ChatView> {
     );
   }
 
-  void _sendMessage() {
+  void _sendMessage() async {
     String message = _chatController.text.trim();
     if (message.isNotEmpty) {
-      _viewModel.sendMessage(message, selectedModel);
       _chatController.clear();
+      setState(() {
+        _isSending = true; 
+      });
+
+      await _viewModel.sendMessage(message, selectedModel, conversationId:  widget.conversationId);
+
+      setState(() {
+        _isSending = false;
+      });
+
     }
   }
 

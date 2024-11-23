@@ -99,6 +99,7 @@ class AuthInterceptor extends Interceptor {
   }
 
   void _navigateToLogin() {
+  _appPreferences.clearTokens();
   Navigator.pushNamedAndRemoveUntil(
       navigatorKey.currentContext!,
       Routes.signInRoute,

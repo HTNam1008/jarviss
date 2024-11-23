@@ -263,12 +263,15 @@ class _AppServiceClient implements AppServiceClient {
     String conversationId,
     String assistandId,
     String assistantModel,
+    String? cursor,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'assistantId': assistandId,
       r'assistantModel': assistantModel,
+      r'cursor': cursor,
     };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ConversationHistoryResponse>(Options(

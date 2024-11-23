@@ -10,11 +10,13 @@ class ConversationHistoryRequest {
   final String conversationId;
   final String assistandId;
   final String assistantModel;
+  final String? cursor;
 
   ConversationHistoryRequest({
     required this.conversationId,
     required this.assistandId,
     required this.assistantModel,
+    this.cursor,
   });
   
   factory ConversationHistoryRequest.fromJson(Map<String, dynamic> json) =>

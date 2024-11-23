@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart'; // Đảm bảo import get_it
 import 'package:jarvis/app/di/di.dart';
 import 'package:jarvis/data/responses/ai_chat/get_conversations_response.dart';
 import 'package:jarvis/domain/model/model.dart';
+import 'package:jarvis/presentation/chat/chat_view.dart';
 import 'package:jarvis/presentation/left_side_bar/app_drawer_viewmodel.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
@@ -28,7 +29,7 @@ class _AppDrawerState extends State<AppDrawer> {
   void initState() {
     super.initState();
     _viewModel = getIt<AppDrawerViewModel>();
-    
+
     _viewModel.getConversations();
 
     _viewModel.errorStream.listen((errorMessage) {
@@ -198,6 +199,13 @@ class _AppDrawerState extends State<AppDrawer> {
                               ],
                             ),
                             onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => ChatView(
+                                    conversationId: conversation.id,
+                                  ),
+                                ),
+                              );
                             },
                           ),
                           const Divider(height: 1),

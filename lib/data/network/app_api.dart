@@ -55,5 +55,6 @@ abstract class AppServiceClient {
     @Path("conversationId") String conversationId, 
     @Query('assistantId') String assistandId,
     @Query('assistantModel') String assistantModel,
+    @Query('cursor') String? cursor,
   );
 }

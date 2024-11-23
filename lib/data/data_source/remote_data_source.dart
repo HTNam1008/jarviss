@@ -62,6 +62,6 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   
   @override
   Future<ConversationHistoryResponse> getConversationHistory(ConversationHistoryRequest conversationHistoryRequest) async{
-   return await _appServiceClient.getConversationHistory(conversationHistoryRequest.conversationId, conversationHistoryRequest.assistandId, conversationHistoryRequest.assistantModel);
+   return await _appServiceClient.getConversationHistory(conversationHistoryRequest.conversationId, conversationHistoryRequest.assistandId, conversationHistoryRequest.assistantModel, conversationHistoryRequest.cursor);
   }
 }

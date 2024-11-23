@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jarvis/presentation/chat/chat_view.dart';
 import 'package:jarvis/presentation/chatbot/chat/chat_bot_view.dart';
 import 'package:jarvis/presentation/chatbot/create_bot/create_bot_view.dart';
 import 'package:jarvis/presentation/chatbot/edit_bot/edit_bot_view.dart';
@@ -43,6 +44,7 @@ class Routes {
   static const String deleteKnowledgeRoute = "/deleteKnowledge";
   static const String detailKnowledgeRoute = "/detailKnowledge";
   static const String upgradeProRoute = "/upgradePro";
+  static const String chatRoute = "/chat";
 }
 
 class RouteGenerator {
@@ -88,6 +90,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => DetailKnowledgeView());
       case Routes.upgradeProRoute:
         return MaterialPageRoute(builder: (_) => UpgradeView());
+      case Routes.chatRoute:
+        return MaterialPageRoute(builder: (_) => ChatView());
       default:
         return UndefinedRoute();
     }
