@@ -11,6 +11,7 @@ import 'package:jarvis/data/network/dio_factory.dart';
 import 'package:jarvis/data/network/network_info.dart';
 import 'package:jarvis/data/repository/repository_impl.dart';
 import 'package:jarvis/domain/repository/repository.dart';
+import 'package:jarvis/domain/usecase/create_prompt_usecase.dart';
 import 'package:jarvis/domain/usecase/refresh_token_usecase.dart';
 import 'package:jarvis/domain/usecase/send_message_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_in_usecase.dart';
@@ -23,6 +24,14 @@ import 'package:jarvis/presentation/authencation/sign_up/sign_up_viewmodel.dart'
 import 'package:jarvis/presentation/chat/chat_viewmodel.dart';
 import 'package:jarvis/presentation/splash/splash_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../data/repository/prompt_repository_impl.dart';
+import '../../domain/repository/prompt_repository.dart';
+import '../../domain/usecase/delete_prompt_usecase.dart';
+import '../../domain/usecase/get_public_prompts_usecase.dart';
+import '../../domain/usecase/update _prompt_usecase.dart';
+import '../../presentation/prompt/main_prompt_view.dart';
+
 
 final getIt = GetIt.instance;
 
@@ -101,6 +110,43 @@ Future<void> setupLocator() async {
       getIt<SignOutUseCase>(),
       getIt<AppPreferences>(),
     ),
+  );
+
+  getIt.registerLazySingleton<PromptRepository>(
+        () => PromptRepositoryImpl(getIt<RemoteDataSource>(), getIt<NetworkInfo>()),
+  );
+
+  getIt.registerFactory<GetPublicPromptsUseCase>(
+        () => GetPublicPromptsUseCase(getIt<PromptRepository>()),
+  );
+
+  getIt.registerFactory<GetPrivatePromptsUseCase>(
+        () => GetPrivatePromptsUseCase(getIt<PromptRepository>()),
+  );
+
+  getIt.registerFactory<PromptViewModel>(
+        () => PromptViewModel(
+      getIt<GetPublicPromptsUseCase>(),
+      getIt<AddPromptToFavoriteUseCase>(),
+      getIt<CreatePromptUseCase>(),
+      getIt<GetPrivatePromptsUseCase>(),
+      getIt<UpdatePromptUseCase>(),
+      getIt<DeletePromptUseCase>()
+    ),
+  );
+  getIt.registerFactory<AddPromptToFavoriteUseCase>(
+        () => AddPromptToFavoriteUseCase(getIt<PromptRepository>()),
+  );
+  getIt.registerFactory<CreatePromptUseCase>(
+        () => CreatePromptUseCase(getIt<PromptRepository>()),
+  );
+
+  getIt.registerFactory<DeletePromptUseCase>(
+        () => DeletePromptUseCase(getIt<PromptRepository>()),
+  );
+
+  getIt.registerFactory<UpdatePromptUseCase>(
+        () => UpdatePromptUseCase(getIt<PromptRepository>()),
   );
 
   getIt.registerFactory<SendMessageUseCase>(

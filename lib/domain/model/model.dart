@@ -36,7 +36,7 @@ class TokenUsage {
   final int totalToken;
   final bool unlimited;
   final DateTime date;
-  
+
   TokenUsage({
     required this.availaleTokens,
     required this.totalToken,
@@ -51,8 +51,9 @@ class Message {
   final int remainingUsage;
   final bool isUser;
   final DateTime timestamp = DateTime.now();
+
   final Assistant? assistant;
-  
+
   Message({
     required this.conversationId,
     required this.message,
@@ -75,3 +76,26 @@ class Message {
     );
   }
 }
+
+enum PromptCategory {
+  ALL,
+  MARKETING,
+  BUSINESS,
+  SEO,
+  WRITING,
+  CODING,
+  CAREER,
+  CHATBOT,
+  EDUCATION,
+  FUN,
+  PRODUCTIVITY,
+  OTHER
+}
+
+class PromptCategoryItem {
+  final PromptCategory? value;
+  final String label;
+
+  const PromptCategoryItem({this.value, required this.label});
+}
+

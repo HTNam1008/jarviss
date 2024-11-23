@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+
+import '../../prompt/main_prompt_view.dart';
 
 class AppinioAnimatedToggleTab extends StatefulWidget {
   /// function(int) for call back and control the view of tabs
@@ -87,11 +90,24 @@ class _AppinioAnimatedToggleTabState extends State<AppinioAnimatedToggleTab> {
             children: [
               for (int i = 0; i < widget.tabTexts.length; i++)
                 Expanded(
-                  child: _buildSwitchTab(
-                    i == index,
-                    widget.tabTexts[i],
-                    i == index ? widget.activeStyle : widget.inactiveStyle,
-                    i,
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        index = i;
+                        widget.callback(i);
+                        if (i == 0) {
+                          GetIt.instance<PromptViewModel>().getPrivatePrompts("All");
+                        } else {
+                          GetIt.instance<PromptViewModel>().getPrompts("All");
+                        }
+                      });
+                    },
+                    child: _buildSwitchTab(
+                      i == index,
+                      widget.tabTexts[i],
+                      i == index ? widget.activeStyle : widget.inactiveStyle,
+                      i,
+                    ),
                   ),
                 ),
             ],

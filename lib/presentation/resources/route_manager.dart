@@ -36,7 +36,7 @@ class Routes {
   static const String createBotRoute = "/createBot";
   static const String previewBotRoute = "/previewBot";
   static const String editBotRoute = "/editBot";
-  static const String promptRoute = "/promptBot";
+  static const String promptRoute = "/prompt";
   static const String createPromptRoute = "/createPrompt";
   static const String createKnowledgeRoute = "/createKnowledge";
   static const String editKnowledgeRoute = "/editKnowledge";

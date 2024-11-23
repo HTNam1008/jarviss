@@ -102,3 +102,69 @@ class RefreshTokenResponse {
 
   Map<String, dynamic> toJson() => _$RefreshTokenResponseToJson(this);
 }
+
+@JsonSerializable()
+class PromptCategoryResponse {
+  final String? value;
+  final String label;
+
+  PromptCategoryResponse({this.value, required this.label});
+
+  factory PromptCategoryResponse.fromJson(Map<String, dynamic> json) {
+    return PromptCategoryResponse(
+        value: json['value'],
+        label: json['label']
+    );
+  }
+}
+
+@JsonSerializable()
+class GetPromptsResponse {
+  final List<PromptResponse> items;
+
+  GetPromptsResponse({required this.items});
+
+  factory GetPromptsResponse.fromJson(Map<String, dynamic> json) {
+    return GetPromptsResponse(
+      items: (json['items'] as List)
+          .map((e) => PromptResponse.fromJson(e))
+          .toList(),
+    );
+  }
+}
+
+@JsonSerializable()
+class PromptResponse {
+  final String id;
+  final String title;
+  final String content;
+  final String description;
+  final String category;
+  final bool isPublic;
+  final String userName;
+  final bool isFavorite;
+
+  PromptResponse({
+    required this.id,
+    required this.title,
+    required this.content,
+    required this.description,
+    required this.category,
+    required this.isPublic,
+    required this.userName,
+    required this.isFavorite
+  });
+
+  factory PromptResponse.fromJson(Map<String, dynamic> json) {
+    return PromptResponse(
+        id: json['_id'],
+        title: json['title'],
+        content: json['content']?? '',
+        description: json['description'] ?? '',
+        category: json['category'],
+        isPublic: json['isPublic'],
+        userName: json['userName'],
+        isFavorite: json['isFavorite']
+    );
+  }
+}
