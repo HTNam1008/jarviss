@@ -508,8 +508,6 @@ class _PromptViewState extends State<PromptView> {
   bool get wantKeepAlive => true;
 }
 
-
-
 class PromptViewModel extends BaseViewModel {
   final GetPublicPromptsUseCase _getPublicPromptsUseCase;
   final GetPrivatePromptsUseCase _getPrivatePromptsUseCase;

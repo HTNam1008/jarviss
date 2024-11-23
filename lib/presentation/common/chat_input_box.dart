@@ -6,6 +6,7 @@ import 'package:jarvis/presentation/resources/values_manager.dart';
 
 import '../../domain/model/prompt.dart';
 import '../prompt/main_prompt_view.dart';
+import '../resources/route_manager.dart';
 
 class ChatInputBox extends StatefulWidget  {
   final TextEditingController controller;
@@ -79,46 +80,118 @@ class _ChatInputBoxState extends State<ChatInputBox> {
     _overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
         width: MediaQuery.of(context).size.width - 32,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 80, // Position above keyboard and input
-        left: 16, // Add horizontal padding
-          child: Material(
-            elevation: 4,
-            borderRadius: BorderRadius.circular(AppSize.s8),
-            child: Container(
-              constraints: BoxConstraints(
-                maxHeight: 200, // Limit maximum height
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(AppSize.s8),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: _promptSuggestions.map((prompt) =>
-                    ListTile(
-                      leading: Icon(
-                        Icons.arrow_upward,
-                        color: ColorManager.teal,
-                        size: AppSize.s16,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 80,
+        left: 16,
+        child: Material(
+          elevation: 4,
+          borderRadius: BorderRadius.circular(AppSize.s8),
+          child: Container(
+            constraints: const BoxConstraints(
+              maxHeight: 200,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(AppSize.s8),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Suggested prompts',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 12,
+                        ),
                       ),
-                      title: Text(
-                        prompt.title,
-                        style: const TextStyle(fontSize: 14),
+                      Row(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              _removeOverlay();
+                              Navigator.pushNamed(context, Routes.promptRoute);
+                            },
+                            child: Text(
+                              'View all',
+                              style: TextStyle(
+                                color: ColorManager.teal,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          InkWell(
+                            onTap: _removeOverlay,
+                            child: Icon(
+                              Icons.close,
+                              size: 16,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
                       ),
+                    ],
+                  ),
+                ),
+                const Divider(height: 1),
+                ..._promptSuggestions.map((prompt) =>
+                    InkWell(
                       onTap: () {
                         widget.controller.text = prompt.content;
                         _removeOverlay();
-                        _focusNode.unfocus();
                       },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Colors.grey.shade200,
+                              width: 1,
+                            ),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.north,
+                              color: ColorManager.teal,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                prompt.title,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                 ).toList(),
-              ),
+              ],
             ),
+          ),
         ),
       ),
     );
 
-    Overlay.of(context)?.insert(_overlayEntry!);
+    if (mounted && context.mounted) {
+      Overlay.of(context)?.insert(_overlayEntry!);
+    }
   }
 
   void _removeOverlay() {
