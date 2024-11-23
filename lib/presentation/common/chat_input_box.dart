@@ -11,10 +11,12 @@ import '../resources/route_manager.dart';
 class ChatInputBox extends StatefulWidget  {
   final TextEditingController controller;
   final VoidCallback onSend;
+  final bool? isSending;
 
   ChatInputBox({
     required this.controller,
-    required this.onSend,
+    required this.onSend, 
+    this.isSending,
   });
 
   @override
@@ -305,8 +307,8 @@ class _ChatInputBoxState extends State<ChatInputBox> {
             ),
           ),
           IconButton(
-            icon: Icon(Icons.send, color: ColorManager.teal),
-            onPressed: widget.onSend,
+            icon: Icon(Icons.send, color: widget.isSending != null ? (widget.isSending! ? Colors.grey : Colors.teal) : Colors.grey),
+            onPressed: widget.isSending != null ? (widget.isSending! ? null : widget.onSend) : null,
           ),
         ],
       ),

@@ -5,12 +5,12 @@ part 'assistant.g.dart';
 
 @JsonSerializable()
 class Assistant {
-  final String? id;
+  final String id;
   final String model;
   final String name;
 
   Assistant({
-    this.id,
+    required this.id,
     required this.model,
     required this.name,
   });

@@ -1,13 +1,16 @@
 import 'dart:developer';
 
 import 'package:jarvis/data/network/app_api.dart';
+import 'package:jarvis/data/request/ai_chat/conversation/conversation_history_request.dart';
+import 'package:jarvis/data/request/ai_chat/conversation/conversations_request.dart';
 import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.dart';
-import 'package:jarvis/data/request/ai_chat/authentication/request.dart';
+import 'package:jarvis/data/request/authentication/request.dart';
+import 'package:jarvis/data/responses/ai_chat/get_conversation_history_response.dart';
+import 'package:jarvis/data/responses/ai_chat/get_conversations_response.dart';
 import 'package:jarvis/data/responses/ai_chat/send_message_response.dart';
 import 'package:jarvis/data/responses/responses.dart';
 import 'package:jarvis/data/responses/token/token_usage_response.dart';
 
-import '../request/request.dart';
 
 abstract class RemoteDataSource {
   Future<SignInResponse> signIn(SignInRequest signInRequest);
@@ -16,6 +19,8 @@ abstract class RemoteDataSource {
   Future<RefreshTokenResponse> refreshToken(String refreshTokenRequest);
   Future<SendMessageResponse> sendMessage(SendMessageRequest sendMessageRequest);
   Future<TokenUsageResponse> getTokenUsage();
+  Future<ConversationsResponse> getConversations(ConversationsRequest conversationsRequest);
+  Future<ConversationHistoryResponse> getConversationHistory(ConversationHistoryRequest conversationHistoryRequest);
   Future<GetPromptsResponse> getPrompts(String? category, bool isPublic,  {bool? isFavorite, String? query, int? limit,});
   Future<void> addToFavorites(String promptId);
   Future<PromptResponse> createPrompt(CreatePromptRequest request);
@@ -56,6 +61,16 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   @override
   Future<TokenUsageResponse> getTokenUsage() async {
     return await _appServiceClient.getTokenUsage();
+  }
+  
+  @override
+  Future<ConversationsResponse> getConversations(ConversationsRequest conversationsRequest) async {
+    return await _appServiceClient.getConversations(conversationsRequest.assistandId, conversationsRequest.assistantModel, conversationsRequest.cursor);
+  }
+  
+  @override
+  Future<ConversationHistoryResponse> getConversationHistory(ConversationHistoryRequest conversationHistoryRequest) async{
+   return await _appServiceClient.getConversationHistory(conversationHistoryRequest.conversationId, conversationHistoryRequest.assistandId, conversationHistoryRequest.assistantModel, conversationHistoryRequest.cursor);
   }
 
   @override

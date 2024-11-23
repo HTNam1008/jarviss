@@ -3,10 +3,14 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:get_it/get_it.dart';
+import 'package:jarvis/data/request/authentication/request.dart';
+import 'package:jarvis/domain/model/prompt.dart';
+import 'package:jarvis/domain/usecase/create_prompt_usecase.dart';
 import 'package:jarvis/domain/usecase/delete_prompt_usecase.dart';
+import 'package:jarvis/domain/usecase/get_public_prompts_usecase.dart';
 import 'package:jarvis/domain/usecase/update%20_prompt_usecase.dart';
+import 'package:jarvis/presentation/base/baseviewmodel.dart';
 import 'package:jarvis/presentation/common/animated_toggle_tab/animated_toggle_tab.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/prompt/create_prompt/create_prompt_view.dart';
@@ -15,11 +19,6 @@ import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 
-import '../../data/request/request.dart';
-import '../../domain/model/prompt.dart';
-import '../../domain/usecase/create_prompt_usecase.dart';
-import '../../domain/usecase/get_public_prompts_usecase.dart';
-import '../base/baseviewmodel.dart';
 
 
 class PromptView extends StatefulWidget {

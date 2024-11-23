@@ -7,7 +7,7 @@ part of 'assistant.dart';
 // **************************************************************************
 
 Assistant _$AssistantFromJson(Map<String, dynamic> json) => Assistant(
-      id: json['id'] as String?,
+      id: json['id'] as String,
       model: json['model'] as String,
       name: json['name'] as String,
     );

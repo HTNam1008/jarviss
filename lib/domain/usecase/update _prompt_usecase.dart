@@ -1,9 +1,8 @@
 import 'package:dartz/dartz.dart';
+import 'package:jarvis/data/network/failure.dart';
+import 'package:jarvis/data/request/authentication/request.dart';
+import 'package:jarvis/domain/repository/prompt_repository.dart';
 
-import '../../data/network/failure.dart';
-import '../../data/request/request.dart';
-import '../model/prompt.dart';
-import '../repository/prompt_repository.dart';
 import 'base_usecase.dart';
 
 class UpdatePromptUseCase implements BaseUseCase<UpdatePromptUseCaseInput, void> {
