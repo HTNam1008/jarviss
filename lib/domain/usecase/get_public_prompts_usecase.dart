@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 
 import '../../data/network/failure.dart';
@@ -13,9 +15,11 @@ class GetPublicPromptsUseCase implements BaseUseCase<GetPublicPromptsUseCaseInpu
 
   @override
   Future<Either<Failure, List<Prompt>>> execute(GetPublicPromptsUseCaseInput input) async {
-    return await _repository.getPublicPrompts(input.category, isFavorite: input.isFavorite);
+
+    return await _repository.getPublicPrompts(input.category, isFavorite: input.isFavorite, query: input.query);
   }
 }
+
 class GetPrivatePromptsUseCase implements BaseUseCase<GetPublicPromptsUseCaseInput, List<Prompt>> {
   final PromptRepository _repository;
 
@@ -23,16 +27,17 @@ class GetPrivatePromptsUseCase implements BaseUseCase<GetPublicPromptsUseCaseInp
 
   @override
   Future<Either<Failure, List<Prompt>>> execute(GetPublicPromptsUseCaseInput input) async {
-    return await _repository.getPrivatePrompts(input.category, isFavorite: input.isFavorite);
+    return await _repository.getPrivatePrompts(input.category, isFavorite: input.isFavorite, query: input.query);
   }
 }
-
 
 class GetPublicPromptsUseCaseInput {
   final String category;
   final bool? isFavorite;
+  final String? query;  // Add query parameter
 
-  GetPublicPromptsUseCaseInput(this.category, {this.isFavorite});
+
+  GetPublicPromptsUseCaseInput(this.category, {this.isFavorite, this.query});
 }
 
 class AddPromptToFavoriteUseCase implements BaseUseCase<String, void> {

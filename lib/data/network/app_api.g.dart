@@ -188,12 +188,14 @@ class _AppServiceClient implements AppServiceClient {
     String? category,
     bool isPublic,
     bool? isFavorite,
+    String? query,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'category': category,
       r'isPublic': isPublic,
       r'isFavorite': isFavorite,
+      r'query': query,
     };
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};

@@ -42,6 +42,7 @@ abstract class AppServiceClient {
       @Query("category") String? category,
       @Query("isPublic") bool isPublic,
       @Query("isFavorite") bool? isFavorite,
+      @Query("query") String? query,
       );
 
   @POST("/api/v1/prompts/{id}/favorite")

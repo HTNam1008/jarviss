@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:jarvis/domain/usecase/delete_prompt_usecase.dart';
 import 'package:jarvis/domain/usecase/update%20_prompt_usecase.dart';
@@ -28,27 +29,31 @@ class PromptView extends StatefulWidget {
 }
 
 class _PromptViewState extends State<PromptView> {
+  final TextEditingController _searchController = TextEditingController();
+  String _currentCategory = 'All';
   int _selectedIndexTab = 0;
-  bool _isFavourite = false;
   bool _isPublicPrompts = false;
   late final PromptViewModel _viewModel;
   bool _isInitialized = false;
 
   @override
-  bool get wantKeepAlive => true;
-
-  @override
   void initState() {
     super.initState();
     _viewModel = GetIt.instance<PromptViewModel>();
+
+    _searchController.addListener(() {
+      if (!_searchController.text.isNotEmpty) {
+        _viewModel.clearSearch();
+      }
+    });
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_isInitialized) {
-      _viewModel.getPrivatePrompts("all"); // Add this
-      _viewModel.getPrompts("all");
+      _viewModel.getPrivatePrompts(_currentCategory); // Add this
+      _viewModel.getPrompts(_currentCategory);
       _isInitialized = true;
     }
   }
@@ -79,6 +84,7 @@ class _PromptViewState extends State<PromptView> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: CustomHeaderBar(
         centerTitle: true,
@@ -150,11 +156,7 @@ class _PromptViewState extends State<PromptView> {
                 callback: (int i) {
                   setState(() {
                     _isPublicPrompts = i == 1;
-                    if (i == 1) {
-                      _viewModel.getPrompts(_viewModel._getCurrentCategory());
-                    } else {
-                      _viewModel.getPrivatePrompts(_viewModel._getCurrentCategory());
-                    }
+                    _viewModel.setPublicMode(i == 1);
                   });
                 },
                 tabTexts: const [
@@ -200,13 +202,19 @@ class _PromptViewState extends State<PromptView> {
                 children: [
                   Expanded(
                     child: TextField(
+                      controller: _searchController,
                       decoration: InputDecoration(
                         hintText: 'Search',
                         prefixIcon: const Icon(Icons.search),
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.mic),
-                          onPressed: () {},
-                        ),
+                        suffixIcon: _searchController.text.isNotEmpty
+                            ? IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            _searchController.clear();
+                            _viewModel.clearSearch();
+                          },
+                        )
+                            : null,
                         fillColor: Colors.white,
                         filled: true,
                         border: OutlineInputBorder(
@@ -221,6 +229,29 @@ class _PromptViewState extends State<PromptView> {
                           borderSide: BorderSide(color: ColorManager.teal),
                         ),
                       ),
+                      onSubmitted: (value) {
+                        _executeSearch();
+                      },
+                    ),
+                  ),
+                  // Search Button
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: _executeSearch,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorManager.teal,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                    ),
+                    child: const Text(
+                      'Search',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ],
@@ -230,7 +261,7 @@ class _PromptViewState extends State<PromptView> {
               height: 40,
               child: ListView(
                 scrollDirection: Axis.horizontal,
-                children: _generateListTab(_isPublicPrompts ? _publicPromptDataTab : _myPromptDataTab),
+                children: _generateListTab(),
               ),
             ),
             Expanded(
@@ -241,6 +272,11 @@ class _PromptViewState extends State<PromptView> {
       ),
     );
   }
+  void _executeSearch() {
+    _viewModel.setSearchQuery(_searchController.text);
+    _viewModel.executeSearch();
+  }
+
 
   void _showActions(BuildContext context,  Prompt prompt) {
     showModalBottomSheet(
@@ -300,15 +336,16 @@ class _PromptViewState extends State<PromptView> {
       ),
     );
   }
-  List<Widget> _generateListTab(List<List<String>> promptData) {
+
+  List<Widget> _generateListTab() {
     final categories = _viewModel.getPromptCategories();
-    return List.generate(categories.length, (index) {
-      final bool isSelected = _selectedIndexTab == index;
+    return categories.map((category) {
+      final bool isSelected = _currentCategory == category;
       return GestureDetector(
         onTap: () {
           setState(() {
-            _selectedIndexTab = index;
-            _viewModel.getPrompts(categories[index]); // Trigger new category filter
+            _currentCategory = category;
+            _viewModel.setCurrentCategory(category);
           });
         },
         child: Container(
@@ -319,7 +356,7 @@ class _PromptViewState extends State<PromptView> {
             borderRadius: BorderRadius.circular(16),
           ),
           child: Text(
-            categories[index],
+            category,
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: isSelected ? Colors.white : Colors.black,
@@ -327,7 +364,7 @@ class _PromptViewState extends State<PromptView> {
           ),
         ),
       );
-    });
+    }).toList();
   }
 
   @override
@@ -338,76 +375,22 @@ class _PromptViewState extends State<PromptView> {
       return StreamBuilder<List<Prompt>>(
         stream: activeStream,
         builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          final prompts = snapshot.data ?? [];
+
+          if (prompts.isEmpty) {
+            return _buildEmptyState();
+          }
           if (snapshot.hasData) {
             return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                final prompt = snapshot.data![index];
-                return Container(
-                  margin: EdgeInsets.symmetric(
-                      vertical: AppSize.s6, horizontal: AppSize.s8),
-                  padding: EdgeInsets.all(AppSize.s4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(AppSize.s12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        spreadRadius: 1,
-                        blurRadius: 4,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: ListTile(
-                    title: Text(prompt.title,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: AppSize.s14,
-                      ),
-                    ),
-                    subtitle: Text(
-                      prompt.description ?? '',
-                      style: TextStyle(
-                        fontSize: AppSize.s14,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            _viewModel.toggleFavorite(prompt);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 8.0,
-                                top: 8.0,
-                                bottom: 8.0),
-                            child: Icon(
-                              Icons.star,
-                              color: prompt.isFavorite ? Colors.yellow : Colors.grey,
-                            ),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            _showActions(context, prompt);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(Icons.more_vert, color: Colors.grey,),
-                          ),
-                        ),
-                      ],
-                    ),
-                    contentPadding: const EdgeInsets.only(left: AppSize.s8),
-                    onTap: () {
-                      // Khi nhấn vào item, chuyển đến một trang mới
-                    },
-                  ),
-                );
-              },
+              itemCount: prompts.length,
+              itemBuilder: (context, index) => _buildPromptItem(prompts[index]),
             );
           }
           if (snapshot.hasError) {
@@ -419,12 +402,105 @@ class _PromptViewState extends State<PromptView> {
       );
     }
 
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            _searchController.text.isNotEmpty ? Icons.search_off : Icons.list,
+            size: 48,
+            color: Colors.grey[400],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            _searchController.text.isNotEmpty
+                ? 'No prompts found for "${_searchController.text}"'
+                : 'No prompts found in this category',
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontSize: 16,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          if (_searchController.text.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            TextButton.icon(
+              onPressed: () {
+                _searchController.clear();
+                _viewModel.clearSearch();
+              },
+              icon: const Icon(Icons.refresh),
+              label: const Text('Clear Search'),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPromptItem(Prompt prompt) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: AppSize.s6, horizontal: AppSize.s8),
+      padding: const EdgeInsets.all(AppSize.s4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppSize.s12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ListTile(
+        title: Text(
+          prompt.title,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: AppSize.s14,
+          ),
+        ),
+        subtitle: Text(
+          prompt.description,
+          style: TextStyle(
+            fontSize: AppSize.s14,
+            color: Colors.grey,
+          ),
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: Icon(
+                Icons.star,
+                color: prompt.isFavorite ? Colors.yellow : Colors.grey,
+              ),
+              onPressed: () => _viewModel.toggleFavorite(prompt),
+            ),
+            IconButton(
+              icon: const Icon(Icons.more_vert),
+              onPressed: () => _showActions(context, prompt),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
   @override
   void dispose() {
     _viewModel.dispose();
+    _searchController.dispose();
     super.dispose();
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
+
+
 
 class PromptViewModel extends BaseViewModel {
   final GetPublicPromptsUseCase _getPublicPromptsUseCase;
@@ -434,57 +510,100 @@ class PromptViewModel extends BaseViewModel {
   final UpdatePromptUseCase _updatePromptUseCase;
   final DeletePromptUseCase _deletePromptUseCase;
 
+  bool showFavorites = false;
+  String _currentCategory = 'all';
+  bool _isPublicMode = false;
+  List<Prompt> prompts = [];
 
 
   final StreamController<List<Prompt>> _promptsStreamController = StreamController<List<Prompt>>.broadcast();
   final StreamController<String> _errorStreamController = StreamController<String>.broadcast();
-  bool showFavorites = false;
-  List<Prompt> prompts = [];
-
-  // Create a separate stream controller for favorites
   final StreamController<List<Prompt>> _favoritesStreamController = StreamController<List<Prompt>>.broadcast();
   final StreamController<List<Prompt>> _privatePromptsStreamController = StreamController<List<Prompt>>.broadcast();
   List<Prompt> favoritePrompts = [];
   List<Prompt> privatePrompts = [];
+  String _searchQuery = '';
 
   Stream<List<Prompt>> get promptsStream => _promptsStreamController.stream;
   Stream<List<Prompt>> get favoritesStream => _favoritesStreamController.stream;
   Stream<List<Prompt>> get privatePromptsStream => _privatePromptsStreamController.stream;
 
   Stream<String> get errorStream => _errorStreamController.stream;
-
   PromptViewModel(this._getPublicPromptsUseCase, this._addPromptToFavoriteUseCase, this._createPromptUseCase, this._getPrivatePromptsUseCase, this._updatePromptUseCase, this._deletePromptUseCase);
 
-  Future<void> getPrompts(String category, {bool? isFavorite}) async {
-    final input = GetPublicPromptsUseCaseInput(category, isFavorite: isFavorite);
+  // Helper method to refresh the current view based on mode and category
+  void refreshCurrentView(category) {
+    log(category.toString());
+    if (_isPublicMode) {
+      getPrompts(category, query: _searchQuery);
+    } else {
+      getPrivatePrompts(category, query: _searchQuery);
+    }
+  }
+
+  void setSearchQuery(String query) {
+    _searchQuery = query;
+    refreshCurrentView(this._currentCategory);  // Refresh with new search query
+  }
+
+  void executeSearch() {
+    refreshCurrentView(this._currentCategory); // Only refresh when search is executed
+  }
+
+  void clearSearch() {
+    _searchQuery = '';
+    refreshCurrentView(this._currentCategory);
+  }
+
+  Future<void> getPrompts(String category, {bool? isFavorite, String? query}) async {
+    final input = GetPublicPromptsUseCaseInput(
+        category.toLowerCase(),
+        isFavorite: isFavorite,
+        query: query?.isNotEmpty == true ? query : null
+    );
 
     (await _getPublicPromptsUseCase.execute(input)).fold(
             (failure) => _errorStreamController.add(failure.message),
             (fetchedPrompts) {
-          prompts = fetchedPrompts;
+          prompts = fetchedPrompts.sublist(0,100);
+          log(prompts.toString());
           _promptsStreamController.add(prompts);
         }
     );
   }
-  Future<void> getPrivatePrompts(String category, {bool? isFavorite}) async {
-    final input = GetPublicPromptsUseCaseInput(category, isFavorite: isFavorite);
+
+  Future<void> getPrivatePrompts(String category,  {bool? isFavorite, String? query}) async {
+    final input = GetPublicPromptsUseCaseInput(
+        category.toLowerCase(),
+        isFavorite: isFavorite,
+        query: query?.isNotEmpty == true ? query : null
+
+    );
 
     (await _getPrivatePromptsUseCase.execute(input)).fold(
             (failure) => _errorStreamController.add(failure.message),
             (prompts) {
           privatePrompts = prompts;
-          _privatePromptsStreamController.add(privatePrompts); // Stream is updated
+          _privatePromptsStreamController.add(privatePrompts);
         }
     );
   }
 
   Future<void> getFavoritePrompts() async {
     final input = GetPublicPromptsUseCaseInput("all", isFavorite: true);
+    final input2 = GetPublicPromptsUseCaseInput("all", isFavorite: true);
 
     (await _getPublicPromptsUseCase.execute(input)).fold(
             (failure) => _errorStreamController.add(failure.message),
             (fetchedPrompts) {
           favoritePrompts = fetchedPrompts;
+          _favoritesStreamController.add(favoritePrompts);
+        }
+    );
+    (await _getPrivatePromptsUseCase.execute(input2)).fold(
+            (failure) => _errorStreamController.add(failure.message),
+            (fetchedPrompts) {
+          favoritePrompts = favoritePrompts + fetchedPrompts;
           _favoritesStreamController.add(favoritePrompts);
         }
     );
@@ -507,7 +626,13 @@ class PromptViewModel extends BaseViewModel {
               userName: prompt.userName,
               isFavorite: !prompt.isFavorite,
             );
-            _promptsStreamController.add(prompts);
+            if (_isPublicMode){
+              _promptsStreamController.add(prompts);
+            }
+            else{
+              _privatePromptsStreamController.add(prompts);
+            }
+            refreshCurrentView(_currentCategory);
           }
         }
     );
@@ -525,7 +650,9 @@ class PromptViewModel extends BaseViewModel {
 
     (await _createPromptUseCase.execute(request)).fold(
             (failure) => _errorStreamController.add(failure.message),
-            (_) => getPrompts(_getCurrentCategory())
+            (_) {
+              refreshCurrentView(_currentCategory); // Refresh the list after creating
+            }
     );
   }
 
@@ -533,23 +660,46 @@ class PromptViewModel extends BaseViewModel {
     final request = UpdatePromptUseCaseInput(id, title, content, description, category, language, isPublic);
     (await _updatePromptUseCase.execute(request)).fold(
             (failure) => _errorStreamController.add(failure.message),
-            (_) => getPrompts(_getCurrentCategory())
+            (_) {
+                 refreshCurrentView(_currentCategory); // Refresh the list after updating
+            }
     );
   }
 
   Future<void> deletePrompt(String id) async {
     (await _deletePromptUseCase.execute(id)).fold(
             (failure) => _errorStreamController.add(failure.message),
-            (_) => getPrompts(_getCurrentCategory())
+            (_) {
+              refreshCurrentView(this._currentCategory); // Refresh the list after updating
+            }
     );
   }
 
-  void toggleFavoriteFilter() {
-    showFavorites = !showFavorites;
-    getPrompts(_getCurrentCategory());
+  void setCurrentCategory(String category) {
+    _currentCategory = category;
+    log("rest:"+_currentCategory);
+    if (_isPublicMode) {
+      getPrompts(category);
+    } else {
+      getPrivatePrompts(category);
+    }
   }
 
-  String _getCurrentCategory() => 'all';
+  // Update mode (public/private) and refresh prompts
+  void setPublicMode(bool isPublic) {
+    _isPublicMode = isPublic;
+    if (isPublic) {
+      getPrompts(_currentCategory);
+    } else {
+      getPrivatePrompts(_currentCategory);
+    }
+  }
+  String getCurrentCategory() => _currentCategory;
+
+  void toggleFavoriteFilter() {
+    showFavorites = !showFavorites;
+    getPrompts('all');
+  }
 
   List<String> getPromptCategories() {
     return [
@@ -572,6 +722,7 @@ class PromptViewModel extends BaseViewModel {
     _promptsStreamController.close();
     _errorStreamController.close();
     _favoritesStreamController.close();
+    _privatePromptsStreamController.close();
     super.dispose();
   }
 

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:jarvis/data/network/app_api.dart';
 import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.dart';
 import 'package:jarvis/data/request/request.dart';
@@ -10,7 +12,7 @@ abstract class RemoteDataSource {
   Future<void> signOut();
   Future<RefreshTokenResponse> refreshToken(String refreshTokenRequest);
   Future<SendMessageResponse> sendMessage(SendMessageRequest sendMessageRequest);
-  Future<GetPromptsResponse> getPrompts(String? category, bool isPublic, {bool? isFavorite});
+  Future<GetPromptsResponse> getPrompts(String? category, bool isPublic,  {bool? isFavorite, String? query});
   Future<void> addToFavorites(String promptId);
   Future<PromptResponse> createPrompt(CreatePromptRequest request);
   Future<void> updatePrompt(String promptId, UpdatePromptRequest request);
@@ -48,8 +50,8 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   }
 
   @override
-  Future<GetPromptsResponse> getPrompts(String? category, bool isPublic, {bool? isFavorite}) async {
-    return await _appServiceClient.getPrompts(category, isPublic, isFavorite);
+  Future<GetPromptsResponse> getPrompts(String? category, bool isPublic,  {bool? isFavorite, String? query}) async {
+    return await _appServiceClient.getPrompts(category, isPublic, isFavorite, query);
   }
 
   @override
