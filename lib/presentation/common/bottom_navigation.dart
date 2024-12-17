@@ -20,32 +20,16 @@ class BottomNavigation extends StatelessWidget {
       onTap: onTap,
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-            icon: Image.asset(
-              ImageAssets.messageCircleIc,
-              width: AppSize.s28,
-              height: AppSize.s28,
-            ),
+            icon: Icon(Icons.chat, size: AppSize.s28),
             label: 'Chat'),
         BottomNavigationBarItem(
-            icon: Image.asset(
-              ImageAssets.botIc,
-              width: AppSize.s28,
-              height: AppSize.s28,
-            ),
+            icon: Icon(Icons.smart_toy, size: AppSize.s28),
             label: 'Bot'),
         BottomNavigationBarItem(
-            icon: Image.asset(
-              ImageAssets.addIc,
-              width: AppSize.s28,
-              height: AppSize.s28,
-            ),
+            icon: Icon(Icons.add_circle_outline, size: AppSize.s28),
             label: 'Prompt'),
         BottomNavigationBarItem(
-            icon: Image.asset(
-              ImageAssets.knowledgeIc,
-              width: AppSize.s28,
-              height: AppSize.s28,
-            ),
+            icon: Icon(Icons.library_books, size: AppSize.s28),
             label: 'Knowledge'),
       ],
       selectedItemColor: Colors.teal,

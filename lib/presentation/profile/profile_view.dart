@@ -8,7 +8,7 @@ class ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.teal.shade50,
       appBar: CustomHeaderBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
@@ -95,7 +95,7 @@ class ProfileView extends StatelessWidget {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16.0,
-            color: Colors.grey,
+            color: Colors.black,
           ),
         ),
       ),
@@ -108,7 +108,15 @@ class ProfileView extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15.0),
-          color: Colors.teal.shade50, // Màu nền
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: ListTile(
             contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0), // Padding cho ListTile
