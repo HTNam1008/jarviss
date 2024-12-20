@@ -2,9 +2,11 @@ import 'package:jarvis/app/extensions.dart';
 import 'package:jarvis/data/request/ai_chat/send_message/assistant.dart';
 import 'package:jarvis/data/request/ai_chat/send_message/chat_message.dart';
 import 'package:jarvis/data/request/ai_chat/send_message/message_role.dart';
+import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:jarvis/data/responses/ai_chat/get_conversation_history_response.dart';
 import 'package:jarvis/data/responses/ai_chat/get_conversations_response.dart';
 import 'package:jarvis/data/responses/ai_chat/send_message_response.dart';
+import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
 import 'package:jarvis/data/responses/responses.dart';
 import 'package:jarvis/data/responses/token/token_usage_response.dart';
 import 'package:jarvis/domain/model/model.dart';
@@ -36,6 +38,12 @@ extension TokenResponseMapper on TokenResponse {
 }
 
 extension SignInResponseMapper on SignInResponse {
+  Token toDomain() {
+    return token.toDomain();
+  }
+}
+
+extension SignInKbResponseMapper on KnowledgeAuthResponse {
   Token toDomain() {
     return token.toDomain();
   }

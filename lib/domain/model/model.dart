@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:jarvis/data/request/ai_chat/send_message/assistant.dart';
 import 'package:jarvis/data/request/ai_chat/send_message/chat_message.dart';
+import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:jarvis/data/responses/ai_chat/get_conversations_response.dart';
 
 class User {
@@ -131,3 +132,47 @@ class PromptCategoryItem {
   const PromptCategoryItem({this.value, required this.label});
 }
 
+
+// class GetAssistantsResponse {
+//   final List<AssistantData> data;
+//   final MetaData metaData;
+
+//   GetAssistantsResponse({required this.data, required this.metaData});
+
+// }
+
+// class AssistantData {
+//   final String createdAt;
+//   final String updatedAt;
+//   final String? createdBy;
+//   final String? updatedBy;
+//   final String? deletedAt;
+//   final String id;
+//   final String openAiAssistantId;
+//   final String description;
+//   final String instructions;
+//   final String assistantName;
+//   final String userId;
+//   final String openAiVectorStoreId;
+//   final String openAiThreadIdPlay;
+//   final bool isDefault;
+//   final bool isFavorite;
+
+//   AssistantData({
+//     required this.createdAt,
+//     required this.updatedAt,
+//     this.createdBy,
+//     this.updatedBy,
+//     this.deletedAt,
+//     required this.id,
+//     required this.openAiAssistantId,
+//     required this.description,
+//     required this.instructions,
+//     required this.assistantName,
+//     required this.userId,
+//     required this.openAiVectorStoreId,
+//     required this.openAiThreadIdPlay,
+//     required this.isDefault,
+//     required this.isFavorite,
+//   });
+// }

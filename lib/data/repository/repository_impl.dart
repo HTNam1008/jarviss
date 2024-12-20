@@ -4,10 +4,13 @@ import 'package:jarvis/data/mapper/mapper.dart';
 import 'package:jarvis/data/network/error_handler.dart';
 import 'package:jarvis/data/network/failure.dart';
 import 'package:jarvis/data/network/network_info.dart';
+import 'package:jarvis/data/request/ai_bot/get_assistants_request.dart';
 import 'package:jarvis/data/request/ai_chat/conversation/conversation_history_request.dart';
 import 'package:jarvis/data/request/ai_chat/conversation/conversations_request.dart';
 import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.dart';
 import 'package:jarvis/data/request/authentication/request.dart';
+import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dart';
+import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 
@@ -129,6 +132,37 @@ class RepositoryImpl implements Repository {
         final response = await _remoteDataSource.getConversationHistory(conversationHistoryRequest);
 
         return Right(response.toDomain());
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, Token>> signInKnowledgeBase(KnowledgeAuthRequest signInKbRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.signInKnowledgeBase(signInKbRequest);
+        print("response: $response");
+        return Right(response.toDomain());
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, GetAssistantsResponse>> getAssistants(GetAssistantsRequest getAssistantsRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.getAssistants(getAssistantsRequest);
+        print("response: $response");
+        return Right(response);
+        // return Right(response.toDomain());
       } catch (error) {
         return Left(ErrorHandler.handle(error).failure);
       }

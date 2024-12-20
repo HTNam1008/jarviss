@@ -14,11 +14,17 @@ class AuthInterceptor extends Interceptor {
 
   AuthInterceptor(this._appPreferences, this._dio);
 
+  bool _isKnowledgeBaseUrl(String url) {
+    return url.contains(Constant.baseKnowledgeUrl);
+  }
+
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     // Do not add Authorization header to the refresh token request
     if (options.path != ConstantAPI.refreshToken) {
-      final accessToken = await _appPreferences.getAccessToken();
+      final accessToken = _isKnowledgeBaseUrl(options.baseUrl) 
+          ? await _appPreferences.getAccessTokenKb()
+          : await _appPreferences.getAccessToken();
       if (accessToken.isNotEmpty) {
         options.headers[Constant.AUTHORIZATION] = 'Bearer $accessToken';
       }
@@ -30,10 +36,13 @@ class AuthInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
       try {
-        final refreshed = await _handleRefreshToken();
+        final isKbUrl = _isKnowledgeBaseUrl(err.requestOptions.baseUrl);
+        final refreshed = await _handleRefreshToken(isKbUrl);
         if (refreshed) {
           // Get new access token
-          final accessToken = await _appPreferences.getAccessToken();
+          final accessToken = isKbUrl 
+              ? await _appPreferences.getAccessTokenKb()
+              : await _appPreferences.getAccessToken();
           // Update the headers
           final options = err.requestOptions;
           options.headers[Constant.AUTHORIZATION] = 'Bearer $accessToken';
@@ -42,14 +51,13 @@ class AuthInterceptor extends Interceptor {
           return handler.resolve(response);
         } else {
           // Refresh token failed, navigate to login
-          await _appPreferences.clearTokens();
+          await _clearTokensAndNavigateToLogin(isKbUrl);
           _navigateToLogin();
           return handler.reject(err);
         }
       } catch (e) {
         // Handle error and navigate to login
-        await _appPreferences.clearTokens();
-        _navigateToLogin();
+        await _clearTokensAndNavigateToLogin(_isKnowledgeBaseUrl(err.requestOptions.baseUrl));
         return handler.reject(err);
       }
     } else {
@@ -57,15 +65,18 @@ class AuthInterceptor extends Interceptor {
     }
   }
 
-  Future<bool> _handleRefreshToken() async {
+  Future<bool> _handleRefreshToken(bool isKbUrl) async {
     try {
-      final refreshToken = await _appPreferences.getRefreshToken();
+      final refreshToken = isKbUrl 
+          ? await _appPreferences.getRefreshTokenKb()
+          : await _appPreferences.getRefreshToken();
+
       if (refreshToken.isEmpty) return false;
       print("refresh token: $refreshToken");
       // Use a new Dio instance without interceptors for refresh token
       Dio refreshDio = Dio();
       refreshDio.options = BaseOptions(
-        baseUrl: Constant.baseUrl,
+        baseUrl: isKbUrl ? Constant.baseKnowledgeUrl : Constant.baseUrl,
         headers: {
           Constant.CONTENT_TYPE: Constant.APPLICATION_JSON,
           Constant.ACCEPT: Constant.APPLICATION_JSON,
@@ -87,10 +98,12 @@ class AuthInterceptor extends Interceptor {
               compact: true,
             ));
           }
-      // Save the new access token
-      final newToken = response.token;
-      await _appPreferences.setAccessToken(newToken.accessToken);
-
+      // Save the new access token      
+      if (isKbUrl) {
+        await _appPreferences.setAccessTokenKb(response.token.accessToken);
+      } else {
+        await _appPreferences.setAccessToken(response.token.accessToken);
+      }
       return true;
     } catch (e) {
       print('Error while refreshing token: $e');
@@ -98,9 +111,17 @@ class AuthInterceptor extends Interceptor {
     }
   }
 
+  Future<void> _clearTokensAndNavigateToLogin(bool isKbUrl) async {
+    if (isKbUrl) {
+      await _appPreferences.clearKbTokens();
+    } else {
+      await _appPreferences.clearTokens();
+    }
+    _navigateToLogin();
+  } 
+
   void _navigateToLogin() {
-  _appPreferences.clearTokens();
-  Navigator.pushNamedAndRemoveUntil(
+    Navigator.pushNamedAndRemoveUntil(
       navigatorKey.currentContext!,
       Routes.signInRoute,
       (route) => false, // This will remove all previous routes

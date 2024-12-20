@@ -1,5 +1,7 @@
 class Constant {
-  static const String baseUrl = "https://api.dev.jarvis.cx";
+  static const String baseUrl = "https://api.jarvis.cx";
+  static const String baseKnowledgeUrl = "https://knowledge-api.jarvis.cx";
+
   static const String APPLICATION_JSON = "application/json";
   static const String CONTENT_TYPE = "content-type";
   static const String ACCEPT = "accept";
@@ -15,6 +17,12 @@ class ConstantAPI {
   static const sendMessage = '/api/v1/ai-chat/messages';
   static const tokenUsage = '/api/v1/tokens/usage';
   static const getConversations = '/api/v1/ai-chat/conversations';
+  static const createAssistant = '/kb-core/v1/ai-assistant';
+  static const updateAssistant = '/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}';
+  static const deleteAssistant = '/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}';
+  static const getAssistant = '/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}';
+  static const getAssistants = '/kb-core/v1/ai-assistant';
+  static const signInKnowledgeBase = '/kb-core/v1/auth/external-sign-in';
 }
 
 class ConstantAssistantID {
@@ -28,4 +36,13 @@ class ConstantAssistantID {
 
 class ConstantAssistantModel {
   static const String DIFY = "dify";
+}
+
+class ConstantPath {
+  static const String assistantId = "assistantId";
+}
+
+enum EnumOrder {
+  ASC,
+  DESC
 }

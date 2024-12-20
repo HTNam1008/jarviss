@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart'; // Đảm bảo import get_it
 import 'package:jarvis/app/di/di.dart';
 import 'package:jarvis/data/responses/ai_chat/get_conversations_response.dart';
 import 'package:jarvis/domain/model/model.dart';

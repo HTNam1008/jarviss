@@ -7,7 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 const String PREFS_KEY_LANG = "PREFS_KEY_LANG";
 const String KEY_ACCESS_TOKEN = "KEY_ACCESS_TOKEN";
 const String KEY_REFRESH_TOKEN = "KEY_REFRESH_TOKEN";
-
+const String KEY_ACCESS_TOKEN_KB = "KEY_ACCESS_TOKEN_KB";
+const String KEY_REFRESH_TOKEN_KB = "KEY_REFRESH_TOKEN_KB";
 class AppPreferences {
   final SharedPreferences _sharedPreferences;
   final FlutterSecureStorage _secureStorage;
@@ -58,4 +59,36 @@ class AppPreferences {
   // bool hasToken() {
   //   return _sharedPreferences.containsKey(PREFS_KEY_TOKEN);
   // }
+
+  // Access Token KB
+  Future<String> getAccessTokenKb() async {
+    return await _secureStorage.read(key: KEY_ACCESS_TOKEN_KB) ?? '';
+  }
+
+  Future<void> setAccessTokenKb(String token) async {
+    await _secureStorage.write(key: KEY_ACCESS_TOKEN_KB, value: token);
+  }
+
+  Future<void> deleteAccessTokenKb() async {
+    await _secureStorage.delete(key: KEY_ACCESS_TOKEN_KB);
+  }
+
+  // Refresh Token
+  Future<String> getRefreshTokenKb() async {
+    return await _secureStorage.read(key: KEY_REFRESH_TOKEN_KB) ?? '';
+  }
+
+  Future<void> setRefreshTokenKb(String token) async {
+    await _secureStorage.write(key: KEY_REFRESH_TOKEN_KB, value: token);
+  }
+
+  Future<void> deleteRefreshTokenKb() async {
+    await _secureStorage.delete(key: KEY_REFRESH_TOKEN_KB);
+  }
+
+  // Xóa tất cả token
+  Future<void> clearKbTokens() async {
+    await _secureStorage.delete(key: KEY_ACCESS_TOKEN_KB);
+    await _secureStorage.delete(key: KEY_REFRESH_TOKEN_KB);
+  }
 }

@@ -7,15 +7,18 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:jarvis/app/app_prefs.dart';
 import 'package:jarvis/data/data_source/remote_data_source.dart';
 import 'package:jarvis/data/network/app_api.dart';
+import 'package:jarvis/data/network/app_kb_api.dart';
 import 'package:jarvis/data/network/dio_factory.dart';
 import 'package:jarvis/data/network/network_info.dart';
 import 'package:jarvis/data/repository/repository_impl.dart';
 import 'package:jarvis/domain/repository/repository.dart';
+import 'package:jarvis/domain/usecase/get_assistants_usecase.dart';
 import 'package:jarvis/domain/usecase/get_conversation_history_usecase.dart';
 import 'package:jarvis/domain/usecase/get_conversations_usecase.dart';
 import 'package:jarvis/domain/usecase/create_prompt_usecase.dart';
 import 'package:jarvis/domain/usecase/refresh_token_usecase.dart';
 import 'package:jarvis/domain/usecase/send_message_usecase.dart';
+import 'package:jarvis/domain/usecase/sign_in_kb_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_in_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_out_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_up_usecase.dart';
@@ -24,7 +27,9 @@ import 'package:jarvis/presentation/authencation/sign_in/sign_in_viewmodel.dart'
 import 'package:jarvis/presentation/authencation/sign_out/sign_out_viewmodel.dart';
 import 'package:jarvis/presentation/authencation/sign_up/sign_up_viewmodel.dart';
 import 'package:jarvis/presentation/chat/chat_viewmodel.dart';
+import 'package:jarvis/presentation/chatbot/main_chatbot_viewmodel.dart';
 import 'package:jarvis/presentation/left_side_bar/app_drawer_viewmodel.dart';
+import 'package:jarvis/presentation/main/sign_in_kb_viewmodel.dart';
 import 'package:jarvis/presentation/splash/splash_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -62,6 +67,10 @@ Future<void> setupLocator() async {
     () => AppServiceClient(getIt<Dio>()),
   );
 
+  getIt.registerLazySingleton<AppKbServiceClient>(
+    () => AppKbServiceClient(getIt<Dio>()),
+  );
+
   // Register InternetConnectionChecker
   getIt.registerLazySingleton<InternetConnectionChecker>(
     () => InternetConnectionChecker(),
@@ -74,7 +83,7 @@ Future<void> setupLocator() async {
 
   // Register RemoteDataSource
   getIt.registerLazySingleton<RemoteDataSource>(
-    () => RemoteDataSourceImplementer(getIt<AppServiceClient>()),
+    () => RemoteDataSourceImplementer(getIt<AppServiceClient>(), getIt<AppKbServiceClient>()),
   );
 
   // Register Repository
@@ -178,4 +187,26 @@ Future<void> setupLocator() async {
   getIt.registerLazySingleton<AppDrawerViewModel>(
     () => AppDrawerViewModel(getIt<GetConversationsUsecase>()),
   );
+
+  // Register SignInKbUseCase
+  getIt.registerFactory<SignInKbUseCase>(
+    () => SignInKbUseCase(getIt<Repository>()),
+  );
+
+  // Register SignInKbViewModel
+  getIt.registerFactory<SignInKbViewModel>(
+    () => SignInKbViewModel(
+      getIt<SignInKbUseCase>(),
+      getIt<AppPreferences>(),
+    ),
+  );
+
+    getIt.registerFactory<GetAssistantsUseCase>(
+    () => GetAssistantsUseCase(getIt<Repository>()),
+  );
+
+  getIt.registerFactory<MainChatbotViewModel>(
+    () => MainChatbotViewModel(getIt<GetAssistantsUseCase>()),
+  );
+
 }
