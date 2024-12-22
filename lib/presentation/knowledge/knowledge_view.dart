@@ -40,6 +40,12 @@ class _KnowledgeViewState extends State<KnowledgeView> {
   void initState() {
     super.initState();
     _viewModel = GetIt.instance<KnowledgeViewModel>();
+
+    _searchController.addListener(() {
+      if (!_searchController.text.isNotEmpty) {
+        _viewModel.clearSearch();
+      }
+    });
   }
 
   @override
@@ -112,14 +118,19 @@ class _KnowledgeViewState extends State<KnowledgeView> {
                 children: [
                   Expanded(
                     child: TextField(
+                      controller: _searchController,
                       decoration: InputDecoration(
                         hintText: 'Search',
                         prefixIcon: Icon(Icons.search),
-                        suffixIcon: IconButton(
-                          icon: Icon(Icons.mic),
+                        suffixIcon: _searchController.text.isNotEmpty
+                            ? IconButton(
+                          icon: const Icon(Icons.clear),
                           onPressed: () {
+                            _searchController.clear();
+                            _viewModel.clearSearch();
                           },
-                        ),
+                        )
+                            : null,
                         fillColor: Colors.white,
                         filled: true,
                         border: OutlineInputBorder(
@@ -133,6 +144,28 @@ class _KnowledgeViewState extends State<KnowledgeView> {
                           borderRadius: BorderRadius.circular(40.0),
                           borderSide: BorderSide(color: ColorManager.teal),
                         ),
+                      ),
+                      onSubmitted: (value) {
+                          _executeSearch();
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: _executeSearch,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorManager.teal,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                    ),
+                    child: const Text(
+                      'Search',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -211,6 +244,10 @@ class _KnowledgeViewState extends State<KnowledgeView> {
     );
   }
 
+  void _executeSearch() {
+    _viewModel.setSearchQuery(_searchController.text);
+    _viewModel.executeSearch();
+  }
   void _showActions(BuildContext context, KnowledgeData knowledge) {
     showModalBottomSheet(
       context: context,
@@ -262,10 +299,25 @@ class KnowledgeViewModel extends BaseViewModel {
   final StreamController<String> _errorStreamController = StreamController<String>.broadcast();
 
   List<KnowledgeData> knowledgeList = [];
+  String _searchQuery = '';
 
   Stream<List<KnowledgeData>> get knowledgeStream => _knowledgeStreamController.stream;
 
   KnowledgeViewModel(this._getKnowledgeUseCase, this._createKnowledgeUsecase, this._updateKnowledgeUseCase);
+
+  void setSearchQuery(String query) {
+    _searchQuery = query;
+    refreshCurrentView();  // Refresh with new search query
+  }
+
+  void executeSearch() {
+    refreshCurrentView(); // Only refresh when search is executed
+  }
+
+  void clearSearch() {
+    _searchQuery = '';
+    refreshCurrentView();
+  }
 
   Future<void> getKnowledge(int? limit, int? offset, EnumOrder? order, String? orderField, String? q) async {
     final input = GetKnowledgeUseCaseInput(
@@ -318,7 +370,7 @@ class KnowledgeViewModel extends BaseViewModel {
   }
 
   void refreshCurrentView(){
-    getKnowledge(null, 0, null, null, null);
+    getKnowledge(null, 0, null, null,_searchQuery!=''?_searchQuery:null);
   }
 
   @override
