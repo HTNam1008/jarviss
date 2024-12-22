@@ -12,16 +12,19 @@ import 'package:jarvis/data/network/dio_factory.dart';
 import 'package:jarvis/data/network/network_info.dart';
 import 'package:jarvis/data/repository/repository_impl.dart';
 import 'package:jarvis/domain/repository/repository.dart';
+import 'package:jarvis/domain/usecase/create_knowledge_usecase.dart';
 import 'package:jarvis/domain/usecase/get_assistants_usecase.dart';
 import 'package:jarvis/domain/usecase/get_conversation_history_usecase.dart';
 import 'package:jarvis/domain/usecase/get_conversations_usecase.dart';
 import 'package:jarvis/domain/usecase/create_prompt_usecase.dart';
+import 'package:jarvis/domain/usecase/get_knowledge_usecase.dart';
 import 'package:jarvis/domain/usecase/refresh_token_usecase.dart';
 import 'package:jarvis/domain/usecase/send_message_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_in_kb_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_in_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_out_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_up_usecase.dart';
+import 'package:jarvis/domain/usecase/update_knowledge_usecase.dart';
 import 'package:jarvis/domain/usecase/usage_token_usecase.dart';
 import 'package:jarvis/presentation/authencation/sign_in/sign_in_viewmodel.dart';
 import 'package:jarvis/presentation/authencation/sign_out/sign_out_viewmodel.dart';
@@ -38,6 +41,7 @@ import '../../domain/repository/prompt_repository.dart';
 import '../../domain/usecase/delete_prompt_usecase.dart';
 import '../../domain/usecase/get_public_prompts_usecase.dart';
 import '../../domain/usecase/update _prompt_usecase.dart';
+import '../../presentation/knowledge/knowledge_view.dart';
 import '../../presentation/prompt/main_prompt_view.dart';
 
 final getIt = GetIt.instance;
@@ -209,4 +213,12 @@ Future<void> setupLocator() async {
     () => MainChatbotViewModel(getIt<GetAssistantsUseCase>()),
   );
 
+  getIt.registerLazySingleton<GetKnowledgeUsecase>(() => GetKnowledgeUsecase(getIt<Repository>()));
+  getIt.registerFactory<CreateKnowledgeUsecase>(
+        () => CreateKnowledgeUsecase(getIt<Repository>()),
+  );
+  getIt.registerFactory<UpdateKnowledgeUseCase>(
+        () => UpdateKnowledgeUseCase(getIt<Repository>()),
+  );
+  getIt.registerFactory<KnowledgeViewModel>(() => KnowledgeViewModel(getIt<GetKnowledgeUsecase>(),getIt<CreateKnowledgeUsecase>(),getIt<UpdateKnowledgeUseCase>()));
 }

@@ -8,6 +8,9 @@ import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dar
 import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/data/request/authentication/request.dart';
+import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
+import '../../../app/constant.dart';
+
 
 abstract class Repository {
   Future<Either<Failure, Token>> signIn(SignInRequest signInRequest);
@@ -20,4 +23,14 @@ abstract class Repository {
   Future<Either<Failure, ConversationHistory>> getConversationHistory(ConversationHistoryRequest conversationsRequest);
   Future<Either<Failure, Token>> signInKnowledgeBase(KnowledgeAuthRequest signInKbRequest);
   Future<Either<Failure, GetAssistantsResponse>> getAssistants(GetAssistantsRequest getAssistantsRequest);
+  Future<Either<Failure, KnowledgeResponse>> createKnowledge(CreateKnowledgeRequest request);
+  Future<Either<Failure, KnowledgeResponse>> updateKnowledge(String id, CreateKnowledgeRequest request);
+  Future<Either<Failure, GetKnowledgeResponse>> getKnowledge({
+    int? limit,
+    int? offset,
+    EnumOrder? order,
+    String? orderField,
+    String? q,
+  });
+  Future<Either<Failure, void>> deleteKnowledge(String id);
 }

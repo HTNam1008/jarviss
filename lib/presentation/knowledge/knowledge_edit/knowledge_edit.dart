@@ -1,25 +1,75 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:jarvis/presentation/common/bottom_navigation.dart';
 import 'package:jarvis/presentation/common/chat_input_box.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
+import 'package:jarvis/presentation/knowledge/knowledge_view.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 
 class EditKnowledgeView extends StatefulWidget {
+  final KnowledgeData knowledge;
+
+  const EditKnowledgeView({super.key, required this.knowledge});
   @override
   State<EditKnowledgeView> createState() => _EditKnowledgeViewState();
 }
 
 class _EditKnowledgeViewState extends State<EditKnowledgeView> {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+  late TextEditingController _nameController = TextEditingController();
+  late TextEditingController _descriptionController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    log(widget.knowledge.index);
+    // Initialize the controllers with the knowledge data
+    _nameController = TextEditingController(text: widget.knowledge.knowledgeName);
+    _descriptionController = TextEditingController(text: widget.knowledge.description);
+  }
 
   @override
   void dispose() {
     _nameController.dispose();
     _descriptionController.dispose();
     super.dispose();
+  }
+
+  void _handleUpdate() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      await GetIt.instance<KnowledgeViewModel>().updatePrompt(
+          widget.knowledge.index,
+          _nameController.text,
+          _descriptionController.text,
+      );
+
+      if (mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Knowledge updated successfully'))
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error updating knowledge: $e'))
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   @override
@@ -31,7 +81,9 @@ class _EditKnowledgeViewState extends State<EditKnowledgeView> {
       ),
       child: Container(
         padding: const EdgeInsets.all(AppPadding.p20),
-        child: Column(
+        child: Form(
+         key: _formKey,
+         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
@@ -67,8 +119,9 @@ class _EditKnowledgeViewState extends State<EditKnowledgeView> {
                   ),
                 ),
                 const SizedBox(height: AppSize.s8),
-                TextField(
+                TextFormField(
                   controller: _nameController,
+                  validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
                   decoration: InputDecoration(
                     hintText: 'Input name',
                     hintStyle: TextStyle(
@@ -100,8 +153,9 @@ class _EditKnowledgeViewState extends State<EditKnowledgeView> {
                   ),
                 ),
                 const SizedBox(height: AppSize.s8),
-                TextField(
+                TextFormField(
                   controller: _descriptionController,
+                  validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
                   decoration: InputDecoration(
                     hintText: 'Input description',
                     hintStyle: TextStyle(
@@ -126,9 +180,7 @@ class _EditKnowledgeViewState extends State<EditKnowledgeView> {
               children: [
                 Expanded(
                   child: TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                     onPressed: _isLoading ? null : () => Navigator.pop(context),
                     style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: AppPadding.p12),
                       shape: RoundedRectangleBorder(
@@ -148,15 +200,7 @@ class _EditKnowledgeViewState extends State<EditKnowledgeView> {
                 const SizedBox(width: AppSize.s16),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
-                      // Handle confirm action
-                      if (_nameController.text.isNotEmpty) {
-                        Navigator.pop(context, {
-                          'name': _nameController.text,
-                          'description': _descriptionController.text,
-                        });
-                      }
-                    },
+                    onPressed:  _isLoading ? null : _handleUpdate,
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: AppPadding.p12),
                       backgroundColor: ColorManager.teal,
@@ -164,7 +208,9 @@ class _EditKnowledgeViewState extends State<EditKnowledgeView> {
                         borderRadius: BorderRadius.circular(AppSize.s12),
                       ),
                     ),
-                    child: const Text(
+                    child: _isLoading
+                        ? const CircularProgressIndicator()
+                    :const Text(
                       'Confirm',
                       style: TextStyle(
                         color: Colors.white,
@@ -177,7 +223,8 @@ class _EditKnowledgeViewState extends State<EditKnowledgeView> {
             ),
           ],
         ),
-      ),
+        ),
+    ),
     );
   }
 }

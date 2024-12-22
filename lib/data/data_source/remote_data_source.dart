@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:jarvis/data/network/app_api.dart';
 import 'package:jarvis/data/network/app_kb_api.dart';
 import 'package:jarvis/data/request/ai_bot/delete_assistant_request.dart';
@@ -18,6 +20,8 @@ import 'package:jarvis/data/responses/ai_chat/send_message_response.dart';
 import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
 import 'package:jarvis/data/responses/responses.dart';
 import 'package:jarvis/data/responses/token/token_usage_response.dart';
+import '../../../app/constant.dart';
+
 
 abstract class RemoteDataSource {
   Future<SignInResponse> signIn(SignInRequest signInRequest);
@@ -51,6 +55,17 @@ abstract class RemoteDataSource {
   Future<void> deleteAssistant(DeleteAssistantRequest deleteAssistantRequest);
   Future<UpdateAssistantResponse> updateAssistant(
       UpdateAssistantRequest updateAssistantRequest);
+  Future<KnowledgeResponse> createKnowledge(CreateKnowledgeRequest request);
+  Future<KnowledgeResponse> updateKnowledge(String id, CreateKnowledgeRequest request);
+  Future<GetKnowledgeResponse> getKnowledge({
+    int? limit,
+    int? offset,
+    EnumOrder? order,
+    String? orderField,
+    String? q,
+  });
+  Future<void> deleteKnowledge(String id);
+
 }
 
 class RemoteDataSourceImplementer implements RemoteDataSource {
@@ -181,4 +196,34 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
         orderField: getAssistantsRequest.orderField,
         q: getAssistantsRequest.q);
   }
+
+  @override
+  Future<KnowledgeResponse> createKnowledge(CreateKnowledgeRequest request) =>
+      _appKbServiceClient.createKnowledge(request);
+
+  @override
+  Future<KnowledgeResponse> updateKnowledge(String id, CreateKnowledgeRequest request) =>
+      _appKbServiceClient.updateKnowledge(id, request);
+
+  @override
+  Future<GetKnowledgeResponse> getKnowledge({int? limit, int? offset, EnumOrder? order,String? orderField,String? q,}) async {
+    log('Fetched knowledge datasource');
+    try {
+      final response = await _appKbServiceClient.getKnowledge(
+        limit: limit,
+        offset: offset,
+        order: order,
+        orderField: orderField,
+        q: q,);
+      log('API call successful: $response');
+      return response;
+    } catch (e, stackTrace) {
+      log('Error in _remoteDataSource.getKnowledge: $e', stackTrace: stackTrace);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> deleteKnowledge(String id) =>
+      _appKbServiceClient.deleteKnowledge(id);
 }

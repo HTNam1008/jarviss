@@ -57,6 +57,61 @@ class AssistantData {
 }
 
 @JsonSerializable()
+class GetKnowledgeResponse {
+  final List<KnowledgeData> data;
+  final MetaData meta;
+
+  GetKnowledgeResponse({
+    required this.data,
+    required this.meta,
+  });
+
+  factory GetKnowledgeResponse.fromJson(Map<String, dynamic> json) =>
+      _$GetKnowledgeResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GetKnowledgeResponseToJson(this);
+}
+
+@JsonSerializable()
+class KnowledgeData {
+  @JsonKey(name: '0')
+  final String index;
+  final String? createdAt;
+  final String? updatedAt;
+  final String? createdBy;
+  final String? updatedBy;
+  final String? userId;
+  final String knowledgeName;
+  final String description;
+
+  KnowledgeData({
+    required this.index,
+    this.createdAt,
+    this.updatedAt,
+    this.createdBy,
+    this.updatedBy,
+    this.userId,
+    required this.knowledgeName,
+    required this.description,
+  });
+
+  factory KnowledgeData.fromJson(Map<String, dynamic> json) {
+    return KnowledgeData(
+      index: json['id'] as String,
+      knowledgeName: json['knowledgeName'] as String,
+      description: json['description'] as String, // Nullable
+      userId: json['userId'] as String?, // Nullable
+      createdBy: json['createdBy'] as String?, // Nullable
+      updatedBy: json['updatedBy'] as String?, // Nullable
+      createdAt: json['createdAt'] as String?,
+      updatedAt: json['updatedAt'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() => _$KnowledgeDataToJson(this);
+}
+
+@JsonSerializable()
 class MetaData {
   final double limit;
   final double offset;

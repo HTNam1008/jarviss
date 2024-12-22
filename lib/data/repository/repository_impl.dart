@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:jarvis/data/data_source/remote_data_source.dart';
 import 'package:jarvis/data/mapper/mapper.dart';
@@ -13,6 +15,9 @@ import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dar
 import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/domain/repository/repository.dart';
+import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
+import '../../../app/constant.dart';
+
 
 class RepositoryImpl implements Repository {
   final RemoteDataSource _remoteDataSource;
@@ -168,6 +173,60 @@ class RepositoryImpl implements Repository {
       }
     } else {
       return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, KnowledgeResponse>> createKnowledge(CreateKnowledgeRequest request) async {
+    try {
+      final response = await _remoteDataSource.createKnowledge(request);
+      return Right(response);
+    } catch (error) {
+      return Left(ErrorHandler.handle(error).failure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, KnowledgeResponse>> updateKnowledge(String id, CreateKnowledgeRequest request) async {
+    try {
+      final response = await _remoteDataSource.updateKnowledge(id, request);
+      return Right(response);
+    } catch (error) {
+      return Left(ErrorHandler.handle(error).failure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, GetKnowledgeResponse>> getKnowledge({
+    int? limit,
+    int? offset,
+    EnumOrder? order,
+    String? orderField,
+    String? q,
+  }) async {
+    try {
+      log('Fetched knowledge repositry');
+      final response = await _remoteDataSource.getKnowledge(
+        limit: limit,
+        offset: offset,
+        order: order,
+        orderField: orderField,
+        q: q,
+      );
+      print("response: $response");
+      return Right(response);
+    } catch (error) {
+      return Left(ErrorHandler.handle(error).failure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteKnowledge(String id) async {
+    try {
+      await _remoteDataSource.deleteKnowledge(id);
+      return const Right(null);
+    } catch (error) {
+      return Left(ErrorHandler.handle(error).failure);
     }
   }
 }

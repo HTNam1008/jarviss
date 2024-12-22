@@ -14,3 +14,29 @@ class KnowledgeAuthResponse {
 
   Map<String, dynamic> toJson() => _$KnowledgeAuthResponseToJson(this);
 }
+
+@JsonSerializable()
+class KnowledgeResponse {
+  final String createdAt;
+  final String updatedAt;
+  final String createdBy;
+  final String updatedBy;
+  final String userId;
+  final String knowledgeName;
+  final String? description;
+
+  KnowledgeResponse({
+    required this.createdAt,
+    required this.updatedAt,
+    required this.createdBy,
+    required this.updatedBy,
+    required this.userId,
+    required this.knowledgeName,
+    this.description,
+  });
+
+  factory KnowledgeResponse.fromJson(Map<String, dynamic> json) =>
+      _$KnowledgeResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$KnowledgeResponseToJson(this);
+}

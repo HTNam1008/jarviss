@@ -47,7 +47,28 @@ abstract class AppKbServiceClient {
 
   @GET(ConstantAPI.getAssistant)
   Future<GetAssistantResponse> getAssistant(@Path("{${ConstantPath.assistantId}}") String assistandId);
+
+  @POST(ConstantAPI.createKnowledge)
+  Future<KnowledgeResponse> createKnowledge(@Body() CreateKnowledgeRequest knowledgeData);
+
+  @PATCH("/kb-core/v1/knowledge/{id}")
+  Future<KnowledgeResponse> updateKnowledge(
+      @Path("id") String knowledgeId,
+      @Body() CreateKnowledgeRequest knowledgeData);
+
+  @GET(ConstantAPI.getKnowledge)
+  Future<GetKnowledgeResponse> getKnowledge({
+    @Query('limit') int? limit,
+    @Query('offset') int? offset,
+    @Query('order') EnumOrder? order,
+    @Query('orderField') String? orderField,
+    @Query('q') String? q,
+  });
+
+  @DELETE(ConstantAPI.deleteKnowledge)
+  Future<void> deleteKnowledge(@Path("{${ConstantPath.knowledgeId}}") String knowledgeId);
 }
+
 
 class CreateAssistantRequest {
 }

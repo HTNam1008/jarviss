@@ -84,8 +84,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => CreateKnowledgeView());
       case Routes.deleteKnowledgeRoute:
         return MaterialPageRoute(builder: (_) => DeleteKnowledgeView());
-      case Routes.editKnowledgeRoute:
-        return MaterialPageRoute(builder: (_) => EditKnowledgeView());
+      // case Routes.editKnowledgeRoute:
+      //   return MaterialPageRoute(builder: (_) => EditKnowledgeView());
       case Routes.detailKnowledgeRoute:
         return MaterialPageRoute(builder: (_) => DetailKnowledgeView());
       case Routes.upgradeProRoute:

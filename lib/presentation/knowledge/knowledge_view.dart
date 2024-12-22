@@ -1,4 +1,11 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dart';
+import 'package:jarvis/domain/usecase/create_knowledge_usecase.dart';
+import 'package:jarvis/domain/usecase/update_knowledge_usecase.dart';
 import 'package:jarvis/presentation/common/bottom_navigation.dart';
 import 'package:jarvis/presentation/common/chat_input_box.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
@@ -11,13 +18,38 @@ import 'package:jarvis/presentation/resources/font_manager.dart';
 import 'package:jarvis/presentation/resources/route_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 
+import '../../app/constant.dart';
+import '../../data/responses/ai_bot/get_assistants_response.dart';
+import '../../domain/model/model.dart';
+import '../../domain/usecase/get_knowledge_usecase.dart';
+import '../base/baseviewmodel.dart';
+
 class KnowledgeView extends StatefulWidget {
+  const KnowledgeView({super.key});
+
   @override
   State<KnowledgeView> createState() => _KnowledgeViewState();
 }
 
 class _KnowledgeViewState extends State<KnowledgeView> {
   final TextEditingController _searchController = TextEditingController();
+  late KnowledgeViewModel _viewModel;
+  bool _isInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = GetIt.instance<KnowledgeViewModel>();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInitialized) {
+      _viewModel.getKnowledge(null, 0, null, null, null); // Initial fetch
+      _isInitialized = true;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,54 +140,70 @@ class _KnowledgeViewState extends State<KnowledgeView> {
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: 4,
-                itemBuilder: (context, index) {
-                  return Container(
-                    margin: EdgeInsets.symmetric(vertical: AppSize.s6, horizontal: AppSize.s8),
-                    padding: EdgeInsets.all(AppSize.s8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(AppSize.s12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          spreadRadius: 1,
-                          blurRadius: 4,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: ListTile(
-                      minTileHeight: AppSize.s40,
-                      leading: CircleAvatar(
-                        child: Icon(Icons.article_outlined),
-                      ),
-                      title: Text("Title",
-                        style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: AppSize.s14,
-                      ),),
-                      subtitle: Text('Description',
-                        style: TextStyle(
-                        fontSize: AppSize.s14,
-                        color: Colors.grey,
-                      ),),
-                      trailing: IconButton(
-                        icon: Icon(Icons.more_vert),
-                        onPressed: () {
-                          _showActions(context);
+                child: StreamBuilder<List<KnowledgeData>>(
+                  stream: _viewModel.knowledgeStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(
+                        child: Text('Error: ${snapshot.error}'),
+                      );
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(child: Text('No knowledge items found.'));
+                    } else {
+                      final knowledgeList = snapshot.data!;
+                      return ListView.builder(
+                        itemCount: knowledgeList.length,
+                        itemBuilder: (context, index) {
+                          final knowledge = knowledgeList[index];
+                          return Container(
+                            margin: EdgeInsets.symmetric(vertical: AppSize.s6, horizontal: AppSize.s8),
+                            padding: EdgeInsets.all(AppSize.s8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(AppSize.s12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  spreadRadius: 1,
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: ListTile(
+                              leading: const CircleAvatar(
+                                child: Icon(Icons.article_outlined),
+                              ),
+                              title: Text(
+                                knowledge.knowledgeName,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: AppSize.s14,
+                                ),
+                              ),
+                              subtitle: Text(
+                                knowledge.description,
+                                style: const TextStyle(
+                                  fontSize: AppSize.s14,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.more_vert),
+                                onPressed: () {
+                                  _showActions(context, knowledge);
+                                },
+                                color: Colors.grey,
+                              ),
+                            ),
+                          );
                         },
-                        color: Colors.grey,
-                      ),
-                      contentPadding: EdgeInsets.only(left: AppSize.s8),
-                      onTap: () {
-                        Navigator.of(context).pushNamed(Routes.detailKnowledgeRoute);
-                      },
-                    ),
-                  );
-                },
-              ),
+                      );
+                    }
+                  },
+                ),
             ),
           ],
         ),
@@ -163,29 +211,30 @@ class _KnowledgeViewState extends State<KnowledgeView> {
     );
   }
 
-  void _showActions(BuildContext context) {
+  void _showActions(BuildContext context, KnowledgeData knowledge) {
     showModalBottomSheet(
       context: context,
       builder: (context) {
         return Container(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(Icons.edit),
-                title: Text('Edit'),
+                leading: const Icon(Icons.edit),
+                title: const Text('Edit'),
                 onTap: () {
                   Navigator.pop(context);
-                  showDialog(context: context, builder: (builder) => EditKnowledgeView());
+                  showDialog(context: context, builder: (builder) => EditKnowledgeView(knowledge:knowledge));
+                  // Navigate to edit view with selected knowledge item
                 },
               ),
               ListTile(
-                leading: Icon(Icons.delete),
-                title: Text('Delete'),
+                leading: const Icon(Icons.delete),
+                title: const Text('Delete'),
                 onTap: () {
                   Navigator.pop(context);
-                  showDialog(context: context, builder: (builder) => DeleteKnowledgeView());
+                  // Confirm and delete the selected knowledge item
                 },
               ),
             ],
@@ -193,5 +242,101 @@ class _KnowledgeViewState extends State<KnowledgeView> {
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    _viewModel.dispose();
+    super.dispose();
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+}
+
+class KnowledgeViewModel extends BaseViewModel {
+  final GetKnowledgeUsecase _getKnowledgeUseCase;
+  final CreateKnowledgeUsecase _createKnowledgeUsecase;
+  final UpdateKnowledgeUseCase _updateKnowledgeUseCase;
+  final StreamController<List<KnowledgeData>> _knowledgeStreamController = StreamController<List<KnowledgeData>>.broadcast();
+  final StreamController<String> _errorStreamController = StreamController<String>.broadcast();
+
+  List<KnowledgeData> knowledgeList = [];
+
+  Stream<List<KnowledgeData>> get knowledgeStream => _knowledgeStreamController.stream;
+
+  KnowledgeViewModel(this._getKnowledgeUseCase, this._createKnowledgeUsecase, this._updateKnowledgeUseCase);
+
+  Future<void> getKnowledge(int? limit, int? offset, EnumOrder? order, String? orderField, String? q) async {
+    final input = GetKnowledgeUseCaseInput(
+        limit: (limit != null) == true ? limit : 50,
+        offset: offset,
+        order: order,
+        orderField: orderField,
+        q: q
+    );
+    (await _getKnowledgeUseCase.execute(input)).fold(
+            (failure) => _errorStreamController.add(failure.message),
+            (fetchedKnowledge) {
+          knowledgeList = fetchedKnowledge.data;
+          log(knowledgeList.toString());
+          _knowledgeStreamController.add(knowledgeList);
+          log('Fetched knowledge count: ${knowledgeList.length}');
+        }
+    );
+  }
+  Future<void> createKnowledge(String knowledgeName,String? description) async {
+    final request = CreateKnowledgeRequest(
+        knowledgeName: knowledgeName,
+        description: description
+    );
+
+    (await _createKnowledgeUsecase.execute(request)).fold(
+            (failure) => _errorStreamController.add(failure.message),
+            (_) {
+            refreshCurrentView(); // Refresh the list after creating
+        }
+    );
+  }
+
+  Future<void> updatePrompt(String id, String knowledgeName,String? description) async {
+    final request = CreateKnowledgeRequest(
+        knowledgeName: knowledgeName,
+        description: description
+    );
+
+    final input = UpdateKnowledgeParams(
+        id: id,
+        request: request
+    );
+    (await _updateKnowledgeUseCase.execute(input)).fold(
+            (failure) => _errorStreamController.add(failure.message),
+            (_) {
+          refreshCurrentView(); // Refresh the list after updating
+        }
+    );
+  }
+
+  void refreshCurrentView(){
+    getKnowledge(null, 0, null, null, null);
+  }
+
+  @override
+  void dispose() {
+    _knowledgeStreamController.close();
+    _errorStreamController.close();
+    super.dispose();
+  }
+
+  @override
+  Future<void> navigateNamed(BuildContext context, String route) {
+    // TODO: implement navigateNamed
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> navigateReplaceNamed(BuildContext context, String route) {
+    // TODO: implement navigateReplaceNamed
+    throw UnimplementedError();
   }
 }

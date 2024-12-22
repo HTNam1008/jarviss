@@ -23,6 +23,11 @@ class ConstantAPI {
   static const getAssistant = '/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}';
   static const getAssistants = '/kb-core/v1/ai-assistant';
   static const signInKnowledgeBase = '/kb-core/v1/auth/external-sign-in';
+  static const createKnowledge = '/kb-core/v1/knowledge';
+  static const updateKnowledge = '/kb-core/v1/knowledge/{${ConstantPath.knowledgeId}}';
+  static const deleteKnowledge = '/kb-core/v1/knowledge/{${ConstantPath.knowledgeId}}';
+  static const getKnowledge = '/kb-core/v1/knowledge';
+
 }
 
 class ConstantAssistantID {
@@ -40,6 +45,7 @@ class ConstantAssistantModel {
 
 class ConstantPath {
   static const String assistantId = "assistantId";
+  static const String knowledgeId = "knowledgeId";
 }
 
 enum EnumOrder {

@@ -121,7 +121,7 @@ class _DetailKnowledgeViewState extends State<DetailKnowledgeView> {
                 size: AppSize.s20,
               ),
               onPressed: () {
-                showDialog(context: context, builder: (builder) => EditKnowledgeView());
+                // showDialog(context: context, builder: (builder) => EditKnowledgeView());
               },
             ),
           ),

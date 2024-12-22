@@ -60,6 +60,46 @@ Map<String, dynamic> _$AssistantDataToJson(AssistantData instance) =>
       'isFavorite': instance.isFavorite,
     };
 
+GetKnowledgeResponse _$GetKnowledgeResponseFromJson(
+        Map<String, dynamic> json) =>
+    GetKnowledgeResponse(
+      data: (json['data'] as List<dynamic>)
+          .map((e) => KnowledgeData.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      meta: MetaData.fromJson(json['meta'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$GetKnowledgeResponseToJson(
+        GetKnowledgeResponse instance) =>
+    <String, dynamic>{
+      'data': instance.data,
+      'meta': instance.meta,
+    };
+
+KnowledgeData _$KnowledgeDataFromJson(Map<String, dynamic> json) =>
+    KnowledgeData(
+      index: json['0'] as String,
+      createdAt: json['createdAt'] as String?,
+      updatedAt: json['updatedAt'] as String?,
+      createdBy: json['createdBy'] as String?,
+      updatedBy: json['updatedBy'] as String?,
+      userId: json['userId'] as String?,
+      knowledgeName: json['knowledgeName'] as String,
+      description: json['description'] as String,
+    );
+
+Map<String, dynamic> _$KnowledgeDataToJson(KnowledgeData instance) =>
+    <String, dynamic>{
+      '0': instance.index,
+      'createdAt': instance.createdAt,
+      'updatedAt': instance.updatedAt,
+      'createdBy': instance.createdBy,
+      'updatedBy': instance.updatedBy,
+      'userId': instance.userId,
+      'knowledgeName': instance.knowledgeName,
+      'description': instance.description,
+    };
+
 MetaData _$MetaDataFromJson(Map<String, dynamic> json) => MetaData(
       limit: (json['limit'] as num).toDouble(),
       offset: (json['offset'] as num).toDouble(),

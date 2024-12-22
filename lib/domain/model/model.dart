@@ -176,3 +176,21 @@ class PromptCategoryItem {
 //     required this.isFavorite,
 //   });
 // }
+
+class Knowledge {
+  final String id;
+  final String knowledgeName;
+  final String description;
+  final String userId;
+  final int numUnits;
+  final int totalSize;
+
+  Knowledge({
+    required this.id,
+    required this.knowledgeName,
+    required this.description,
+    required this.userId,
+    required this.numUnits,
+    required this.totalSize,
+  });
+}
