@@ -368,7 +368,7 @@ class _AppKbServiceClient implements AppKbServiceClient {
     )
         .compose(
           _dio.options,
-          '/kb-core/v1/knowledge/{knowledgeId}',
+          '/kb-core/v1/knowledge/${knowledgeId}',
           queryParameters: queryParameters,
           data: _data,
         )

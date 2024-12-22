@@ -13,6 +13,7 @@ import 'package:jarvis/data/network/network_info.dart';
 import 'package:jarvis/data/repository/repository_impl.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 import 'package:jarvis/domain/usecase/create_knowledge_usecase.dart';
+import 'package:jarvis/domain/usecase/delete_knowledge_usecase.dart';
 import 'package:jarvis/domain/usecase/get_assistants_usecase.dart';
 import 'package:jarvis/domain/usecase/get_conversation_history_usecase.dart';
 import 'package:jarvis/domain/usecase/get_conversations_usecase.dart';
@@ -220,5 +221,8 @@ Future<void> setupLocator() async {
   getIt.registerFactory<UpdateKnowledgeUseCase>(
         () => UpdateKnowledgeUseCase(getIt<Repository>()),
   );
-  getIt.registerFactory<KnowledgeViewModel>(() => KnowledgeViewModel(getIt<GetKnowledgeUsecase>(),getIt<CreateKnowledgeUsecase>(),getIt<UpdateKnowledgeUseCase>()));
+  getIt.registerFactory<DeleteKnowledgeUsecase>(
+        () => DeleteKnowledgeUsecase(getIt<Repository>()),
+  );
+  getIt.registerFactory<KnowledgeViewModel>(() => KnowledgeViewModel(getIt<GetKnowledgeUsecase>(),getIt<CreateKnowledgeUsecase>(),getIt<UpdateKnowledgeUseCase>(),getIt<DeleteKnowledgeUsecase>()));
 }

@@ -65,8 +65,8 @@ abstract class AppKbServiceClient {
     @Query('q') String? q,
   });
 
-  @DELETE(ConstantAPI.deleteKnowledge)
-  Future<void> deleteKnowledge(@Path("{${ConstantPath.knowledgeId}}") String knowledgeId);
+  @DELETE("/kb-core/v1/knowledge/{id}")
+  Future<void> deleteKnowledge(@Path("id") String knowledgeId);
 }
 
 

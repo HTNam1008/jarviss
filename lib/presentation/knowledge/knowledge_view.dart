@@ -21,6 +21,7 @@ import 'package:jarvis/presentation/resources/values_manager.dart';
 import '../../app/constant.dart';
 import '../../data/responses/ai_bot/get_assistants_response.dart';
 import '../../domain/model/model.dart';
+import '../../domain/usecase/delete_knowledge_usecase.dart';
 import '../../domain/usecase/get_knowledge_usecase.dart';
 import '../base/baseviewmodel.dart';
 
@@ -271,13 +272,36 @@ class _KnowledgeViewState extends State<KnowledgeView> {
                 title: const Text('Delete'),
                 onTap: () {
                   Navigator.pop(context);
-                  // Confirm and delete the selected knowledge item
-                },
+                  _showDeleteConfirmation(context, knowledge);                },
               ),
             ],
           ),
         );
       },
+    );
+  }
+
+  void _showDeleteConfirmation(BuildContext context, KnowledgeData knowledge) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Prompt'),
+        content: Text('Are you sure you want to delete "${knowledge.knowledgeName}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              _viewModel.deleteKnowledge(knowledge.index);
+              Navigator.pop(context);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -295,6 +319,8 @@ class KnowledgeViewModel extends BaseViewModel {
   final GetKnowledgeUsecase _getKnowledgeUseCase;
   final CreateKnowledgeUsecase _createKnowledgeUsecase;
   final UpdateKnowledgeUseCase _updateKnowledgeUseCase;
+  final DeleteKnowledgeUsecase _deleteKnowledgeUsecase;
+
   final StreamController<List<KnowledgeData>> _knowledgeStreamController = StreamController<List<KnowledgeData>>.broadcast();
   final StreamController<String> _errorStreamController = StreamController<String>.broadcast();
 
@@ -303,7 +329,7 @@ class KnowledgeViewModel extends BaseViewModel {
 
   Stream<List<KnowledgeData>> get knowledgeStream => _knowledgeStreamController.stream;
 
-  KnowledgeViewModel(this._getKnowledgeUseCase, this._createKnowledgeUsecase, this._updateKnowledgeUseCase);
+  KnowledgeViewModel(this._getKnowledgeUseCase, this._createKnowledgeUsecase, this._updateKnowledgeUseCase, this._deleteKnowledgeUsecase);
 
   void setSearchQuery(String query) {
     _searchQuery = query;
@@ -362,6 +388,15 @@ class KnowledgeViewModel extends BaseViewModel {
         request: request
     );
     (await _updateKnowledgeUseCase.execute(input)).fold(
+            (failure) => _errorStreamController.add(failure.message),
+            (_) {
+          refreshCurrentView(); // Refresh the list after updating
+        }
+    );
+  }
+
+  Future<void> deleteKnowledge(String id) async {
+    (await _deleteKnowledgeUsecase.execute(id)).fold(
             (failure) => _errorStreamController.add(failure.message),
             (_) {
           refreshCurrentView(); // Refresh the list after updating
