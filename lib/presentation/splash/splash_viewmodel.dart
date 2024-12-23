@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:jarvis/app/app_prefs.dart';
 import 'package:jarvis/domain/usecase/sign_in_kb_usecase.dart';
@@ -11,6 +13,10 @@ class SplashViewModel extends BaseViewModel {
 
   Future<String> getAccessToken() async {
     return await _appPreferences.getAccessToken();
+  }  
+  
+  Future<String> getAccessTokenKb() async {
+    return await _appPreferences.getAccessTokenKb();
   }
 
   Future<void> clearAccessToken() async {
@@ -21,13 +27,21 @@ class SplashViewModel extends BaseViewModel {
     String token = await getAccessToken();
     return token.isNotEmpty;
   }
+  
+  Future<bool> isUserLoggedInKb() async {
+    String token = await getAccessTokenKb();
+    return token.isNotEmpty;
+  }
 
   Future<void> signInKnowledgeBase() async {
     final token = await getAccessToken();
     if (token.isNotEmpty) {
       final result = await _signInKbUseCase.execute(SignInKbUseCaseInput(token));
       result.fold(
-        (failure) => print(failure.message),
+        (failure) {
+          log(failure.message);
+
+        },
         (response) async {
           await _appPreferences.setAccessTokenKb(response.accessToken);
           await _appPreferences.setRefreshTokenKb(response.refreshToken ?? "");

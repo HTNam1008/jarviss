@@ -3,18 +3,17 @@ import 'package:dartz/dartz.dart';
 
 import 'package:jarvis/data/network/failure.dart';
 import 'package:jarvis/data/request/ai_bot/ask_assistant_request.dart';
-import 'package:jarvis/data/request/ai_bot/create_assistant_request.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 import 'package:jarvis/domain/usecase/base_usecase.dart';
 
-class AskAssistantUseCase implements BaseUseCase<CreateAssistantUseCaseInput, String> {
+class AskAssistantUseCase implements BaseUseCase<AskAssistantUseCaseInput, MessageAssistant> {
   final Repository _repository;
 
   AskAssistantUseCase(this._repository);
 
   @override
-  Future<Either<Failure, String>> execute(CreateAssistantUseCaseInput input) async {
+  Future<Either<Failure, MessageAssistant>> execute(AskAssistantUseCaseInput input) async {
     return await _repository.askAssistant(
       AskAssistantRequest(
         assistandId: input.assistandId,
@@ -26,18 +25,16 @@ class AskAssistantUseCase implements BaseUseCase<CreateAssistantUseCaseInput, St
   }
 }
 
-class CreateAssistantUseCaseInput {
+class AskAssistantUseCaseInput {
   String assistandId;
   String message;
   String openAiThreadId;
   String additionalInstruction;
 
-  CreateAssistantUseCaseInput({
+  AskAssistantUseCaseInput({
     required this.assistandId,
     required this.message,
     required this.openAiThreadId,
-    required this.additionalInstruction,
+    required this.additionalInstruction
   });
-
-
 }

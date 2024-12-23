@@ -183,3 +183,19 @@ class Assistants {
 
   Assistants({required this.data, required this.meta});
 }
+
+class MessageAssistant {
+  final String message;
+  final bool isUser;
+  
+  MessageAssistant({
+    required this.message,
+    required this.isUser,
+  });
+}
+
+class MessageAssistants {
+  final List<MessageAssistant> data;
+
+  MessageAssistants({required this.data});
+}

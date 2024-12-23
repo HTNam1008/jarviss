@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:jarvis/app/di/di.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/presentation/chatbot/edit_bot/edit_bot_view.dart';
+import 'package:jarvis/presentation/chatbot/preview_bot/preview_bot_viewmodel.dart';
 import 'package:jarvis/presentation/common/chat_input_box.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
@@ -17,12 +19,21 @@ class PreviewBotView extends StatefulWidget {
 
 class _PreviewBotViewState extends State<PreviewBotView> {
   late AssistantCustom _assistant;
-  final TextEditingController _chatController = TextEditingController();
+  late final PreviewBotViewModel _viewModel;
+  
+  final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  
+  bool _isSending = false;
 
   @override
   void initState() {
     super.initState();
+    _viewModel = getIt<PreviewBotViewModel>();
     _assistant = widget.assistant;
+    if (_assistant.openAiThreadIdPlay != null) {
+      _viewModel.init(_assistant.openAiThreadIdPlay!);
+    }
   }
 
   @override
@@ -182,36 +193,31 @@ class _PreviewBotViewState extends State<PreviewBotView> {
       body: SafeArea(
         child: Column(
           children: [
-            const Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: 30.0),
-                      child: Center(
-                        child: CircleAvatar(
-                          radius: 40.0,
-                          backgroundImage: AssetImage('assets/images/avt.png'),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: AppSize.s8),
-                    Center(
-                      child: Text(
-                        "Description",
-                        style: TextStyle(
-                          fontSize: AppSize.s16,
-                          fontWeight: FontWeightManager.medium,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
+            Expanded(
+              child: StreamBuilder<bool>(
+                stream: _viewModel.outputLoading,
+                builder: (context, loadingSnapshot) {
+                  if (loadingSnapshot.data == true) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  
+                  return StreamBuilder<List<MessageAssistant>>(
+                    stream: _viewModel.outputMessages,
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+                      
+                      return snapshot.data!.isEmpty 
+                          ? _buildInitialContent()
+                          : _buildChatMessages(snapshot.data!);
+                    },
+                  );
+                },
               ),
             ),
             ChatInputBox(
-              controller: _chatController,
+              controller: _messageController,
               onSend: _sendMessage,
+              isSending: _isSending,
             ),
           ],
         ),
@@ -219,10 +225,89 @@ class _PreviewBotViewState extends State<PreviewBotView> {
     );
   }
 
-  void _sendMessage() {
-    String message = _chatController.text;
-    if (message.isNotEmpty) {
-      _chatController.clear();
+   Widget _buildInitialContent() {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          const SizedBox(height: 30.0),
+          const CircleAvatar(
+            radius: 40.0,
+            backgroundImage: AssetImage('assets/images/avt.png'),
+          ),
+          const SizedBox(height: AppSize.s16),
+          Text(
+            _assistant.assistantName,
+            style: const TextStyle(
+              fontSize: AppSize.s20,
+              fontWeight: FontWeightManager.bold,
+            ),
+          ),
+          const SizedBox(height: AppSize.s8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppPadding.p16),
+            child: Text(
+              _assistant.description ?? '',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: AppSize.s16,
+                fontWeight: FontWeightManager.medium,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChatMessages(List<MessageAssistant> messages) {
+    return ListView.builder(
+      controller: _scrollController,
+      padding: const EdgeInsets.all(AppSize.s16),
+      itemCount: messages.length,
+      itemBuilder: (context, index) {
+        final message = messages[index];
+        return Align(
+          alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
+          child: Container(
+            padding: const EdgeInsets.all(AppSize.s12),
+            margin: const EdgeInsets.symmetric(vertical: AppSize.s4),
+            decoration: BoxDecoration(
+              color: message.isUser ? ColorManager.primary : Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(AppSize.s8),
+            ),
+            child: Text(
+              message.message,
+              style: TextStyle(
+                color: message.isUser ? Colors.white : Colors.black,
+                fontSize: AppSize.s16,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _sendMessage() async {
+    String message = _messageController.text.trim();
+    if (message.isEmpty) return;
+    
+    setState(() => _isSending = true);
+    _messageController.clear();
+    
+    await _viewModel.sendMessage(message, _assistant);
+    _scrollToBottom();
+    
+    setState(() => _isSending = false);
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
     }
   }
 }

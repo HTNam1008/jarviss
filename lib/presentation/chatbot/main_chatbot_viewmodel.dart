@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:jarvis/data/request/ai_bot/delete_assistant_request.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
@@ -71,11 +72,11 @@ class MainChatbotViewModel extends BaseViewModel
       ),
     );
 
-    print("Get assistants success 1");
+    log("Get assistants success 1");
 
     result.fold(
       (failure) {
-        print(failure.message);
+        log(failure.message);
         if (!_errorController.isClosed) {
           inputError.add(failure.message);
         }
@@ -84,7 +85,7 @@ class MainChatbotViewModel extends BaseViewModel
         }
       },
       (response) {
-        print("Get assistants success 2");
+        log("Get assistants success 2");
         _cachedAssistants = response.data;
          if (!_assistantsController.isClosed) {
           inputAssistants.add(response.data);

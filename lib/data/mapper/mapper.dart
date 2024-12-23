@@ -1,11 +1,9 @@
 import 'package:jarvis/app/extensions.dart';
 import 'package:jarvis/data/request/ai_chat/send_message/assistant.dart';
-import 'package:jarvis/data/request/ai_chat/send_message/chat_message.dart';
-import 'package:jarvis/data/request/ai_chat/send_message/message_role.dart';
-import 'package:jarvis/data/responses/ai_bot/ask_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/create_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
+import 'package:jarvis/data/responses/ai_bot/retrieve_message_thread_response.dart';
 import 'package:jarvis/data/responses/ai_bot/update_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_chat/get_conversation_history_response.dart';
 import 'package:jarvis/data/responses/ai_chat/get_conversations_response.dart';
@@ -154,6 +152,7 @@ extension UpdateAssistantResponseMapper on UpdateAssistantResponse {
       instructions: instructions,
       assistantName: assistantName,
       openAiAssistantId: openAiAssistantId,
+      openAiThreadIdPlay: openAiThreadIdPlay,
     );
   }
 }
@@ -170,6 +169,12 @@ extension GetAssistantResponseMapper on GetAssistantResponse {
       instructions: instructions,
       assistantName: assistantName,
       openAiAssistantId: openAiAssistantId,
+      openAiThreadIdPlay: openAiThreadIdPlay,
+      openAiVectorStoreId: openAiVectorStoreId,
+      isDefault: isDefault,
+      isFavorite: isFavorite,
+      userId: userId,
+      deletedAt: deletedAt,
     );
   }
 }
@@ -185,7 +190,13 @@ extension AssistantDataMapper on AssistantData {
       description: description,
       instructions: instructions,
       assistantName: assistantName,
-      openAiAssistantId: openAiAssistantId, 
+      openAiAssistantId: openAiAssistantId,
+      openAiThreadIdPlay: openAiThreadIdPlay,
+      openAiVectorStoreId: openAiVectorStoreId,
+      isDefault: isDefault,
+      isFavorite: isFavorite,
+      userId: userId,
+      deletedAt: deletedAt,
     );
   }
 }
@@ -198,9 +209,24 @@ extension GetAssistantsResponseMapper on GetAssistantsResponse {
   }
 }
 
-extension AskAssistantsResponseMapper on AskAssistantResponse {
-  String toDomain() {
-    return message;
+extension AskAssistantsResponseMapper on String {
+  MessageAssistant toDomain() {
+    return MessageAssistant(message: this, isUser: false);
   }
 }
+
+extension MessageAssistantResponseMapper on MessageAssistantResponse {
+  MessageAssistant toDomain() {
+    return MessageAssistant(message: content.first.text.value, isUser: role == 'user' ? true : false);
+  }
+}
+
+extension RetrieveMessageThreadResponseMapper on RetrieveMessageThreadResponse {
+  MessageAssistants toDomain() {
+    return MessageAssistants(data: List<MessageAssistant>.from(messages.map((e) => e.toDomain())));
+  }
+}
+
+
+
 

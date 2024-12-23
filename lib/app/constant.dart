@@ -23,6 +23,7 @@ class ConstantAPI {
   static const getAssistant = "/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}";
   static const askAssistant = "/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}/ask";
   static const getAssistants = '/kb-core/v1/ai-assistant';
+  static const retrieveMessageThread = '/kb-core/v1/ai-assistant/thread/{${ConstantPath.openAiThreadId}}/messages';
   static const signInKnowledgeBase = '/kb-core/v1/auth/external-sign-in';
 }
 
@@ -41,6 +42,7 @@ class ConstantAssistantModel {
 
 class ConstantPath {
   static const String assistantId = "assistantId";
+  static const String openAiThreadId = "openAiThreadId";
 }
 
 enum EnumOrder {

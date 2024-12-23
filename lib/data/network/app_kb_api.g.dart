@@ -239,7 +239,7 @@ class _AppKbServiceClient implements AppKbServiceClient {
   }
 
   @override
-  Future<AskAssistantResponse> askAssistant(
+  Future<String> askAssistant(
     String assistandId,
     AskAssistantRequest askAssistantRequest,
   ) async {
@@ -248,7 +248,7 @@ class _AppKbServiceClient implements AppKbServiceClient {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(askAssistantRequest.toJson());
-    final _options = _setStreamType<AskAssistantResponse>(Options(
+    final _options = _setStreamType<String>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -264,10 +264,44 @@ class _AppKbServiceClient implements AppKbServiceClient {
           _dio.options.baseUrl,
           baseUrl,
         )));
-    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late AskAssistantResponse _value;
+    final _result = await _dio.fetch<String>(_options);
+    late String _value;
     try {
-      _value = AskAssistantResponse.fromJson(_result.data!);
+      _value = _result.data!;
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<RetrieveMessageThreadResponse> retrieveMessageThread(
+      String openAiThreadId) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<RetrieveMessageThreadResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/kb-core/v1/ai-assistant/thread/${openAiThreadId}/messages',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<List<dynamic>>(_options);
+    late RetrieveMessageThreadResponse _value;
+    try {
+      _value = RetrieveMessageThreadResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

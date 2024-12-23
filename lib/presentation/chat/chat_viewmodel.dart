@@ -1,6 +1,7 @@
 // lib/presentation/viewmodel/chat_viewmodel.dart
 
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:jarvis/app/constant.dart';
 import 'package:jarvis/app/functions.dart';
@@ -143,11 +144,11 @@ class ChatViewModel extends BaseViewModel
     final result = await _usageTokenUseCase.execute(NoParams());
     result.fold(
       (failure) {
-        print(failure);
+        log(failure.message);
         _errorStreamController.add(failure.message);
       },
       (responseMessage) {
-        print('get usage token success');
+        log('get usage token success');
 
         final assistantMessage = responseMessage;
         _remainingUsage = assistantMessage.availaleTokens;

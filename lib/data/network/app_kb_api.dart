@@ -4,10 +4,10 @@ import 'package:jarvis/data/request/ai_bot/ask_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/create_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/update_assistant_request.dart';
 import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dart';
-import 'package:jarvis/data/responses/ai_bot/ask_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/create_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
+import 'package:jarvis/data/responses/ai_bot/retrieve_message_thread_response.dart';
 import 'package:jarvis/data/responses/ai_bot/update_assistant_response.dart';
 import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
 import 'package:retrofit/retrofit.dart';
@@ -52,8 +52,13 @@ abstract class AppKbServiceClient {
   Future<GetAssistantResponse> getAssistant(@Path(ConstantPath.assistantId) String assistandId);
 
   @POST(ConstantAPI.askAssistant)
-  Future<AskAssistantResponse> askAssistant(
+  Future<String> askAssistant(
     @Path(ConstantPath.assistantId) String assistandId,
     @Body() AskAssistantRequest askAssistantRequest,
+  );
+
+  @GET(ConstantAPI.retrieveMessageThread)
+  Future<RetrieveMessageThreadResponse> retrieveMessageThread(
+    @Path(ConstantPath.openAiThreadId) String openAiThreadId,
   );
 }

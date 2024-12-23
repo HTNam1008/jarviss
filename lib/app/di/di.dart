@@ -21,6 +21,7 @@ import 'package:jarvis/domain/usecase/get_conversation_history_usecase.dart';
 import 'package:jarvis/domain/usecase/get_conversations_usecase.dart';
 import 'package:jarvis/domain/usecase/create_prompt_usecase.dart';
 import 'package:jarvis/domain/usecase/refresh_token_usecase.dart';
+import 'package:jarvis/domain/usecase/retrieve_message_thread_usecase.dart';
 import 'package:jarvis/domain/usecase/send_message_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_in_kb_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_in_usecase.dart';
@@ -35,6 +36,7 @@ import 'package:jarvis/presentation/chat/chat_viewmodel.dart';
 import 'package:jarvis/presentation/chatbot/create_bot/create_bot_viewmodel.dart';
 import 'package:jarvis/presentation/chatbot/edit_bot/edit_bot_viewmodel.dart';
 import 'package:jarvis/presentation/chatbot/main_chatbot_viewmodel.dart';
+import 'package:jarvis/presentation/chatbot/preview_bot/preview_bot_viewmodel.dart';
 import 'package:jarvis/presentation/left_side_bar/app_drawer_viewmodel.dart';
 import 'package:jarvis/presentation/main/sign_in_kb_viewmodel.dart';
 import 'package:jarvis/presentation/splash/splash_viewmodel.dart';
@@ -244,4 +246,12 @@ Future<void> setupLocator() async {
   getIt.registerFactory<AskAssistantUseCase>(
     () => AskAssistantUseCase(getIt<Repository>()),
   );
+
+  getIt.registerFactory<PreviewBotViewModel>(
+    () => PreviewBotViewModel(getIt<AskAssistantUseCase>(), getIt<RetrieveMessageThreadUseCase>()),
+  );
+
+  getIt.registerFactory<RetrieveMessageThreadUseCase>(
+  () => RetrieveMessageThreadUseCase(getIt<Repository>()),
+);
 }

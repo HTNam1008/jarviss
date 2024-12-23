@@ -26,7 +26,12 @@ class _SplashViewState extends State<SplashView> {
     bool isLoggedIn = await _viewModel.isUserLoggedIn();
     if (isLoggedIn) {
       await _viewModel.signInKnowledgeBase();
-      Navigator.pushReplacementNamed(context, Routes.mainRoute);
+      bool isLoggedInKb = await _viewModel.isUserLoggedInKb();
+      if (isLoggedInKb) {
+        Navigator.pushReplacementNamed(context, Routes.mainRoute);
+      } else {
+        Navigator.pushReplacementNamed(context, Routes.gettingStartedRoute);
+      }
     } else {
       Navigator.pushReplacementNamed(context, Routes.gettingStartedRoute);
     }
