@@ -220,11 +220,11 @@ class _UnitAddState extends State<UnitAdd> {
       case 0:
         return UnitAddLocalfile(knowledgeId: widget.knowledgeId,);
       case 1:
-        return UnitAddWebsite();
+        return UnitAddWebsite(knowledgeId: widget.knowledgeId,);
       case 2:
-        return UnitAddConfluence();
+        return UnitAddConfluence(knowledgeId: widget.knowledgeId,);
       case 3:
-        return UnitAddSlack();
+        return UnitAddSlack(knowledgeId: widget.knowledgeId,);
       case 4:
         return UnitAddGoogleDrive();
       default:

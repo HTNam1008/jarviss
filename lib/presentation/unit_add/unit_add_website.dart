@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:jarvis/presentation/common/bottom_navigation.dart';
 import 'package:jarvis/presentation/common/chat_input_box.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
@@ -6,8 +9,14 @@ import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:jarvis/presentation/unit_add/unit_view_model.dart';
+
+import '../common/dialog_util.dart';
 
 class UnitAddWebsite extends StatefulWidget {
+  final String knowledgeId;
+
+  UnitAddWebsite({super.key, required this.knowledgeId});
   @override
   State<UnitAddWebsite> createState() => _UnitAddWebsiteState();
 }
@@ -17,6 +26,7 @@ class _UnitAddWebsiteState extends State<UnitAddWebsite> {
   final TextEditingController _labelController = TextEditingController();
   String? _urlErrorText;
   String? _labelErrorText;
+  final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
   @override
@@ -26,68 +36,89 @@ class _UnitAddWebsiteState extends State<UnitAddWebsite> {
     super.dispose();
   }
 
-  bool _isValidUrl(String url) {
-    Uri? uri = Uri.tryParse(url);
-    return uri != null &&
-        (uri.scheme == 'http' || uri.scheme == 'https') &&
-        uri.host.isNotEmpty;
-  }
+  Future<void> _uploadWebFile() async {
+    if (!_formKey.currentState!.validate()) return;
 
-  Future<void> _handleConnect() async {
-    final url = _urlController.text.trim();
-    final label = _labelController.text.trim();
-    bool hasError = false;
+    setState(() => _isLoading = true);
 
-    if (url.isEmpty) {
-      setState(() {
-        _urlErrorText = 'Please enter a URL';
-      });
-      hasError = true;
-    } else if (!_isValidUrl(url)) {
-      setState(() {
-        _urlErrorText = 'Please enter a valid URL';
-      });
-      hasError = true;
-    }
+    log(widget.knowledgeId+" "+_labelController.text+" "+_urlController.text);
+    try {;
+      await GetIt.instance<UnitViewModel>().uploadWebFile(
+        widget.knowledgeId,
+        _labelController.text,
+        _urlController.text,
+      );
 
-    if (label.isEmpty) {
-      setState(() {
-        _labelErrorText = 'Please enter a label';
-      });
-      hasError = true;
-    }
-
-    if (hasError) return;
-
-    setState(() {
-      _isLoading = true;
-      _urlErrorText = null;
-      _labelErrorText = null;
-    });
-
-    try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 1));
-      if (mounted) {
-        Navigator.pop(context, {
-          'url': url,
-          'label': label,
-        });
-      }
+      Navigator.pop(context);
+      showCustomDialog(
+        context: context,
+        type: DialogType.success,
+        title: 'Success',
+        message: 'Upload successfully',
+      );
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          _urlErrorText = 'Failed to connect to website';
-        });
-      }
+      showCustomDialog(
+        context: context,
+        type: DialogType.error,
+        title: 'Error',
+        message: 'Failed to upload file: $e',
+      );
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      setState(() => _isLoading = false);
     }
   }
+
+  // Future<void> _handleConnect() async {
+  //   final url = _urlController.text.trim();
+  //   final label = _labelController.text.trim();
+  //   bool hasError = false;
+  //
+  //   if (url.isEmpty) {
+  //     setState(() {
+  //       _urlErrorText = 'Please enter a URL';
+  //     });
+  //     hasError = true;
+  //   } else if (!_isValidUrl(url)) {
+  //     setState(() {
+  //       _urlErrorText = 'Please enter a valid URL';
+  //     });
+  //     hasError = true;
+  //   }
+  //
+  //   if (label.isEmpty) {
+  //     setState(() {
+  //       _labelErrorText = 'Please enter a label';
+  //     });
+  //     hasError = true;
+  //   }
+  //
+  //   if (hasError) return;
+  //
+  //   setState(() {
+  //     _isLoading = true;
+  //     _urlErrorText = null;
+  //     _labelErrorText = null;
+  //   });
+  //
+  //   try {
+  //     // Simulate API call
+  //     await Future.delayed(const Duration(seconds: 1));
+  //     if (mounted) {
+  //       Navigator.pop(context, {
+  //         'url': url,
+  //         'label': label,
+  //       });
+  //     }
+  //   } catch (e) {
+  //     if (mounted) {
+  //       setState(() {
+  //         _urlErrorText = 'Failed to connect to website';
+  //       });
+  //     }
+  //   } finally {
+  //      _uploadWebFile();
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +129,11 @@ class _UnitAddWebsiteState extends State<UnitAddWebsite> {
       ),
       child: Container(
         padding: const EdgeInsets.all(AppPadding.p20),
-        child: Column(
+        width: 700,
+        child: Form(
+        key: _formKey,
+         child: SingleChildScrollView(
+          child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -113,6 +148,7 @@ class _UnitAddWebsiteState extends State<UnitAddWebsite> {
                     ),
                   ),
                 ),
+
               ],
             ),
             const SizedBox(height: AppSize.s24),
@@ -149,7 +185,7 @@ class _UnitAddWebsiteState extends State<UnitAddWebsite> {
                         TextField(
                           controller: _labelController,
                           decoration: InputDecoration(
-                            hintText: 'Enter label',
+                            hintText: 'Enter unit name',
                             hintStyle: TextStyle(
                               color: Colors.grey[400],
                             ),
@@ -211,7 +247,7 @@ class _UnitAddWebsiteState extends State<UnitAddWebsite> {
                           },
                           keyboardType: TextInputType.url,
                           textInputAction: TextInputAction.done,
-                          onSubmitted: (_) => _handleConnect(),
+                          onSubmitted: (_) => _uploadWebFile(),
                         ),
                       ],
                     ),
@@ -222,7 +258,7 @@ class _UnitAddWebsiteState extends State<UnitAddWebsite> {
             ),
             const SizedBox(height: AppSize.s24),
             ElevatedButton(
-              onPressed: _isLoading ? null : _handleConnect,
+              onPressed: _isLoading ? null : _uploadWebFile,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: AppPadding.p16),
                 backgroundColor: ColorManager.teal,
@@ -231,16 +267,13 @@ class _UnitAddWebsiteState extends State<UnitAddWebsite> {
                 ),
                 disabledBackgroundColor: Colors.grey[300],
               ),
-              child: _isLoading
-                  ? SizedBox(
-                height: AppSize.s20,
-                width: AppSize.s20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
+              child:  _isLoading
+                  ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
               )
-                  : const Text(
+                  :const Text(
                 'Connect',
                 style: TextStyle(
                   color: Colors.white,
@@ -251,7 +284,9 @@ class _UnitAddWebsiteState extends State<UnitAddWebsite> {
             ),
           ],
         ),
+        ),
       ),
+      )
     );
   }
 }

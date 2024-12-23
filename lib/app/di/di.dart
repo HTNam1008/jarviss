@@ -26,6 +26,9 @@ import 'package:jarvis/domain/usecase/sign_in_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_out_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_up_usecase.dart';
 import 'package:jarvis/domain/usecase/update_knowledge_usecase.dart';
+import 'package:jarvis/domain/usecase/upload_confluence_file_usecase.dart';
+import 'package:jarvis/domain/usecase/upload_slack_file_usecase.dart';
+import 'package:jarvis/domain/usecase/upload_web_file_usecase.dart';
 import 'package:jarvis/domain/usecase/usage_token_usecase.dart';
 import 'package:jarvis/presentation/authencation/sign_in/sign_in_viewmodel.dart';
 import 'package:jarvis/presentation/authencation/sign_out/sign_out_viewmodel.dart';
@@ -230,8 +233,16 @@ Future<void> setupLocator() async {
   getIt.registerFactory<UploadLocalFileUsecase>(
         () => UploadLocalFileUsecase(getIt<Repository>()),
   );
-
+  getIt.registerFactory<UploadWebFileUsecase>(
+        () => UploadWebFileUsecase(getIt<Repository>()),
+  );
+  getIt.registerFactory<UploadSlackFileUsecase>(
+        () => UploadSlackFileUsecase(getIt<Repository>()),
+  );
+  getIt.registerFactory<UploadConfluenceFileUsecase>(
+        () => UploadConfluenceFileUsecase(getIt<Repository>()),
+  );
   getIt.registerFactory<UnitViewModel>(
-        () => UnitViewModel(getIt<UploadLocalFileUsecase>()),
+        () => UnitViewModel(getIt<UploadLocalFileUsecase>(),getIt<UploadWebFileUsecase>(), getIt<UploadSlackFileUsecase>(),getIt<UploadConfluenceFileUsecase>()),
   );
 }
