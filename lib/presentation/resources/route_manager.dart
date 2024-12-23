@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/presentation/chat/chat_view.dart';
 import 'package:jarvis/presentation/chatbot/chat/chat_bot_view.dart';
 import 'package:jarvis/presentation/chatbot/create_bot/create_bot_view.dart';
@@ -51,7 +52,7 @@ class RouteGenerator {
   static Route<dynamic> getRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
       case Routes.splashRoute:
-        return MaterialPageRoute(builder: (_) => SplashView());
+        return MaterialPageRoute(builder: (_) => const SplashView());
       case Routes.gettingStartedRoute:
         return MaterialPageRoute(builder: (_) => GettingStartedView());
       case Routes.signInRoute:
@@ -73,9 +74,15 @@ class RouteGenerator {
       case Routes.createBotRoute:
         return MaterialPageRoute(builder: (_) => const CreateBotView());
       case Routes.previewBotRoute:
-      return MaterialPageRoute(builder: (_) => const PreviewBotView());
+        final AssistantCustom assistant = routeSettings.arguments as AssistantCustom;
+        return MaterialPageRoute(
+          builder: (_) => PreviewBotView(assistant: assistant),
+        );
       case Routes.editBotRoute:
-        return MaterialPageRoute(builder: (_) => const EditBotView());
+        final String assistantId = routeSettings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => EditBotView(assistantId: assistantId),
+        );
       case Routes.promptRoute:
         return MaterialPageRoute(builder: (_) => const PromptView());
       case Routes.createPromptRoute:

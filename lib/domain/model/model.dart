@@ -141,38 +141,45 @@ class PromptCategoryItem {
 
 // }
 
-// class AssistantData {
-//   final String createdAt;
-//   final String updatedAt;
-//   final String? createdBy;
-//   final String? updatedBy;
-//   final String? deletedAt;
-//   final String id;
-//   final String openAiAssistantId;
-//   final String description;
-//   final String instructions;
-//   final String assistantName;
-//   final String userId;
-//   final String openAiVectorStoreId;
-//   final String openAiThreadIdPlay;
-//   final bool isDefault;
-//   final bool isFavorite;
+class AssistantCustom {
+  final String createdAt;
+  final String? updatedAt;
+  final String? createdBy;
+  final String? updatedBy;
+  final String? deletedAt;
+  final String id;
+  final String openAiAssistantId;
+  final String? description;
+  final String? instructions;
+  final String assistantName;
+  final String? userId;
+  final String? openAiVectorStoreId;
+  final String? openAiThreadIdPlay;
+  final bool? isDefault;
+  final bool? isFavorite;
 
-//   AssistantData({
-//     required this.createdAt,
-//     required this.updatedAt,
-//     this.createdBy,
-//     this.updatedBy,
-//     this.deletedAt,
-//     required this.id,
-//     required this.openAiAssistantId,
-//     required this.description,
-//     required this.instructions,
-//     required this.assistantName,
-//     required this.userId,
-//     required this.openAiVectorStoreId,
-//     required this.openAiThreadIdPlay,
-//     required this.isDefault,
-//     required this.isFavorite,
-//   });
-// }
+  AssistantCustom({
+    required this.createdAt,
+    this.updatedAt,
+    this.createdBy,
+    this.updatedBy,
+    this.deletedAt,
+    required this.id,
+    required this.openAiAssistantId,
+    this.description,
+    this.instructions,
+    required this.assistantName,
+    this.userId,
+    this.openAiVectorStoreId,
+    this.openAiThreadIdPlay,
+    this.isDefault,
+    this.isFavorite,
+  });
+}
+
+class Assistants {
+  final List<AssistantCustom> data;
+  final MetaData meta;
+
+  Assistants({required this.data, required this.meta});
+}

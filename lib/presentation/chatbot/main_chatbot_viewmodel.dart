@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:jarvis/data/request/ai_bot/delete_assistant_request.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
+import 'package:jarvis/domain/model/model.dart';
+import 'package:jarvis/domain/usecase/delete_assistant_usecase.dart';
 import 'package:jarvis/domain/usecase/get_assistants_usecase.dart';
 import 'package:jarvis/presentation/base/baseviewmodel.dart';
 
@@ -8,19 +11,36 @@ class MainChatbotViewModel extends BaseViewModel
     implements MainChatbotViewModelInputs, MainChatbotViewModelOutputs {
   
   final GetAssistantsUseCase _getAssistantsUseCase;
-  
-  final StreamController<List<AssistantData>> _assistantsController = 
-      StreamController<List<AssistantData>>.broadcast();
+  final DeleteAssistantUseCase _deleteAssistantUseCase;
+  List<AssistantCustom>? _cachedAssistants;
+  bool _isInitialized = false;
+
+  final StreamController<List<AssistantCustom>> _assistantsController = 
+      StreamController<List<AssistantCustom>>.broadcast();
   final StreamController<bool> _isLoadingController = 
       StreamController<bool>.broadcast();
   final StreamController<String> _errorController = 
       StreamController<String>.broadcast();
 
-  MainChatbotViewModel(this._getAssistantsUseCase);
+  MainChatbotViewModel(this._getAssistantsUseCase, this._deleteAssistantUseCase);
 
   @override
   void start() {
-    getAssistants();
+    if (!_isInitialized) {
+      getAssistants();
+      _isInitialized = true;
+    } else if (_cachedAssistants != null && !_assistantsController.isClosed) {
+      inputAssistants.add(_cachedAssistants!);
+    }
+  }
+
+  void refreshAssistants() {
+    _isInitialized = false;
+    start();
+  }
+
+  void updateCachedAssistants(List<AssistantCustom> assistants) {
+    _cachedAssistants = assistants;
   }
 
   @override
@@ -38,7 +58,9 @@ class MainChatbotViewModel extends BaseViewModel
     double limit = 20,
     double offset = 0,
   }) async {
-    inputIsLoading.add(true);
+    if (!_isLoadingController.isClosed) {
+      inputIsLoading.add(true);
+    }
     
     final result = await _getAssistantsUseCase.execute(
       GetAssistantsUseCaseInput(
@@ -54,19 +76,49 @@ class MainChatbotViewModel extends BaseViewModel
     result.fold(
       (failure) {
         print(failure.message);
-        inputError.add(failure.message);
+        if (!_errorController.isClosed) {
+          inputError.add(failure.message);
+        }
+        if (_cachedAssistants != null && !_assistantsController.isClosed) {
+          inputAssistants.add(_cachedAssistants!);
+        }
       },
       (response) {
         print("Get assistants success 2");
-        inputAssistants.add(response.data);
+        _cachedAssistants = response.data;
+         if (!_assistantsController.isClosed) {
+          inputAssistants.add(response.data);
+        }
       },
     );
 
-    inputIsLoading.add(false);
+    if (!_isLoadingController.isClosed) {
+      inputIsLoading.add(false);
+    }
   }
 
   @override
-  Sink<List<AssistantData>> get inputAssistants => _assistantsController.sink;
+  Future<bool> deleteAssistant(String assistantId) async {
+    inputIsLoading.add(true);
+    
+    final result = await _deleteAssistantUseCase.execute(
+      DeleteAssistantRequest(assistantId: assistantId),
+    );
+    
+    final success = result.fold(
+      (failure) {
+        inputError.add(failure.message);
+        return false;
+      },
+      (response) => true,
+    );
+    
+    inputIsLoading.add(false);
+    return success;
+  }
+
+  @override
+  Sink<List<AssistantCustom>> get inputAssistants => _assistantsController.sink;
 
   @override
   Sink<bool> get inputIsLoading => _isLoadingController.sink;
@@ -75,7 +127,7 @@ class MainChatbotViewModel extends BaseViewModel
   Sink<String> get inputError => _errorController.sink;
 
   @override
-  Stream<List<AssistantData>> get outputAssistants => _assistantsController.stream;
+  Stream<List<AssistantCustom>> get outputAssistants => _assistantsController.stream;
 
   @override
   Stream<bool> get outputIsLoading => _isLoadingController.stream;
@@ -98,13 +150,14 @@ class MainChatbotViewModel extends BaseViewModel
 
 abstract class MainChatbotViewModelInputs {
   Future<void> getAssistants({bool? isFavorite, String? searchQuery});
-  Sink<List<AssistantData>> get inputAssistants;
+  Future<bool> deleteAssistant(String assistantId);
+  Sink<List<AssistantCustom>> get inputAssistants;
   Sink<bool> get inputIsLoading;
   Sink<String> get inputError;
 }
 
 abstract class MainChatbotViewModelOutputs {
-  Stream<List<AssistantData>> get outputAssistants;
+  Stream<List<AssistantCustom>> get outputAssistants;
   Stream<bool> get outputIsLoading;
   Stream<String> get outputError;
 }

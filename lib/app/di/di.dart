@@ -12,6 +12,10 @@ import 'package:jarvis/data/network/dio_factory.dart';
 import 'package:jarvis/data/network/network_info.dart';
 import 'package:jarvis/data/repository/repository_impl.dart';
 import 'package:jarvis/domain/repository/repository.dart';
+import 'package:jarvis/domain/usecase/ask_assistant_usecase.dart';
+import 'package:jarvis/domain/usecase/create_assistant_usecase.dart';
+import 'package:jarvis/domain/usecase/delete_assistant_usecase.dart';
+import 'package:jarvis/domain/usecase/get_assistant_usecase.dart';
 import 'package:jarvis/domain/usecase/get_assistants_usecase.dart';
 import 'package:jarvis/domain/usecase/get_conversation_history_usecase.dart';
 import 'package:jarvis/domain/usecase/get_conversations_usecase.dart';
@@ -22,11 +26,14 @@ import 'package:jarvis/domain/usecase/sign_in_kb_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_in_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_out_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_up_usecase.dart';
+import 'package:jarvis/domain/usecase/update_assistant_usecase.dart';
 import 'package:jarvis/domain/usecase/usage_token_usecase.dart';
 import 'package:jarvis/presentation/authencation/sign_in/sign_in_viewmodel.dart';
 import 'package:jarvis/presentation/authencation/sign_out/sign_out_viewmodel.dart';
 import 'package:jarvis/presentation/authencation/sign_up/sign_up_viewmodel.dart';
 import 'package:jarvis/presentation/chat/chat_viewmodel.dart';
+import 'package:jarvis/presentation/chatbot/create_bot/create_bot_viewmodel.dart';
+import 'package:jarvis/presentation/chatbot/edit_bot/edit_bot_viewmodel.dart';
 import 'package:jarvis/presentation/chatbot/main_chatbot_viewmodel.dart';
 import 'package:jarvis/presentation/left_side_bar/app_drawer_viewmodel.dart';
 import 'package:jarvis/presentation/main/sign_in_kb_viewmodel.dart';
@@ -83,7 +90,8 @@ Future<void> setupLocator() async {
 
   // Register RemoteDataSource
   getIt.registerLazySingleton<RemoteDataSource>(
-    () => RemoteDataSourceImplementer(getIt<AppServiceClient>(), getIt<AppKbServiceClient>()),
+    () => RemoteDataSourceImplementer(
+        getIt<AppServiceClient>(), getIt<AppKbServiceClient>()),
   );
 
   // Register Repository
@@ -177,7 +185,7 @@ Future<void> setupLocator() async {
   );
 
   getIt.registerFactory<SplashViewModel>(
-    () => SplashViewModel(getIt<AppPreferences>()),
+    () => SplashViewModel(getIt<AppPreferences>(), getIt<SignInKbUseCase>()),
   );
 
   getIt.registerLazySingleton<GetConversationsUsecase>(
@@ -201,12 +209,39 @@ Future<void> setupLocator() async {
     ),
   );
 
-    getIt.registerFactory<GetAssistantsUseCase>(
+  getIt.registerFactory<GetAssistantsUseCase>(
     () => GetAssistantsUseCase(getIt<Repository>()),
   );
 
-  getIt.registerFactory<MainChatbotViewModel>(
-    () => MainChatbotViewModel(getIt<GetAssistantsUseCase>()),
+  getIt.registerFactory<GetAssistantUseCase>(
+    () => GetAssistantUseCase(getIt<Repository>()),
   );
 
+  getIt.registerFactory<MainChatbotViewModel>(
+    () => MainChatbotViewModel(getIt<GetAssistantsUseCase>(), getIt<DeleteAssistantUseCase>()),
+  );
+
+  getIt.registerFactory<CreateAssistantUseCase>(
+    () => CreateAssistantUseCase(getIt<Repository>()),
+  );
+
+  getIt.registerFactory<CreateBotViewModel>(
+    () => CreateBotViewModel(getIt<CreateAssistantUseCase>()),
+  );
+
+  getIt.registerFactory<UpdateAssistantUseCase>(
+    () => UpdateAssistantUseCase(getIt<Repository>()),
+  );
+
+  getIt.registerFactory<EditBotViewModel>(
+    () => EditBotViewModel(getIt<UpdateAssistantUseCase>(), getIt<GetAssistantUseCase>()),
+  );
+
+  getIt.registerFactory<DeleteAssistantUseCase>(
+    () => DeleteAssistantUseCase(getIt<Repository>()),
+  );
+
+  getIt.registerFactory<AskAssistantUseCase>(
+    () => AskAssistantUseCase(getIt<Repository>()),
+  );
 }

@@ -64,7 +64,8 @@ class _AppKbServiceClient implements AppKbServiceClient {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = createAssistantRequest;
+    final _data = <String, dynamic>{};
+    _data.addAll(createAssistantRequest.toJson());
     final _options = _setStreamType<CreateAssistantResponse>(Options(
       method: 'POST',
       headers: _headers,
@@ -105,7 +106,7 @@ class _AppKbServiceClient implements AppKbServiceClient {
     )
         .compose(
           _dio.options,
-          '/kb-core/v1/ai-assistant/{assistantId}',
+          '/kb-core/v1/ai-assistant/${assistantId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -134,7 +135,7 @@ class _AppKbServiceClient implements AppKbServiceClient {
     )
         .compose(
           _dio.options,
-          '/kb-core/v1/ai-assistant/{assistantId}',
+          '/kb-core/v1/ai-assistant/${assistantId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -217,7 +218,7 @@ class _AppKbServiceClient implements AppKbServiceClient {
     )
         .compose(
           _dio.options,
-          '/kb-core/v1/ai-assistant/{assistantId}',
+          '/kb-core/v1/ai-assistant/${assistandId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -230,6 +231,43 @@ class _AppKbServiceClient implements AppKbServiceClient {
     late GetAssistantResponse _value;
     try {
       _value = GetAssistantResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<AskAssistantResponse> askAssistant(
+    String assistandId,
+    AskAssistantRequest askAssistantRequest,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(askAssistantRequest.toJson());
+    final _options = _setStreamType<AskAssistantResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/kb-core/v1/ai-assistant/${assistandId}/ask',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AskAssistantResponse _value;
+    try {
+      _value = AskAssistantResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

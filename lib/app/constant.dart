@@ -20,7 +20,8 @@ class ConstantAPI {
   static const createAssistant = '/kb-core/v1/ai-assistant';
   static const updateAssistant = '/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}';
   static const deleteAssistant = '/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}';
-  static const getAssistant = '/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}';
+  static const getAssistant = "/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}";
+  static const askAssistant = "/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}/ask";
   static const getAssistants = '/kb-core/v1/ai-assistant';
   static const signInKnowledgeBase = '/kb-core/v1/auth/external-sign-in';
 }

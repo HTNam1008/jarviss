@@ -29,7 +29,7 @@ class _ChatBotViewState extends State<ChatBotView> {
         ),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -38,14 +38,14 @@ class _ChatBotViewState extends State<ChatBotView> {
       body: SafeArea(
         child: Column(
           children: [
-            Expanded(
+            const Expanded(
               child: SingleChildScrollView(
                 child: Column(
                   children: [
                     Padding(
                       padding: EdgeInsets.only(top: 30.0),
                       child: Center(
-                        child: CircleAvatar(
+                        child: const CircleAvatar(
                           radius: 40.0,
                           backgroundImage: AssetImage('assets/images/avt.png'),
                         ),

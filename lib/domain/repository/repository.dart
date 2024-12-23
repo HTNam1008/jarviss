@@ -1,6 +1,11 @@
 import 'package:dartz/dartz.dart';
 import 'package:jarvis/data/network/failure.dart';
+import 'package:jarvis/data/request/ai_bot/ask_assistant_request.dart';
+import 'package:jarvis/data/request/ai_bot/create_assistant_request.dart';
+import 'package:jarvis/data/request/ai_bot/delete_assistant_request.dart';
+import 'package:jarvis/data/request/ai_bot/get_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/get_assistants_request.dart';
+import 'package:jarvis/data/request/ai_bot/update_assistant_request.dart';
 import 'package:jarvis/data/request/ai_chat/conversation/conversation_history_request.dart';
 import 'package:jarvis/data/request/ai_chat/conversation/conversations_request.dart';
 import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.dart';
@@ -19,5 +24,10 @@ abstract class Repository {
   Future<Either<Failure, Conversations>> getConversations(ConversationsRequest conversationsRequest);
   Future<Either<Failure, ConversationHistory>> getConversationHistory(ConversationHistoryRequest conversationsRequest);
   Future<Either<Failure, Token>> signInKnowledgeBase(KnowledgeAuthRequest signInKbRequest);
-  Future<Either<Failure, GetAssistantsResponse>> getAssistants(GetAssistantsRequest getAssistantsRequest);
+  Future<Either<Failure, Assistants>> getAssistants(GetAssistantsRequest getAssistantsRequest);
+  Future<Either<Failure, AssistantCustom>> getAssistant(GetAssistantRequest getAssistantRequest);
+  Future<Either<Failure, AssistantCustom>> createAssistant(CreateAssistantRequest createAssistantRequest);
+  Future<Either<Failure, AssistantCustom>> updateAssistant(UpdateAssistantRequest updateAssistantRequest);
+  Future<Either<Failure, void>> deleteAssistant(DeleteAssistantRequest deleteAssistantRequest);
+  Future<Either<Failure, String>> askAssistant(AskAssistantRequest askAssistantRequest);
 }

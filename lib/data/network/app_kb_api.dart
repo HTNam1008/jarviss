@@ -1,8 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:jarvis/app/constant.dart';
+import 'package:jarvis/data/request/ai_bot/ask_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/create_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/update_assistant_request.dart';
 import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dart';
+import 'package:jarvis/data/responses/ai_bot/ask_assistant_response.dart';
+import 'package:jarvis/data/responses/ai_bot/create_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:jarvis/data/responses/ai_bot/update_assistant_response.dart';
@@ -26,11 +29,11 @@ abstract class AppKbServiceClient {
   );
 
   @DELETE(ConstantAPI.deleteAssistant)
-  Future<void> deleteAssistant(@Path("{${ConstantPath.assistantId}}") String assistantId);
+  Future<void> deleteAssistant(@Path(ConstantPath.assistantId) String assistantId);
 
   @PATCH(ConstantAPI.updateAssistant)
   Future<UpdateAssistantResponse> updateAssistant(
-    @Path("{${ConstantPath.assistantId}}") String assistantId,
+    @Path(ConstantPath.assistantId) String assistantId,
     @Body() UpdateAssistantRequest updateAssistantRequest,
   );
 
@@ -46,8 +49,11 @@ abstract class AppKbServiceClient {
   });
 
   @GET(ConstantAPI.getAssistant)
-  Future<GetAssistantResponse> getAssistant(@Path("{${ConstantPath.assistantId}}") String assistandId);
-}
+  Future<GetAssistantResponse> getAssistant(@Path(ConstantPath.assistantId) String assistandId);
 
-class CreateAssistantRequest {
+  @POST(ConstantAPI.askAssistant)
+  Future<AskAssistantResponse> askAssistant(
+    @Path(ConstantPath.assistantId) String assistandId,
+    @Body() AskAssistantRequest askAssistantRequest,
+  );
 }

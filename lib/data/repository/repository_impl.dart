@@ -4,13 +4,17 @@ import 'package:jarvis/data/mapper/mapper.dart';
 import 'package:jarvis/data/network/error_handler.dart';
 import 'package:jarvis/data/network/failure.dart';
 import 'package:jarvis/data/network/network_info.dart';
+import 'package:jarvis/data/request/ai_bot/ask_assistant_request.dart';
+import 'package:jarvis/data/request/ai_bot/create_assistant_request.dart';
+import 'package:jarvis/data/request/ai_bot/delete_assistant_request.dart';
+import 'package:jarvis/data/request/ai_bot/get_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/get_assistants_request.dart';
+import 'package:jarvis/data/request/ai_bot/update_assistant_request.dart';
 import 'package:jarvis/data/request/ai_chat/conversation/conversation_history_request.dart';
 import 'package:jarvis/data/request/ai_chat/conversation/conversations_request.dart';
 import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.dart';
 import 'package:jarvis/data/request/authentication/request.dart';
 import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dart';
-import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 
@@ -156,13 +160,12 @@ class RepositoryImpl implements Repository {
   }
 
   @override
-  Future<Either<Failure, GetAssistantsResponse>> getAssistants(GetAssistantsRequest getAssistantsRequest) async {
+  Future<Either<Failure, Assistants>> getAssistants(GetAssistantsRequest getAssistantsRequest) async {
     if (await _networkInfo.isConnected) {
       try {
         final response = await _remoteDataSource.getAssistants(getAssistantsRequest);
         print("response: $response");
-        return Right(response);
-        // return Right(response.toDomain());
+        return Right(response.toDomain());
       } catch (error) {
         return Left(ErrorHandler.handle(error).failure);
       }
@@ -170,4 +173,77 @@ class RepositoryImpl implements Repository {
       return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, AssistantCustom>> getAssistant(GetAssistantRequest getAssistantRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.getAssistant(getAssistantRequest);
+        print("response: $response");
+        return Right(response.toDomain());
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, AssistantCustom>> createAssistant(CreateAssistantRequest createAssistantRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.createAssistant(createAssistantRequest);
+        print("response: $response");
+        return Right(response.toDomain());
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, AssistantCustom>> updateAssistant(UpdateAssistantRequest updateAssistantRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.updateAssistant(updateAssistantRequest);
+        print("response: $response");
+        return Right(response.toDomain());
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteAssistant(DeleteAssistantRequest deleteAssistantRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        await _remoteDataSource.deleteAssistant(deleteAssistantRequest);
+        return const Right(null);
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> askAssistant(AskAssistantRequest askAssistantRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.askAssistant(askAssistantRequest);
+        return Right(response.toDomain());
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }   
 }

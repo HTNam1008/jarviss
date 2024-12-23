@@ -2,7 +2,11 @@ import 'package:jarvis/app/extensions.dart';
 import 'package:jarvis/data/request/ai_chat/send_message/assistant.dart';
 import 'package:jarvis/data/request/ai_chat/send_message/chat_message.dart';
 import 'package:jarvis/data/request/ai_chat/send_message/message_role.dart';
+import 'package:jarvis/data/responses/ai_bot/ask_assistant_response.dart';
+import 'package:jarvis/data/responses/ai_bot/create_assistant_response.dart';
+import 'package:jarvis/data/responses/ai_bot/get_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
+import 'package:jarvis/data/responses/ai_bot/update_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_chat/get_conversation_history_response.dart';
 import 'package:jarvis/data/responses/ai_chat/get_conversations_response.dart';
 import 'package:jarvis/data/responses/ai_chat/send_message_response.dart';
@@ -99,9 +103,7 @@ extension ConversationHistoryMapper on ConversationHistoryResponse {
           remainingUsage: 0,
           isUser: true,
           assistant: assistant,
-          timestamp: detail.createdAt != null
-              ? DateTime.fromMillisecondsSinceEpoch(detail.createdAt! * 1000)
-              : DateTime.now(),
+          timestamp: detail.createdAt != null ? DateTime.fromMillisecondsSinceEpoch(detail.createdAt! * 1000) : DateTime.now(),
         );
         messages.add(userMessage);
       }
@@ -111,11 +113,9 @@ extension ConversationHistoryMapper on ConversationHistoryResponse {
         Message assistantMessage = Message(
           conversationId: detail.id ?? '',
           message: detail.answer!,
-          remainingUsage: 0, 
+          remainingUsage: 0,
           isUser: false,
-          timestamp: detail.createdAt != null
-              ? DateTime.fromMillisecondsSinceEpoch(detail.createdAt! * 1000)
-              : DateTime.now(),
+          timestamp: detail.createdAt != null ? DateTime.fromMillisecondsSinceEpoch(detail.createdAt! * 1000) : DateTime.now(),
           assistant: assistant,
         );
         messages.add(assistantMessage);
@@ -123,6 +123,84 @@ extension ConversationHistoryMapper on ConversationHistoryResponse {
     }
 
     return ConversationHistory(has_more: has_more, limit: limit, cursor: cursor, items: messages);
+  }
+}
+
+extension CreateAssistantResponseMapper on CreateAssistantResponse {
+  AssistantCustom toDomain() {
+    return AssistantCustom(
+      updatedAt: updatedAt,
+      createdAt: createdAt,
+      createdBy: createdBy,
+      updatedBy: updatedBy,
+      id: id,
+      description: description,
+      instructions: instructions,
+      assistantName: assistantName,
+      openAiAssistantId: openAiAssistantId,
+    );
+  }
+}
+
+extension UpdateAssistantResponseMapper on UpdateAssistantResponse {
+  AssistantCustom toDomain() {
+    return AssistantCustom(
+      updatedAt: updatedAt,
+      createdAt: createdAt,
+      createdBy: createdBy,
+      updatedBy: updatedBy,
+      id: id,
+      description: description,
+      instructions: instructions,
+      assistantName: assistantName,
+      openAiAssistantId: openAiAssistantId,
+    );
+  }
+}
+
+extension GetAssistantResponseMapper on GetAssistantResponse {
+  AssistantCustom toDomain() {
+    return AssistantCustom(
+      updatedAt: updatedAt,
+      createdAt: createdAt,
+      createdBy: createdBy,
+      updatedBy: updatedBy,
+      id: id,
+      description: description,
+      instructions: instructions,
+      assistantName: assistantName,
+      openAiAssistantId: openAiAssistantId,
+    );
+  }
+}
+
+extension AssistantDataMapper on AssistantData {
+  AssistantCustom toDomain() {
+    return AssistantCustom(
+      updatedAt: updatedAt,
+      createdAt: createdAt,
+      createdBy: createdBy,
+      updatedBy: updatedBy,
+      id: id,
+      description: description,
+      instructions: instructions,
+      assistantName: assistantName,
+      openAiAssistantId: openAiAssistantId, 
+    );
+  }
+}
+extension GetAssistantsResponseMapper on GetAssistantsResponse {
+  Assistants toDomain() {
+    return Assistants(
+      data: List<AssistantCustom>.from(data.map((e) => e.toDomain())), 
+      meta: meta,
+    );
+  }
+}
+
+extension AskAssistantsResponseMapper on AskAssistantResponse {
+  String toDomain() {
+    return message;
   }
 }
 
