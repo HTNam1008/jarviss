@@ -42,8 +42,10 @@ import '../../domain/repository/prompt_repository.dart';
 import '../../domain/usecase/delete_prompt_usecase.dart';
 import '../../domain/usecase/get_public_prompts_usecase.dart';
 import '../../domain/usecase/update _prompt_usecase.dart';
+import '../../domain/usecase/upload_local_file_usecase.dart';
 import '../../presentation/knowledge/knowledge_view.dart';
 import '../../presentation/prompt/main_prompt_view.dart';
+import '../../presentation/unit_add/unit_view_model.dart';
 
 final getIt = GetIt.instance;
 
@@ -225,4 +227,11 @@ Future<void> setupLocator() async {
         () => DeleteKnowledgeUsecase(getIt<Repository>()),
   );
   getIt.registerFactory<KnowledgeViewModel>(() => KnowledgeViewModel(getIt<GetKnowledgeUsecase>(),getIt<CreateKnowledgeUsecase>(),getIt<UpdateKnowledgeUseCase>(),getIt<DeleteKnowledgeUsecase>()));
+  getIt.registerFactory<UploadLocalFileUsecase>(
+        () => UploadLocalFileUsecase(getIt<Repository>()),
+  );
+
+  getIt.registerFactory<UnitViewModel>(
+        () => UnitViewModel(getIt<UploadLocalFileUsecase>()),
+  );
 }

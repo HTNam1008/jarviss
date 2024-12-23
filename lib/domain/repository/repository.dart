@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:jarvis/data/network/failure.dart';
 import 'package:jarvis/data/request/ai_bot/get_assistants_request.dart';
@@ -33,4 +35,9 @@ abstract class Repository {
     String? q,
   });
   Future<Either<Failure, void>> deleteKnowledge(String id);
+  Future<Either<Failure, UnitResponse>> uploadLocalFile(String knowledgeId, File file);
+  Future<Either<Failure, UnitResponse>> uploadSlackFile(String id, UploadSlackFileRequest request);
+  Future<Either<Failure, UnitResponse>> uploadWebFile(String id, UploadWebFileRequest request);
+  Future<Either<Failure, UnitResponse>> uploadConfluenceFile(String id, UploadConfluenceFileRequest request);
+
 }

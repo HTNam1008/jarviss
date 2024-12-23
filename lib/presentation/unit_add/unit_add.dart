@@ -8,6 +8,9 @@ import 'package:jarvis/presentation/unit_add/unit_add_slack.dart';
 import 'package:jarvis/presentation/unit_add/unit_add_website.dart';
 
 class UnitAdd extends StatefulWidget {
+  final String knowledgeId;
+
+  UnitAdd({super.key, required this.knowledgeId});
   @override
   State<UnitAdd> createState() => _UnitAddState();
 }
@@ -35,12 +38,12 @@ class _UnitAddState extends State<UnitAdd> {
       icon: Icons.link_outlined,
       title: 'Slack',
       description: 'Add Slack link',
-    ),UnitOption(
-      icon: Icons.link_outlined,
-      title: 'Google Drive',
-      description: 'Add Google Drive link',
     )
-
+    // ,UnitOption(
+    //   icon: Icons.link_outlined,
+    //   title: 'Google Drive',
+    //   description: 'Add Google Drive link',
+    // )
   ];
 
   @override
@@ -52,6 +55,7 @@ class _UnitAddState extends State<UnitAdd> {
       ),
       child: Container(
         padding: const EdgeInsets.all(AppPadding.p20),
+        width: 700,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -214,7 +218,7 @@ class _UnitAddState extends State<UnitAdd> {
   Widget _handleAddUnit(int selectedIndex) {
     switch (selectedIndex) {
       case 0:
-        return UnitAddLocalfile();
+        return UnitAddLocalfile(knowledgeId: widget.knowledgeId,);
       case 1:
         return UnitAddWebsite();
       case 2:

@@ -7,7 +7,12 @@ import 'package:jarvis/presentation/resources/route_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 import 'package:jarvis/presentation/unit_add/unit_add.dart';
 
+import '../../../data/responses/ai_bot/get_assistants_response.dart';
+
 class DetailKnowledgeView extends StatefulWidget {
+  final KnowledgeData knowledge;
+
+  const DetailKnowledgeView({super.key, required this.knowledge});
   @override
   State<DetailKnowledgeView> createState() => _DetailKnowledgeViewState();
 }
@@ -74,9 +79,9 @@ class _DetailKnowledgeViewState extends State<DetailKnowledgeView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Name of knowledge',
-                  style: TextStyle(
+                Text(
+                  widget.knowledge.knowledgeName,
+                  style: const TextStyle(
                     fontSize: AppSize.s18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -121,7 +126,7 @@ class _DetailKnowledgeViewState extends State<DetailKnowledgeView> {
                 size: AppSize.s20,
               ),
               onPressed: () {
-                // showDialog(context: context, builder: (builder) => EditKnowledgeView());
+                showDialog(context: context, builder: (builder) => EditKnowledgeView(knowledge:widget.knowledge));
               },
             ),
           ),
@@ -148,7 +153,7 @@ class _DetailKnowledgeViewState extends State<DetailKnowledgeView> {
           ),
           TextButton(
             onPressed: () {
-              showDialog(context: context, builder: (builder) => UnitAdd());
+              showDialog(context: context, builder: (builder) => UnitAdd(knowledgeId: widget.knowledge.index));
             },
             style: TextButton.styleFrom(
               backgroundColor: ColorManager.teal,
@@ -212,55 +217,6 @@ class _DetailKnowledgeViewState extends State<DetailKnowledgeView> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildBottomNavigation() {
-    return Container(
-      padding: const EdgeInsets.all(AppPadding.p16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 5,
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildNavItem('Title', false),
-          _buildNavItem('Title', true),
-          _buildNavItem('Title', false),
-          _buildNavItem('Title', false),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavItem(String title, bool isSelected) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: AppSize.s8,
-          height: AppSize.s8,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: isSelected ? Colors.purple : Colors.transparent,
-          ),
-        ),
-        const SizedBox(height: AppSize.s4),
-        Text(
-          title,
-          style: TextStyle(
-            color: isSelected ? Colors.purple : Colors.grey,
-            fontSize: AppSize.s12,
-          ),
-        ),
-      ],
     );
   }
 }

@@ -1,5 +1,9 @@
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:dio/dio.dart';
+import 'package:dio/src/multipart_file.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:jarvis/data/network/app_api.dart';
 import 'package:jarvis/data/network/app_kb_api.dart';
 import 'package:jarvis/data/request/ai_bot/delete_assistant_request.dart';
@@ -65,7 +69,10 @@ abstract class RemoteDataSource {
     String? q,
   });
   Future<void> deleteKnowledge(String id);
-
+  Future<UnitResponse> uploadLocalFile(String id, File file);
+  Future<UnitResponse> uploadWebFile(String id, UploadWebFileRequest request);
+  Future<UnitResponse> uploadSlackFile(String id, UploadSlackFileRequest request);
+  Future<UnitResponse> uploadConfluenceFile(String id, UploadConfluenceFileRequest request);
 }
 
 class RemoteDataSourceImplementer implements RemoteDataSource {
@@ -226,4 +233,68 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   @override
   Future<void> deleteKnowledge(String id) =>
       _appKbServiceClient.deleteKnowledge(id);
+
+  @override
+  Future<UnitResponse> uploadLocalFile(String id, File file) async {
+    String? mimeType = FileUploadHelper.getMimeType(file.path);
+    if (mimeType == null) {
+      throw Exception('Unsupported file format');
+    }
+    // Convert the file to MultipartFile
+    MultipartFile multipartFile = await MultipartFile.fromFile(
+      file.path,
+      filename: file.path.split('/').last,
+      contentType: MediaType.parse(mimeType), // Adjust for your file type
+    );
+
+    // Create FormData with the MultipartFile
+    FormData formData = FormData.fromMap({
+      'file': multipartFile,
+    });
+
+    // Debugging: Log FormData content
+    print('Uploading file: ${file.path}');
+    print('FormData: ${formData.files.map((f) => f.value.filename).toList()}');
+
+    // Call the API
+    return await _appKbServiceClient.uploadLocalFile(id, formData);
+  }
+
+  @override
+  Future<UnitResponse> uploadWebFile(String id, UploadWebFileRequest request) =>
+      _appKbServiceClient.uploadWebFile(id, request);
+
+  @override
+  Future<UnitResponse> uploadSlackFile(String id, UploadSlackFileRequest request) =>
+      _appKbServiceClient.uploadSlackFile(id, request);
+
+  @override
+  Future<UnitResponse> uploadConfluenceFile(String id, UploadConfluenceFileRequest request) =>
+      _appKbServiceClient.uploadConfluenceFile(id, request);
+}
+
+class FileUploadHelper {
+  // Map of file extensions to MIME types
+  static const Map<String, String> mimeTypes = {
+    '.c': 'text/x-c',
+    '.cpp': 'text/x-c++',
+    '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    '.html': 'text/html',
+    '.java': 'text/x-java',
+    '.json': 'application/json',
+    '.md': 'text/markdown',
+    '.pdf': 'application/pdf',
+    '.php': 'text/x-php',
+    '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    '.py': 'text/x-python',
+    '.rb': 'text/x-ruby',
+    '.tex': 'text/x-tex',
+    '.txt': 'text/plain',
+  };
+
+  // Method to determine MIME type based on file extension
+  static String? getMimeType(String filePath) {
+    final extension = filePath.split('.').last.toLowerCase();
+    return mimeTypes['.$extension'];
+  }
 }

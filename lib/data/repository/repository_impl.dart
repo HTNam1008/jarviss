@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 import 'package:jarvis/data/data_source/remote_data_source.dart';
@@ -225,6 +226,47 @@ class RepositoryImpl implements Repository {
     try {
       await _remoteDataSource.deleteKnowledge(id);
       return const Right(null);
+    } catch (error) {
+      return Left(ErrorHandler.handle(error).failure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, UnitResponse>> uploadLocalFile(String id, File file) async {
+    try {
+      final response = await  _remoteDataSource.uploadLocalFile(id, file);
+      log(file.path);
+      return Right(response);
+    } catch (error) {
+      return Left(ErrorHandler.handle(error).failure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, UnitResponse>> uploadSlackFile(String id, UploadSlackFileRequest request) async {
+    try {
+      final response = await _remoteDataSource.uploadSlackFile(id, request);
+      return Right(response);
+    } catch (error) {
+      return Left(ErrorHandler.handle(error).failure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, UnitResponse>> uploadWebFile(String id, UploadWebFileRequest request) async {
+    try {
+      final response = await _remoteDataSource.uploadWebFile(id, request);
+      return Right(response);
+    } catch (error) {
+      return Left(ErrorHandler.handle(error).failure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, UnitResponse>> uploadConfluenceFile(String id, UploadConfluenceFileRequest request) async {
+    try {
+      final response = await _remoteDataSource.uploadConfluenceFile(id, request);
+      return Right(response);
     } catch (error) {
       return Left(ErrorHandler.handle(error).failure);
     }

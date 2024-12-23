@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:jarvis/presentation/common/bottom_navigation.dart';
 import 'package:jarvis/presentation/common/chat_input_box.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
@@ -6,20 +7,29 @@ import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:jarvis/presentation/unit_add/unit_view_model.dart';
+import '../common/dialog_util.dart';
+import '../knowledge/knowledge_view.dart';
 
 class UnitAddLocalfile extends StatefulWidget {
+  final String knowledgeId;
+
+  UnitAddLocalfile({super.key, required this.knowledgeId});
+
   @override
   State<UnitAddLocalfile> createState() => _UnitAddLocalfileState();
 }
 
 class _UnitAddLocalfileState extends State<UnitAddLocalfile> {
   PlatformFile? _selectedFile;
+  final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
 
   Future<void> _handleFileSelection() async {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['pdf', 'doc', 'docx', 'txt'],
+        allowedExtensions: ['c','pdf', 'doc', 'docx', 'txt','cpp','java','html','json','md','php','pptx','rb','py','text'],
       );
 
       if (result != null) {
@@ -33,6 +43,36 @@ class _UnitAddLocalfileState extends State<UnitAddLocalfile> {
     }
   }
 
+  Future<void> _uploadLocalFile() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+    String? selectedFilePath = _selectedFile?.path;
+
+    try {
+      await GetIt.instance<UnitViewModel>().uploadLocalFile(
+        widget.knowledgeId,
+        selectedFilePath!,
+      );
+
+      Navigator.pop(context);
+      showCustomDialog(
+        context: context,
+        type: DialogType.success,
+        title: 'Success',
+        message: 'Upload successfully',
+      );
+    } catch (e) {
+      showCustomDialog(
+        context: context,
+        type: DialogType.error,
+        title: 'Error',
+        message: 'Failed to upload file: $e',
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -42,10 +82,12 @@ class _UnitAddLocalfileState extends State<UnitAddLocalfile> {
       ),
       child: Container(
         padding: const EdgeInsets.all(AppPadding.p20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+           children: [
             const Row(
               children: [
                 Expanded(
@@ -113,9 +155,7 @@ class _UnitAddLocalfileState extends State<UnitAddLocalfile> {
             const SizedBox(height: AppSize.s24),
             ElevatedButton(
               onPressed: _selectedFile != null
-                  ? () {
-                Navigator.pop(context, _selectedFile);
-              }
+                  ? _uploadLocalFile
                   : null,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: AppPadding.p16),
@@ -125,7 +165,13 @@ class _UnitAddLocalfileState extends State<UnitAddLocalfile> {
                 ),
                 disabledBackgroundColor: Colors.grey[300],
               ),
-              child: const Text(
+              child: _isLoading
+                  ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+                  :const Text(
                 'Connect',
                 style: TextStyle(
                   color: Colors.white,
@@ -136,6 +182,7 @@ class _UnitAddLocalfileState extends State<UnitAddLocalfile> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

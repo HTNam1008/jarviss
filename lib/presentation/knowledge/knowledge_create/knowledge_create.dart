@@ -3,7 +3,6 @@ import 'package:get_it/get_it.dart';
 import 'package:jarvis/presentation/knowledge/knowledge_view.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
-
 import '../../common/dialog_util.dart';
 import '../../prompt/main_prompt_view.dart';
 

@@ -231,6 +231,14 @@ class _KnowledgeViewState extends State<KnowledgeView> {
                                 },
                                 color: Colors.grey,
                               ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => DetailKnowledgeView(knowledge: knowledge),
+                                  ),
+                                );
+                              },
                             ),
                           );
                         },
