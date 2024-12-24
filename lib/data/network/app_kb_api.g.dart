@@ -309,6 +309,45 @@ class _AppKbServiceClient implements AppKbServiceClient {
     return _value;
   }
 
+  @override
+  Future<UpdateAssistantNewThreadPlayGroundResponse>
+      updateAssistantNewThreadPlayGround(
+          UpdateAssistantNewThreadPlayGroundRequest
+              updateAssistantNewThreadPlayGroundRequest) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(updateAssistantNewThreadPlayGroundRequest.toJson());
+    final _options =
+        _setStreamType<UpdateAssistantNewThreadPlayGroundResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/kb-core/v1/ai-assistant/thread/playground',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late UpdateAssistantNewThreadPlayGroundResponse _value;
+    try {
+      _value =
+          UpdateAssistantNewThreadPlayGroundResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&
         !(requestOptions.responseType == ResponseType.bytes ||

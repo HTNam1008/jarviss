@@ -218,7 +218,15 @@ class _PreviewBotViewState extends State<PreviewBotView> {
               controller: _messageController,
               onSend: _sendMessage,
               isSending: _isSending,
-              onAdd: () {},
+              showSuggestions: false,
+              onAdd: () async {
+                final updatedAssistant = await _viewModel.resetMessages(_assistant.id);
+                if (updatedAssistant != null) {
+                  setState(() {
+                    _assistant = updatedAssistant;
+                  });
+                }
+              },
             ),
           ],
         ),

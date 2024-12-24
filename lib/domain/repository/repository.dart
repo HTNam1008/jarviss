@@ -6,6 +6,7 @@ import 'package:jarvis/data/request/ai_bot/delete_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/get_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/get_assistants_request.dart';
 import 'package:jarvis/data/request/ai_bot/retrieve_message_thread_request.dart';
+import 'package:jarvis/data/request/ai_bot/update_assistant_new_thread_playground_request.dart';
 import 'package:jarvis/data/request/ai_bot/update_assistant_request.dart';
 import 'package:jarvis/data/request/ai_chat/conversation/conversation_history_request.dart';
 import 'package:jarvis/data/request/ai_chat/conversation/conversations_request.dart';
@@ -28,6 +29,7 @@ abstract class Repository {
   Future<Either<Failure, AssistantCustom>> getAssistant(GetAssistantRequest getAssistantRequest);
   Future<Either<Failure, AssistantCustom>> createAssistant(CreateAssistantRequest createAssistantRequest);
   Future<Either<Failure, AssistantCustom>> updateAssistant(UpdateAssistantRequest updateAssistantRequest);
+  Future<Either<Failure, AssistantCustom>> updateAssistantNewThreadPlayGround(UpdateAssistantNewThreadPlayGroundRequest updateAssistantNewThreadPlayGroundRequest);
   Future<Either<Failure, void>> deleteAssistant(DeleteAssistantRequest deleteAssistantRequest);
   Future<Either<Failure, MessageAssistant>> askAssistant(AskAssistantRequest askAssistantRequest);
   Future<Either<Failure, MessageAssistants>> retrieveMessageThread(RetrieveMessageThreadRequest retrieveMessageThreadRequest);

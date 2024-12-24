@@ -10,6 +10,7 @@ import 'package:jarvis/data/request/ai_bot/delete_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/get_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/get_assistants_request.dart';
 import 'package:jarvis/data/request/ai_bot/retrieve_message_thread_request.dart';
+import 'package:jarvis/data/request/ai_bot/update_assistant_new_thread_playground_request.dart';
 import 'package:jarvis/data/request/ai_bot/update_assistant_request.dart';
 import 'package:jarvis/data/request/ai_chat/conversation/conversation_history_request.dart';
 import 'package:jarvis/data/request/ai_chat/conversation/conversations_request.dart';
@@ -253,6 +254,20 @@ class RepositoryImpl implements Repository {
     if (await _networkInfo.isConnected) {
       try {
         final response = await _remoteDataSource.retrieveMessageThread(retrieveMessageThreadRequest);
+        return Right(response.toDomain());
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, AssistantCustom>> updateAssistantNewThreadPlayGround(UpdateAssistantNewThreadPlayGroundRequest updateAssistantNewThreadPlayGroundRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.updateAssistantNewThreadPlayGround(updateAssistantNewThreadPlayGroundRequest);
         return Right(response.toDomain());
       } catch (error) {
         return Left(ErrorHandler.handle(error).failure);

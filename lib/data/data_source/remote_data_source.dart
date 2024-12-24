@@ -6,6 +6,7 @@ import 'package:jarvis/data/request/ai_bot/delete_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/get_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/get_assistants_request.dart';
 import 'package:jarvis/data/request/ai_bot/retrieve_message_thread_request.dart';
+import 'package:jarvis/data/request/ai_bot/update_assistant_new_thread_playground_request.dart';
 import 'package:jarvis/data/request/ai_bot/update_assistant_request.dart';
 import 'package:jarvis/data/request/ai_chat/conversation/conversation_history_request.dart';
 import 'package:jarvis/data/request/ai_chat/conversation/conversations_request.dart';
@@ -16,6 +17,7 @@ import 'package:jarvis/data/responses/ai_bot/create_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:jarvis/data/responses/ai_bot/retrieve_message_thread_response.dart';
+import 'package:jarvis/data/responses/ai_bot/update_assistant_new_thread_playground_response.dart';
 import 'package:jarvis/data/responses/ai_bot/update_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_chat/get_conversation_history_response.dart';
 import 'package:jarvis/data/responses/ai_chat/get_conversations_response.dart';
@@ -49,6 +51,7 @@ abstract class RemoteDataSource {
   Future<GetAssistantResponse> getAssistant(GetAssistantRequest getAssistantRequest);
   Future<void> deleteAssistant(DeleteAssistantRequest deleteAssistantRequest);
   Future<UpdateAssistantResponse> updateAssistant(UpdateAssistantRequest updateAssistantRequest);
+  Future<UpdateAssistantNewThreadPlayGroundResponse> updateAssistantNewThreadPlayGround(UpdateAssistantNewThreadPlayGroundRequest updateAssistantNewThreadPlayGroundRequest);
   Future<CreateAssistantResponse> createAssistant(CreateAssistantRequest createAssistantRequest);
   Future<String> askAssistant(AskAssistantRequest createAssistantRequest);
   Future<RetrieveMessageThreadResponse> retrieveMessageThread(RetrieveMessageThreadRequest retrieveMessageThreadRequest);
@@ -179,5 +182,10 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   @override
   Future<RetrieveMessageThreadResponse> retrieveMessageThread(RetrieveMessageThreadRequest retrieveMessageThreadRequest) async {
     return await _appKbServiceClient.retrieveMessageThread(retrieveMessageThreadRequest.openAiThreadId);
+  }
+  
+  @override
+  Future<UpdateAssistantNewThreadPlayGroundResponse> updateAssistantNewThreadPlayGround(UpdateAssistantNewThreadPlayGroundRequest updateAssistantNewThreadPlayGroundRequest) async {
+    return await _appKbServiceClient.updateAssistantNewThreadPlayGround(updateAssistantNewThreadPlayGroundRequest);
   }
 }

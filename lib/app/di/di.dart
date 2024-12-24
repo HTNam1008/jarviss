@@ -27,6 +27,7 @@ import 'package:jarvis/domain/usecase/sign_in_kb_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_in_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_out_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_up_usecase.dart';
+import 'package:jarvis/domain/usecase/update_assistant_new_thread_playground_usecase.dart';
 import 'package:jarvis/domain/usecase/update_assistant_usecase.dart';
 import 'package:jarvis/domain/usecase/usage_token_usecase.dart';
 import 'package:jarvis/presentation/authencation/sign_in/sign_in_viewmodel.dart';
@@ -247,8 +248,12 @@ Future<void> setupLocator() async {
     () => AskAssistantUseCase(getIt<Repository>()),
   );
 
+  getIt.registerFactory<UpdateAssistantNewThreadPlayGroundUseCase>(
+    () => UpdateAssistantNewThreadPlayGroundUseCase(getIt<Repository>()),
+  );
+
   getIt.registerFactory<PreviewBotViewModel>(
-    () => PreviewBotViewModel(getIt<AskAssistantUseCase>(), getIt<RetrieveMessageThreadUseCase>()),
+    () => PreviewBotViewModel(getIt<AskAssistantUseCase>(), getIt<RetrieveMessageThreadUseCase>(), getIt<UpdateAssistantNewThreadPlayGroundUseCase>()),
   );
 
   getIt.registerFactory<RetrieveMessageThreadUseCase>(

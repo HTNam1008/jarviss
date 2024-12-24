@@ -19,6 +19,7 @@ class ConstantAPI {
   static const getConversations = '/api/v1/ai-chat/conversations';
   static const createAssistant = '/kb-core/v1/ai-assistant';
   static const updateAssistant = '/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}';
+  static const updateAssistantNewThreadPlayGround = '/kb-core/v1/ai-assistant/thread/playground';
   static const deleteAssistant = '/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}';
   static const getAssistant = "/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}";
   static const askAssistant = "/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}/ask";

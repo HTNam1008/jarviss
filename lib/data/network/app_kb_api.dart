@@ -2,12 +2,14 @@ import 'package:dio/dio.dart';
 import 'package:jarvis/app/constant.dart';
 import 'package:jarvis/data/request/ai_bot/ask_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/create_assistant_request.dart';
+import 'package:jarvis/data/request/ai_bot/update_assistant_new_thread_playground_request.dart';
 import 'package:jarvis/data/request/ai_bot/update_assistant_request.dart';
 import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dart';
 import 'package:jarvis/data/responses/ai_bot/create_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:jarvis/data/responses/ai_bot/retrieve_message_thread_response.dart';
+import 'package:jarvis/data/responses/ai_bot/update_assistant_new_thread_playground_response.dart';
 import 'package:jarvis/data/responses/ai_bot/update_assistant_response.dart';
 import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
 import 'package:retrofit/retrofit.dart';
@@ -60,5 +62,10 @@ abstract class AppKbServiceClient {
   @GET(ConstantAPI.retrieveMessageThread)
   Future<RetrieveMessageThreadResponse> retrieveMessageThread(
     @Path(ConstantPath.openAiThreadId) String openAiThreadId,
+  );
+
+  @POST(ConstantAPI.updateAssistantNewThreadPlayGround)
+  Future<UpdateAssistantNewThreadPlayGroundResponse> updateAssistantNewThreadPlayGround(
+    @Body() UpdateAssistantNewThreadPlayGroundRequest updateAssistantNewThreadPlayGroundRequest,
   );
 }

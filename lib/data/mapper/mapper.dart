@@ -4,6 +4,7 @@ import 'package:jarvis/data/responses/ai_bot/create_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:jarvis/data/responses/ai_bot/retrieve_message_thread_response.dart';
+import 'package:jarvis/data/responses/ai_bot/update_assistant_new_thread_playground_response.dart';
 import 'package:jarvis/data/responses/ai_bot/update_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_chat/get_conversation_history_response.dart';
 import 'package:jarvis/data/responses/ai_chat/get_conversations_response.dart';
@@ -227,6 +228,27 @@ extension RetrieveMessageThreadResponseMapper on RetrieveMessageThreadResponse {
   }
 }
 
+extension UpdateAssistantNewThreadPlayGroundResponseMapper on UpdateAssistantNewThreadPlayGroundResponse {
+  AssistantCustom toDomain() {
+    return AssistantCustom(
+      updatedAt: updatedAt,
+      createdAt: createdAt,
+      createdBy: createdBy,
+      updatedBy: updatedBy,
+      id: id,
+      description: description,
+      instructions: instructions,
+      assistantName: assistantName,
+      openAiAssistantId: openAiAssistantId,
+      openAiThreadIdPlay: openAiThreadIdPlay,
+      openAiVectorStoreId: openAiVectorStoreId,
+      isDefault: isDefault,
+      isFavorite: isFavorite,
+      userId: userId,
+      deletedAt: deletedAt,
+    );
+  }
+}
 
 
 
