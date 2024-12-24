@@ -18,7 +18,7 @@ class _MainViewState extends State<MainView> {
     const ChatView(),
     const ChatBotMainView(),
     const PromptView(),
-     KnowledgeView(),
+    KnowledgeView(),
   ];
 
   @override

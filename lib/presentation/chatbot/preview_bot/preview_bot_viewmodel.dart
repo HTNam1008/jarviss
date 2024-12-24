@@ -74,6 +74,12 @@ class PreviewBotViewModel extends BaseViewModel implements PreviewBotViewModelIn
   }
 
   @override
+  void resetMessages() {
+    _messages.clear();
+    _messagesController.add(_messages);
+  }
+
+  @override
   void dispose() {
     _messagesController.close();
     _loadingController.close();
@@ -100,4 +106,5 @@ abstract class PreviewBotViewModelOutputs {
 
 abstract class PreviewBotViewModelInputs {
   Future<void> sendMessage(String content, AssistantCustom assistant);
+  void resetMessages();
 }

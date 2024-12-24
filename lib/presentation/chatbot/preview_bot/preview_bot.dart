@@ -25,7 +25,7 @@ class _PreviewBotViewState extends State<PreviewBotView> {
   final ScrollController _scrollController = ScrollController();
   
   bool _isSending = false;
-
+  
   @override
   void initState() {
     super.initState();
@@ -218,6 +218,7 @@ class _PreviewBotViewState extends State<PreviewBotView> {
               controller: _messageController,
               onSend: _sendMessage,
               isSending: _isSending,
+              onAdd: () {},
             ),
           ],
         ),

@@ -221,6 +221,10 @@ class _ChatViewState extends State<ChatView> {
               controller: _chatController,
               onSend: _sendMessage,
               isSending: _isSending,
+              onAdd: () {
+                // Logic khi nhấn nút add
+                _viewModel.resetMessages();
+              },
             ),
           ],
         ),

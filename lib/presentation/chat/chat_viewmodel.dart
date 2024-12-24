@@ -188,6 +188,12 @@ class ChatViewModel extends BaseViewModel
       },
     );
   }
+  @override
+  void resetMessages() {
+    _messages.clear();
+    _messagesStreamController.add(_messages);
+    _conversationId = null;
+  }
   // Outputs
   @override
   Stream<List<Message>> get messagesStream => _messagesStreamController.stream;
@@ -228,6 +234,7 @@ abstract class ChatViewModelInputs {
   void sendMessage(String content, String selectedModel);
   void getUsageToken();
   void loadConversationMessages(String conversationId, {String? assistantId, String? assistantModel});
+  void resetMessages();
   // Sink để gửi các sự kiện nếu cần
 }
 
