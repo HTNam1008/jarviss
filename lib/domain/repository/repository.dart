@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:jarvis/data/network/failure.dart';
 import 'package:jarvis/data/request/ai_bot/ask_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/create_assistant_request.dart';
+import 'package:jarvis/data/request/ai_bot/create_thread_request.dart';
 import 'package:jarvis/data/request/ai_bot/delete_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/get_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/get_assistants_request.dart';
@@ -33,4 +34,6 @@ abstract class Repository {
   Future<Either<Failure, void>> deleteAssistant(DeleteAssistantRequest deleteAssistantRequest);
   Future<Either<Failure, MessageAssistant>> askAssistant(AskAssistantRequest askAssistantRequest);
   Future<Either<Failure, MessageAssistants>> retrieveMessageThread(RetrieveMessageThreadRequest retrieveMessageThreadRequest);
+  Future<Either<Failure, Thread>> createThread(CreateThreadRequest createThreadRequest);
+
 }

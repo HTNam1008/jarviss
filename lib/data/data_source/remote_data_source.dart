@@ -2,6 +2,7 @@ import 'package:jarvis/data/network/app_api.dart';
 import 'package:jarvis/data/network/app_kb_api.dart';
 import 'package:jarvis/data/request/ai_bot/ask_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/create_assistant_request.dart';
+import 'package:jarvis/data/request/ai_bot/create_thread_request.dart';
 import 'package:jarvis/data/request/ai_bot/delete_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/get_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/get_assistants_request.dart';
@@ -14,6 +15,7 @@ import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.da
 import 'package:jarvis/data/request/authentication/request.dart';
 import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dart';
 import 'package:jarvis/data/responses/ai_bot/create_assistant_response.dart';
+import 'package:jarvis/data/responses/ai_bot/create_thread_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:jarvis/data/responses/ai_bot/retrieve_message_thread_response.dart';
@@ -54,6 +56,7 @@ abstract class RemoteDataSource {
   Future<UpdateAssistantNewThreadPlayGroundResponse> updateAssistantNewThreadPlayGround(UpdateAssistantNewThreadPlayGroundRequest updateAssistantNewThreadPlayGroundRequest);
   Future<CreateAssistantResponse> createAssistant(CreateAssistantRequest createAssistantRequest);
   Future<String> askAssistant(AskAssistantRequest createAssistantRequest);
+  Future<CreateThreadResponse> createThread(CreateThreadRequest createThreadRequest);
   Future<RetrieveMessageThreadResponse> retrieveMessageThread(RetrieveMessageThreadRequest retrieveMessageThreadRequest);
 }
 
@@ -187,5 +190,10 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   @override
   Future<UpdateAssistantNewThreadPlayGroundResponse> updateAssistantNewThreadPlayGround(UpdateAssistantNewThreadPlayGroundRequest updateAssistantNewThreadPlayGroundRequest) async {
     return await _appKbServiceClient.updateAssistantNewThreadPlayGround(updateAssistantNewThreadPlayGroundRequest);
+  }
+  
+  @override
+  Future<CreateThreadResponse> createThread(CreateThreadRequest createThreadRequest) async {
+    return await _appKbServiceClient.createThread(createThreadRequest);
   }
 }

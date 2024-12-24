@@ -2,10 +2,12 @@ import 'package:dio/dio.dart';
 import 'package:jarvis/app/constant.dart';
 import 'package:jarvis/data/request/ai_bot/ask_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/create_assistant_request.dart';
+import 'package:jarvis/data/request/ai_bot/create_thread_request.dart';
 import 'package:jarvis/data/request/ai_bot/update_assistant_new_thread_playground_request.dart';
 import 'package:jarvis/data/request/ai_bot/update_assistant_request.dart';
 import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dart';
 import 'package:jarvis/data/responses/ai_bot/create_assistant_response.dart';
+import 'package:jarvis/data/responses/ai_bot/create_thread_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:jarvis/data/responses/ai_bot/retrieve_message_thread_response.dart';
@@ -67,5 +69,10 @@ abstract class AppKbServiceClient {
   @POST(ConstantAPI.updateAssistantNewThreadPlayGround)
   Future<UpdateAssistantNewThreadPlayGroundResponse> updateAssistantNewThreadPlayGround(
     @Body() UpdateAssistantNewThreadPlayGroundRequest updateAssistantNewThreadPlayGroundRequest,
+  );
+  
+  @POST(ConstantAPI.createThread)
+  Future<CreateThreadResponse> createThread(
+    @Body() CreateThreadRequest createThreadRequest,
   );
 }

@@ -199,3 +199,49 @@ class MessageAssistants {
 
   MessageAssistants({required this.data});
 }
+
+class AssistantModel {
+  final String id;
+  final String name;
+  final bool isBuiltIn;
+  String? _openAiThreadId;
+
+  AssistantModel({
+    required this.id,
+    required this.name,
+    required this.isBuiltIn,
+    String? openAiThreadId,
+  }) : _openAiThreadId = openAiThreadId;
+
+  String? get openAiThreadId => _openAiThreadId;
+
+  set openAiThreadId(String? value) {
+    _openAiThreadId = value;
+  }
+}
+
+class Thread {
+  final String threadName;
+  final String assistantId;
+  final String createdAt;
+  final String? createdBy;
+  final String id;
+  final String openAiThreadId;
+  final String? integratedPlatform;
+  final String? updatedAt;
+  final String? updatedBy;
+  final String? deletedAt;
+  
+  Thread({
+    required this.threadName,
+    required this.assistantId,
+    required this.createdAt,
+    this.createdBy,
+    required this.id,
+    this.integratedPlatform,
+    required this.openAiThreadId,
+    this.updatedAt,
+    this.updatedBy,
+    this.deletedAt,
+  });
+}

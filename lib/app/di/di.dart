@@ -14,6 +14,7 @@ import 'package:jarvis/data/repository/repository_impl.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 import 'package:jarvis/domain/usecase/ask_assistant_usecase.dart';
 import 'package:jarvis/domain/usecase/create_assistant_usecase.dart';
+import 'package:jarvis/domain/usecase/create_thread_usecase.dart';
 import 'package:jarvis/domain/usecase/delete_assistant_usecase.dart';
 import 'package:jarvis/domain/usecase/get_assistant_usecase.dart';
 import 'package:jarvis/domain/usecase/get_assistants_usecase.dart';
@@ -62,12 +63,10 @@ Future<void> setupLocator() async {
   );
 
   // Register AppPreferences
-  getIt.registerLazySingleton<AppPreferences>(() => AppPreferences(
-      getIt<SharedPreferences>(), getIt<FlutterSecureStorage>()));
+  getIt.registerLazySingleton<AppPreferences>(() => AppPreferences(getIt<SharedPreferences>(), getIt<FlutterSecureStorage>()));
 
   // Register DioFactory
-  getIt.registerLazySingleton<DioFactory>(
-      () => DioFactory(getIt<AppPreferences>()));
+  getIt.registerLazySingleton<DioFactory>(() => DioFactory(getIt<AppPreferences>()));
 
   // Register Dio
   getIt.registerLazySingleton<Dio>(() => getIt<DioFactory>().getDio());
@@ -93,8 +92,7 @@ Future<void> setupLocator() async {
 
   // Register RemoteDataSource
   getIt.registerLazySingleton<RemoteDataSource>(
-    () => RemoteDataSourceImplementer(
-        getIt<AppServiceClient>(), getIt<AppKbServiceClient>()),
+    () => RemoteDataSourceImplementer(getIt<AppServiceClient>(), getIt<AppKbServiceClient>()),
   );
 
   // Register Repository
@@ -151,13 +149,8 @@ Future<void> setupLocator() async {
   );
 
   getIt.registerFactory<PromptViewModel>(
-    () => PromptViewModel(
-        getIt<GetPublicPromptsUseCase>(),
-        getIt<AddPromptToFavoriteUseCase>(),
-        getIt<CreatePromptUseCase>(),
-        getIt<GetPrivatePromptsUseCase>(),
-        getIt<UpdatePromptUseCase>(),
-        getIt<DeletePromptUseCase>()),
+    () => PromptViewModel(getIt<GetPublicPromptsUseCase>(), getIt<AddPromptToFavoriteUseCase>(), getIt<CreatePromptUseCase>(),
+        getIt<GetPrivatePromptsUseCase>(), getIt<UpdatePromptUseCase>(), getIt<DeletePromptUseCase>()),
   );
   getIt.registerFactory<AddPromptToFavoriteUseCase>(
     () => AddPromptToFavoriteUseCase(getIt<PromptRepository>()),
@@ -182,9 +175,13 @@ Future<void> setupLocator() async {
     () => GetConversationHistoryUsecase(getIt<Repository>()),
   );
 
+  getIt.registerFactory<CreateThreadUseCase>(
+    () => CreateThreadUseCase(getIt<Repository>()),
+  );
+
   getIt.registerFactory<ChatViewModel>(
-    () => ChatViewModel(getIt<SendMessageUseCase>(), getIt<UsageTokenUseCase>(),
-        getIt<GetConversationHistoryUsecase>()),
+    () => ChatViewModel(getIt<SendMessageUseCase>(), getIt<UsageTokenUseCase>(), getIt<GetConversationHistoryUsecase>(), getIt<GetAssistantsUseCase>(),
+        getIt<CreateThreadUseCase>(), getIt<AskAssistantUseCase>()),
   );
 
   getIt.registerFactory<SplashViewModel>(
@@ -257,6 +254,6 @@ Future<void> setupLocator() async {
   );
 
   getIt.registerFactory<RetrieveMessageThreadUseCase>(
-  () => RetrieveMessageThreadUseCase(getIt<Repository>()),
-);
+    () => RetrieveMessageThreadUseCase(getIt<Repository>()),
+  );
 }

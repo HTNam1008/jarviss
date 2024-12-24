@@ -1,6 +1,7 @@
 import 'package:jarvis/app/extensions.dart';
 import 'package:jarvis/data/request/ai_chat/send_message/assistant.dart';
 import 'package:jarvis/data/responses/ai_bot/create_assistant_response.dart';
+import 'package:jarvis/data/responses/ai_bot/create_thread_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:jarvis/data/responses/ai_bot/retrieve_message_thread_response.dart';
@@ -245,6 +246,22 @@ extension UpdateAssistantNewThreadPlayGroundResponseMapper on UpdateAssistantNew
       isDefault: isDefault,
       isFavorite: isFavorite,
       userId: userId,
+      deletedAt: deletedAt,
+    );
+  }
+}
+
+extension CreateThreadResponseMappper on CreateThreadResponse {
+  Thread toDomain() {
+    return Thread(
+      threadName: threadName,
+      assistantId: assistantId,
+      createdAt: createdAt,
+      createdBy: createdBy,
+      id: id,
+      openAiThreadId: openAiThreadId,
+      updatedAt: updatedAt,
+      updatedBy: updatedBy,
       deletedAt: deletedAt,
     );
   }

@@ -42,8 +42,8 @@ class _ChatViewState extends State<ChatView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final List<String> assistantModels = [
-    ConstantAssistantID.GPT_4_O,
     ConstantAssistantID.GPT_4_O_MINI,
+    ConstantAssistantID.GPT_4_O,
     ConstantAssistantID.CLAUDE_3_HAIKU_20240307,
     ConstantAssistantID.CLAUDE_35_SONNET_20240229,
     ConstantAssistantID.GEMINI_15_FLASH_LATEST,
@@ -51,6 +51,10 @@ class _ChatViewState extends State<ChatView> {
   ];
 
   late String selectedModel;
+
+  late AssistantModel _selectedModel;
+  List<AssistantModel> _allModels = [];
+  
   bool _isSending = false;
   bool isScrollBottom = true;
 
@@ -59,7 +63,7 @@ class _ChatViewState extends State<ChatView> {
     super.initState();
     _scrollController = ScrollController();
     selectedModel = assistantModels[1];
-    _viewModel = getIt<ChatViewModel>();
+    _viewModel = getIt<ChatViewModel>();    
     _viewModel.start();
 
     _errorSubscription = _viewModel.errorStream.listen((errorMessage) {
@@ -83,6 +87,35 @@ class _ChatViewState extends State<ChatView> {
     /* WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToBottom();
     }); */
+
+    _initializeModels();
+  }
+
+  void _initializeModels() async {
+    _allModels = assistantModels.map((model) => AssistantModel(
+      id: model,
+      name: model,
+      isBuiltIn: true,
+    )).toList();
+
+    _selectedModel = _allModels.first;
+
+    await _fetchCustomAssistants();
+  }
+
+  Future<void> _fetchCustomAssistants() async {
+    final assistants = await _viewModel.getAssistantsModel();
+    if (assistants != null) {
+      setState(() {
+        _allModels.addAll(
+          assistants.map((assistant) => AssistantModel(
+                id: assistant.id,
+                name: assistant.assistantName,
+                isBuiltIn: false,
+              )),
+        );
+      });
+    }
   }
 
   void _scrollToBottom() {
@@ -132,22 +165,22 @@ class _ChatViewState extends State<ChatView> {
       key: _scaffoldKey,
       drawer: const AppDrawer(),
       appBar: CustomHeaderBar(
-              centerWidget: DropdownButton<String>(
-              value: selectedModel,
+              centerWidget: DropdownButton<AssistantModel>(
+              value: _selectedModel,
               dropdownColor: ColorManager.teal,
               style: TextStyle(color: ColorManager.white),
               underline: const SizedBox(),
-              onChanged: (String? newValue) {
+              onChanged: (AssistantModel? newValue) {
                 if (newValue != null) {
                   setState(() {
-                    selectedModel = newValue;
+                    _selectedModel = newValue;
                   });
                 }
               },
-              items: assistantModels.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
+              items: _allModels.map<DropdownMenuItem<AssistantModel>>((AssistantModel value) {
+                return DropdownMenuItem<AssistantModel>(
                   value: value,
-                  child: Text(value),
+                  child: Text(value.name),
                 );
               }).toList(),
             ),
@@ -224,6 +257,7 @@ class _ChatViewState extends State<ChatView> {
               onAdd: () {
                 // Logic khi nhấn nút add
                 _viewModel.resetMessages();
+                _selectedModel.openAiThreadId = null;
               },
             ),
           ],
@@ -374,15 +408,14 @@ class _ChatViewState extends State<ChatView> {
     if (message.isNotEmpty) {
       _chatController.clear();
       setState(() {
-        _isSending = true; 
+        _isSending = true;
       });
 
-      await _viewModel.sendMessage(message, selectedModel, conversationId:  widget.conversationId);
+      await _viewModel.sendMessage(message, _selectedModel, conversationId: widget.conversationId);
 
       setState(() {
         _isSending = false;
       });
-
     }
   }
 
