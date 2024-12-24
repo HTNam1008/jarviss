@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/knowledge/knowledge_edit/knowledge_edit.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
@@ -6,6 +7,7 @@ import 'package:jarvis/presentation/resources/font_manager.dart';
 import 'package:jarvis/presentation/resources/route_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 import 'package:jarvis/presentation/unit_add/unit_add.dart';
+import 'package:jarvis/presentation/unit_add/unit_view_model.dart';
 
 import '../../../data/responses/ai_bot/get_assistants_response.dart';
 
@@ -18,10 +20,23 @@ class DetailKnowledgeView extends StatefulWidget {
 }
 
 class _DetailKnowledgeViewState extends State<DetailKnowledgeView> {
-  final List<KnowledgeUnit> units = [
-    KnowledgeUnit(name: 'bai1.docx', size: '15KB', isEnabled: true),
-    KnowledgeUnit(name: 'bai1.docx', size: '15KB', isEnabled: true),
-  ];
+  late UnitViewModel _viewModel;
+  bool _isInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = GetIt.instance<UnitViewModel>();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInitialized) {
+      _viewModel.getUnits(widget.knowledge.index, null, 0, null, null, null); // Initial fetch
+      _isInitialized = true;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,10 +63,30 @@ class _DetailKnowledgeViewState extends State<DetailKnowledgeView> {
           _buildKnowledgeHeader(),
           _buildUnitsHeader(),
           Expanded(
-            child: ListView.builder(
-              itemCount: units.length,
-              itemBuilder: (context, index) {
-                return _buildUnitItem(units[index]);
+            child: StreamBuilder<List<UnitData>>(
+              stream: _viewModel.unitStream,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      'Error: ${snapshot.error}',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  );
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('No units available.'));
+                }
+
+                final unitsList = snapshot.data!;
+                return ListView.builder(
+                  itemCount: unitsList.length,
+                  itemBuilder: (context, index) {
+                    final unit = unitsList[index];
+                    return _buildUnitItem(unit);
+                  },
+                );
               },
             ),
           ),
@@ -97,14 +132,13 @@ class _DetailKnowledgeViewState extends State<DetailKnowledgeView> {
                         color: Colors.blue[50],
                         borderRadius: BorderRadius.circular(AppSize.s12),
                       ),
-                      child: const Text(
-                        '3 units',
+                      child:  Text(widget.knowledge.numUnits.toString()+' units',
                         style: TextStyle(color: Colors.blue),
                       ),
                     ),
                     const SizedBox(width: AppSize.s8),
                     Text(
-                      '15KB',
+                      widget.knowledge.totalSize.toString()+' KB',
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                   ],
@@ -175,7 +209,7 @@ class _DetailKnowledgeViewState extends State<DetailKnowledgeView> {
     );
   }
 
-  Widget _buildUnitItem(KnowledgeUnit unit) {
+  Widget _buildUnitItem(UnitData unit) {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppPadding.p16,
@@ -183,21 +217,24 @@ class _DetailKnowledgeViewState extends State<DetailKnowledgeView> {
       ),
       child: Row(
         children: [
+          // Icon for the unit
           const Icon(Icons.attachment, color: Colors.grey),
           const SizedBox(width: AppSize.s12),
+
+          // Unit details (name and size)
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  unit.name,
+                  unit.name ?? 'Unknown',
                   style: const TextStyle(
                     fontSize: AppSize.s16,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 Text(
-                  unit.size,
+                  unit.size.toString()+ 'KB' ?? '0 KB',
                   style: TextStyle(
                     fontSize: AppSize.s14,
                     color: Colors.grey[600],
@@ -206,29 +243,8 @@ class _DetailKnowledgeViewState extends State<DetailKnowledgeView> {
               ],
             ),
           ),
-          Switch(
-            value: unit.isEnabled,
-            onChanged: (value) {
-              setState(() {
-                unit.isEnabled = value;
-              });
-            },
-            activeColor: ColorManager.teal,
-          ),
         ],
       ),
     );
   }
-}
-
-class KnowledgeUnit {
-  final String name;
-  final String size;
-  bool isEnabled;
-
-  KnowledgeUnit({
-    required this.name,
-    required this.size,
-    required this.isEnabled,
-  });
 }

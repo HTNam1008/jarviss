@@ -68,6 +68,14 @@ abstract class RemoteDataSource {
     String? orderField,
     String? q,
   });
+  Future<GetUnitsResponse> getUnits({
+    required String id,
+    int? limit,
+    int? offset,
+    EnumOrder? order,
+    String? orderField,
+    String? q,
+  });
   Future<void> deleteKnowledge(String id);
   Future<UnitResponse> uploadLocalFile(String id, File file);
   Future<UnitResponse> uploadWebFile(String id, UploadWebFileRequest request);
@@ -217,6 +225,25 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
     log('Fetched knowledge datasource');
     try {
       final response = await _appKbServiceClient.getKnowledge(
+        limit: limit,
+        offset: offset,
+        order: order,
+        orderField: orderField,
+        q: q,);
+      log('API call successful: $response');
+      return response;
+    } catch (e, stackTrace) {
+      log('Error in _remoteDataSource.getKnowledge: $e', stackTrace: stackTrace);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<GetUnitsResponse> getUnits({required String id, int? limit, int? offset, EnumOrder? order,String? orderField,String? q,}) async {
+    log('Fetched knowledge datasource');
+    try {
+      final response = await _appKbServiceClient.getUnits(
+        knowledgeId: id,
         limit: limit,
         offset: offset,
         order: order,

@@ -356,6 +356,53 @@ class _AppKbServiceClient implements AppKbServiceClient {
   }
 
   @override
+  Future<GetUnitsResponse> getUnits({
+    required String knowledgeId,
+    int? limit,
+    int? offset,
+    EnumOrder? order,
+    String? orderField,
+    String? q,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'limit': limit,
+      r'offset': offset,
+      r'order': order?.name,
+      r'orderField': orderField,
+      r'q': q,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<GetUnitsResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/kb-core/v1/knowledge/${knowledgeId}/units',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetUnitsResponse _value;
+    try {
+      _value = GetUnitsResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<void> deleteKnowledge(String knowledgeId) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

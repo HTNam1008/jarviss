@@ -222,6 +222,32 @@ class RepositoryImpl implements Repository {
   }
 
   @override
+  Future<Either<Failure, GetUnitsResponse>> getUnits({
+    required String id,
+    int? limit,
+    int? offset,
+    EnumOrder? order,
+    String? orderField,
+    String? q,
+  }) async {
+    try {
+      log('Fetched knowledge repositry');
+      final response = await _remoteDataSource.getUnits(
+        id: id,
+        limit: limit,
+        offset: offset,
+        order: order,
+        orderField: orderField,
+        q: q,
+      );
+      print("response: $response");
+      return Right(response);
+    } catch (error) {
+      return Left(ErrorHandler.handle(error).failure);
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> deleteKnowledge(String id) async {
     try {
       await _remoteDataSource.deleteKnowledge(id);

@@ -67,6 +67,16 @@ abstract class AppKbServiceClient {
     @Query('q') String? q,
   });
 
+  @GET('/kb-core/v1/knowledge/{id}/units')
+  Future<GetUnitsResponse> getUnits({
+    @Path("id") required String knowledgeId,
+    @Query('limit') int? limit,
+    @Query('offset') int? offset,
+    @Query('order') EnumOrder? order,
+    @Query('orderField') String? orderField,
+    @Query('q') String? q,
+  });
+
   @DELETE("/kb-core/v1/knowledge/{id}")
   Future<void> deleteKnowledge(@Path("id") String knowledgeId);
 

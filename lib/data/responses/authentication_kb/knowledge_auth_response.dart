@@ -55,7 +55,6 @@ class UnitResponse {
   final String userId;
   final String knowledgeId;
 
-
   UnitResponse({
     required this.createdAt,
     this.updatedAt,

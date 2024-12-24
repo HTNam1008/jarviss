@@ -34,6 +34,14 @@ abstract class Repository {
     String? orderField,
     String? q,
   });
+  Future<Either<Failure, GetUnitsResponse>> getUnits({
+    required String id,
+    int? limit,
+    int? offset,
+    EnumOrder? order,
+    String? orderField,
+    String? q,
+  });
   Future<Either<Failure, void>> deleteKnowledge(String id);
   Future<Either<Failure, UnitResponse>> uploadLocalFile(String knowledgeId, File file);
   Future<Either<Failure, UnitResponse>> uploadSlackFile(String id, UploadSlackFileRequest request);

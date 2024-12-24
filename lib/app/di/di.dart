@@ -19,6 +19,7 @@ import 'package:jarvis/domain/usecase/get_conversation_history_usecase.dart';
 import 'package:jarvis/domain/usecase/get_conversations_usecase.dart';
 import 'package:jarvis/domain/usecase/create_prompt_usecase.dart';
 import 'package:jarvis/domain/usecase/get_knowledge_usecase.dart';
+import 'package:jarvis/domain/usecase/get_units_usecase.dart';
 import 'package:jarvis/domain/usecase/refresh_token_usecase.dart';
 import 'package:jarvis/domain/usecase/send_message_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_in_kb_usecase.dart';
@@ -242,7 +243,9 @@ Future<void> setupLocator() async {
   getIt.registerFactory<UploadConfluenceFileUsecase>(
         () => UploadConfluenceFileUsecase(getIt<Repository>()),
   );
+  getIt.registerLazySingleton<GetUnitsUsecase>(() => GetUnitsUsecase(getIt<Repository>()));
+
   getIt.registerFactory<UnitViewModel>(
-        () => UnitViewModel(getIt<UploadLocalFileUsecase>(),getIt<UploadWebFileUsecase>(), getIt<UploadSlackFileUsecase>(),getIt<UploadConfluenceFileUsecase>()),
+        () => UnitViewModel(getIt<UploadLocalFileUsecase>(),getIt<UploadWebFileUsecase>(), getIt<UploadSlackFileUsecase>(),getIt<UploadConfluenceFileUsecase>(),getIt<GetUnitsUsecase>()),
   );
 }
