@@ -10,20 +10,20 @@ GetAssistantResponse _$GetAssistantResponseFromJson(
         Map<String, dynamic> json) =>
     GetAssistantResponse(
       createdAt: json['createdAt'] as String,
-      updatedAt: json['updatedAt'] as String,
+      updatedAt: json['updatedAt'] as String?,
       createdBy: json['createdBy'] as String?,
       updatedBy: json['updatedBy'] as String?,
       deletedAt: json['deletedAt'] as String?,
       id: json['id'] as String,
       openAiAssistantId: json['openAiAssistantId'] as String,
-      description: json['description'] as String,
-      instructions: json['instructions'] as String,
+      description: json['description'] as String?,
+      instructions: json['instructions'] as String?,
       assistantName: json['assistantName'] as String,
-      userId: json['userId'] as String,
-      openAiVectorStoreId: json['openAiVectorStoreId'] as String,
-      openAiThreadIdPlay: json['openAiThreadIdPlay'] as String,
-      isDefault: json['isDefault'] as bool,
-      isFavorite: json['isFavorite'] as bool,
+      userId: json['userId'] as String?,
+      openAiVectorStoreId: json['openAiVectorStoreId'] as String?,
+      openAiThreadIdPlay: json['openAiThreadIdPlay'] as String?,
+      isDefault: json['isDefault'] as bool?,
+      isFavorite: json['isFavorite'] as bool?,
     );
 
 Map<String, dynamic> _$GetAssistantResponseToJson(

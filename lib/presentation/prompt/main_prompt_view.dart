@@ -596,7 +596,6 @@ class PromptViewModel extends BaseViewModel {
         category.toLowerCase(),
         isFavorite: isFavorite,
         query: query?.isNotEmpty == true ? query : null
-
     );
 
     (await _getPrivatePromptsUseCase.execute(input)).fold(

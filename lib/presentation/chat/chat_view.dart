@@ -42,8 +42,8 @@ class _ChatViewState extends State<ChatView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final List<String> assistantModels = [
-    ConstantAssistantID.GPT_4_O,
     ConstantAssistantID.GPT_4_O_MINI,
+    ConstantAssistantID.GPT_4_O,
     ConstantAssistantID.CLAUDE_3_HAIKU_20240307,
     ConstantAssistantID.CLAUDE_35_SONNET_20240229,
     ConstantAssistantID.GEMINI_15_FLASH_LATEST,
@@ -51,6 +51,10 @@ class _ChatViewState extends State<ChatView> {
   ];
 
   late String selectedModel;
+
+  late AssistantModel _selectedModel;
+  List<AssistantModel> _allModels = [];
+  
   bool _isSending = false;
   bool isScrollBottom = true;
 
@@ -59,7 +63,7 @@ class _ChatViewState extends State<ChatView> {
     super.initState();
     _scrollController = ScrollController();
     selectedModel = assistantModels[1];
-    _viewModel = getIt<ChatViewModel>();
+    _viewModel = getIt<ChatViewModel>();    
     _viewModel.start();
 
     _errorSubscription = _viewModel.errorStream.listen((errorMessage) {
@@ -83,6 +87,35 @@ class _ChatViewState extends State<ChatView> {
     /* WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToBottom();
     }); */
+
+    _initializeModels();
+  }
+
+  void _initializeModels() async {
+    _allModels = assistantModels.map((model) => AssistantModel(
+      id: model,
+      name: model,
+      isBuiltIn: true,
+    )).toList();
+
+    _selectedModel = _allModels.first;
+
+    await _fetchCustomAssistants();
+  }
+
+  Future<void> _fetchCustomAssistants() async {
+    final assistants = await _viewModel.getAssistantsModel();
+    if (assistants != null) {
+      setState(() {
+        _allModels.addAll(
+          assistants.map((assistant) => AssistantModel(
+                id: assistant.id,
+                name: assistant.assistantName,
+                isBuiltIn: false,
+              )),
+        );
+      });
+    }
   }
 
   void _scrollToBottom() {
@@ -132,22 +165,22 @@ class _ChatViewState extends State<ChatView> {
       key: _scaffoldKey,
       drawer: const AppDrawer(),
       appBar: CustomHeaderBar(
-              centerWidget: DropdownButton<String>(
-              value: selectedModel,
+              centerWidget: DropdownButton<AssistantModel>(
+              value: _selectedModel,
               dropdownColor: ColorManager.teal,
               style: TextStyle(color: ColorManager.white),
               underline: const SizedBox(),
-              onChanged: (String? newValue) {
+              onChanged: (AssistantModel? newValue) {
                 if (newValue != null) {
                   setState(() {
-                    selectedModel = newValue;
+                    _selectedModel = newValue;
                   });
                 }
               },
-              items: assistantModels.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
+              items: _allModels.map<DropdownMenuItem<AssistantModel>>((AssistantModel value) {
+                return DropdownMenuItem<AssistantModel>(
                   value: value,
-                  child: Text(value),
+                  child: Text(value.name),
                 );
               }).toList(),
             ),
@@ -221,6 +254,11 @@ class _ChatViewState extends State<ChatView> {
               controller: _chatController,
               onSend: _sendMessage,
               isSending: _isSending,
+              onAdd: () {
+                // Logic khi nhấn nút add
+                _viewModel.resetMessages();
+                _selectedModel.openAiThreadId = null;
+              },
             ),
           ],
         ),
@@ -229,56 +267,59 @@ class _ChatViewState extends State<ChatView> {
   }
 
   Widget _buildInitialContent() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppSize.s16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Hi, good afternoon!',
-            style: TextStyle(
-                fontSize: AppSize.s24,
-                fontWeight: FontWeightManager.bold),
-          ),
-          const SizedBox(height: AppSize.s8),
-          Text(
-            'I\'m a chatbot.',
-            style: TextStyle(
-                fontSize: AppSize.s16, color: ColorManager.grey),
-          ),
-          const SizedBox(height: AppSize.s20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildUploadButton(
-                icon: Icons.image,
-                label: 'Upload your image',
-                color: Colors.teal.shade100,
-              ),
-              _buildUploadButton(
-                icon: Icons.folder,
-                label: 'Upload your file',
-                color: Colors.blue.shade100,
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSize.s20),
-          const Text('You can ask me like this',
-              style: TextStyle(fontSize: AppSize.s18)),
-          const SizedBox(height: AppSize.s10),
-          ListView(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            children: [
-              _buildSuggestion('Write an email', 'to submission project'),
-              _buildSuggestion('Suggest events', 'for this summer'),
-              _buildSuggestion('List some books',
-                  'related to adventure'),
-              _buildSuggestion('Explain an issue',
-                  'why the earth is round'),
-            ],
-          ),
-        ],
+    return Container(
+      color: Colors.teal.shade50,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(AppSize.s16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Hi, good afternoon!',
+              style: TextStyle(
+                  fontSize: AppSize.s24,
+                  fontWeight: FontWeightManager.bold),
+            ),
+            const SizedBox(height: AppSize.s8),
+            Text(
+              'I\'m a chatbot.',
+              style: TextStyle(
+                  fontSize: AppSize.s16, color: ColorManager.grey),
+            ),
+            const SizedBox(height: AppSize.s20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildUploadButton(
+                  icon: Icons.image,
+                  label: 'Upload your image',
+                  color: Colors.teal.shade100,
+                ),
+                _buildUploadButton(
+                  icon: Icons.folder,
+                  label: 'Upload your file',
+                  color: Colors.blue.shade100,
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSize.s20),
+            const Text('You can ask me like this',
+                style: TextStyle(fontSize: AppSize.s18)),
+            const SizedBox(height: AppSize.s10),
+            ListView(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              children: [
+                _buildSuggestion('Write an email', 'to submission project'),
+                _buildSuggestion('Suggest events', 'for this summer'),
+                _buildSuggestion('List some books',
+                    'related to adventure'),
+                _buildSuggestion('Explain an issue',
+                    'why the earth is round'),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -370,15 +411,14 @@ class _ChatViewState extends State<ChatView> {
     if (message.isNotEmpty) {
       _chatController.clear();
       setState(() {
-        _isSending = true; 
+        _isSending = true;
       });
 
-      await _viewModel.sendMessage(message, selectedModel, conversationId:  widget.conversationId);
+      await _viewModel.sendMessage(message, _selectedModel, conversationId: widget.conversationId);
 
       setState(() {
         _isSending = false;
       });
-
     }
   }
 
@@ -412,11 +452,23 @@ class _ChatViewState extends State<ChatView> {
 
   Widget _buildSuggestion(String title, String subtitle) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: AppSize.s8),
+      margin: const EdgeInsets.symmetric(vertical: AppSize.s6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppSize.s10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: ListTile(
         title: Text(title),
         subtitle: Text(subtitle),
-        tileColor: Colors.teal.shade50,
+        tileColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSize.s10),
         ),

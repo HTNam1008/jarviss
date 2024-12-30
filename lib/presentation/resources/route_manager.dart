@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/presentation/chat/chat_view.dart';
-import 'package:jarvis/presentation/chatbot/chat/chat_bot_view.dart';
 import 'package:jarvis/presentation/chatbot/create_bot/create_bot_view.dart';
 import 'package:jarvis/presentation/chatbot/edit_bot/edit_bot_view.dart';
 import 'package:jarvis/presentation/chatbot/main_chatbot_view.dart';
@@ -18,6 +18,7 @@ import 'package:jarvis/presentation/profile/profile_view.dart';
 import 'package:jarvis/presentation/prompt/create_prompt/create_prompt_view.dart';
 import 'package:jarvis/presentation/prompt/main_prompt_view.dart';
 import 'package:jarvis/presentation/authencation/sign_up/sign_up.dart';
+import 'package:jarvis/presentation/publish_bot/publish_bot_view.dart';
 import 'package:jarvis/presentation/resources/strings_manager.dart';
 import 'package:jarvis/presentation/splash/splash.dart';
 import 'package:jarvis/presentation/upgrade/upgrade.dart';
@@ -31,7 +32,6 @@ class Routes {
   static const String forgotPasswordRoute = "/forgot-password";
   static const String mainRoute = "/main";
   static const String chatbotMainRoute = "/chatbotMain";
-  static const String chatbotRoute = "/chatbot";
   static const String profileRoute = "/profile";
   static const String detailProfileRoute = "/detailProfile";
   static const String createBotRoute = "/createBot";
@@ -45,13 +45,14 @@ class Routes {
   static const String detailKnowledgeRoute = "/detailKnowledge";
   static const String upgradeProRoute = "/upgradePro";
   static const String chatRoute = "/chat";
+  static const String publishBotRoute = "/publish";
 }
 
 class RouteGenerator {
   static Route<dynamic> getRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
       case Routes.splashRoute:
-        return MaterialPageRoute(builder: (_) => SplashView());
+        return MaterialPageRoute(builder: (_) => const SplashView());
       case Routes.gettingStartedRoute:
         return MaterialPageRoute(builder: (_) => GettingStartedView());
       case Routes.signInRoute:
@@ -64,8 +65,6 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const MainView());
       case Routes.chatbotMainRoute:
         return MaterialPageRoute(builder: (_) => const ChatBotMainView());
-      case Routes.chatbotRoute:
-        return MaterialPageRoute(builder: (_) => const ChatBotView());
       case Routes.profileRoute:
         return MaterialPageRoute(builder: (_) => const ProfileView());
       case Routes.detailProfileRoute:
@@ -73,13 +72,19 @@ class RouteGenerator {
       case Routes.createBotRoute:
         return MaterialPageRoute(builder: (_) => const CreateBotView());
       case Routes.previewBotRoute:
-      return MaterialPageRoute(builder: (_) => const PreviewBotView());
+        final AssistantCustom assistant = routeSettings.arguments as AssistantCustom;
+        return MaterialPageRoute(
+          builder: (_) => PreviewBotView(assistant: assistant),
+        );
       case Routes.editBotRoute:
-        return MaterialPageRoute(builder: (_) => const EditBotView());
+        final String assistantId = routeSettings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => EditBotView(assistantId: assistantId),
+        );
       case Routes.promptRoute:
         return MaterialPageRoute(builder: (_) => const PromptView());
       case Routes.createPromptRoute:
-        return MaterialPageRoute(builder: (_) => CreatePromptView());
+        return MaterialPageRoute(builder: (_) => const CreatePromptView());
       case Routes.createKnowledgeRoute:
         return MaterialPageRoute(builder: (_) => CreateKnowledgeView());
       case Routes.deleteKnowledgeRoute:
@@ -89,21 +94,25 @@ class RouteGenerator {
       // case Routes.detailKnowledgeRoute:
       //   return MaterialPageRoute(builder: (_) => DetailKnowledgeView());
       case Routes.upgradeProRoute:
-        return MaterialPageRoute(builder: (_) => UpgradeView());
+        return MaterialPageRoute(builder: (_) => const UpgradeView());
       case Routes.chatRoute:
-        return MaterialPageRoute(builder: (_) => ChatView());
+        return MaterialPageRoute(builder: (_) => const ChatView());
+      case Routes.publishBotRoute:
+        final String assistantId = routeSettings.arguments as String;
+        return MaterialPageRoute(builder: (_) => PublishBotView(assistantId: assistantId));
       default:
         return UndefinedRoute();
     }
   }
 
+  // ignore: non_constant_identifier_names
   static Route<dynamic> UndefinedRoute() {
     return MaterialPageRoute(
         builder: (_) => Scaffold(
           appBar: AppBar(
-            title: Text(AppStrings.noRouteFound),
+            title: const Text(AppStrings.noRouteFound),
           ),
-          body: Center(
+          body: const Center(
             child: Text(AppStrings.noRouteFound),
           ),
         ));

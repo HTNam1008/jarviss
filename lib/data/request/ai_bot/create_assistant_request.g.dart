@@ -6,16 +6,16 @@ part of 'create_assistant_request.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-CreateAssistantResponse _$CreateAssistantResponseFromJson(
+CreateAssistantRequest _$CreateAssistantRequestFromJson(
         Map<String, dynamic> json) =>
-    CreateAssistantResponse(
+    CreateAssistantRequest(
       assistantName: json['assistantName'] as String,
       description: json['description'] as String?,
       instructions: json['instructions'] as String?,
     );
 
-Map<String, dynamic> _$CreateAssistantResponseToJson(
-        CreateAssistantResponse instance) =>
+Map<String, dynamic> _$CreateAssistantRequestToJson(
+        CreateAssistantRequest instance) =>
     <String, dynamic>{
       'assistantName': instance.assistantName,
       'description': instance.description,

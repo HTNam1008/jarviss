@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:jarvis/app/di/di.dart';
-import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
+import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/presentation/chatbot/main_chatbot_viewmodel.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
+import 'package:jarvis/presentation/resources/assets_manager.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
 import 'package:jarvis/presentation/resources/route_manager.dart';
@@ -17,46 +19,87 @@ class ChatBotMainView extends StatefulWidget {
 }
 
 class _ChatBotMainViewState extends State<ChatBotMainView> {
-  int _selectedIndex = 0;
+  // int _selectedIndex = 0;
   final getIt = GetIt.instance;
   late final MainChatbotViewModel _viewModel;
-  // final TextEditingController _searchController = TextEditingController();
-  // Danh sách dữ liệu cho các tab
-  final List<List<String>> _botData = [
-    ['Bot A1', 'Bot A2', 'Bot A3','Bot A1', 'Bot A2', 'Bot A3','Bot A1', 'Bot A2', 'Bot A3','Bot A1', 'Bot A2', 'Bot A3','Bot A1', 'Bot A2', 'Bot A3'],
-    ['Bot B1', 'Bot B2', 'Bot B3'],
-    ['Bot C1', 'Bot C2', 'Bot C3'],
-    ['Bot D1', 'Bot D2', 'Bot D3'],
-    ['Bot E1', 'Bot E2', 'Bot E3'],
-    ['Bot A1', 'Bot A2', 'Bot A3'],
-    ['Bot B1', 'Bot B2', 'Bot B3'],
-    ['Bot C1', 'Bot C2', 'Bot C3'],
-    ['Bot D1', 'Bot D2', 'Bot D3'],
-    ['Bot E1', 'Bot E2', 'Bot E3'],
-    ['Bot A1', 'Bot A2', 'Bot A3'],
-    ['Bot B1', 'Bot B2', 'Bot B3'],
-    ['Bot C1', 'Bot C2', 'Bot C3'],
-    ['Bot D1', 'Bot D2', 'Bot D3'],
-    ['Bot E1', 'Bot E2', 'Bot E3'], 
-  ];
+  List<AssistantCustom> _assistants = [];
+  List<AssistantCustom> _filteredAssistants = [];
+  bool _isLoading = false;
+  late StreamSubscription<List<AssistantCustom>> _assistantsSubscription;
+  late StreamSubscription<bool> _loadingSubscription;
+  final TextEditingController _searchController = TextEditingController();
+  BuildContext? _scaffoldContext;
 
   @override
   void initState() {
     super.initState();
     _viewModel = getIt<MainChatbotViewModel>();
+    _setupStreams();
+    _setupSearchController();
     _viewModel.start();
-    // _searchController.addListener(() {
-    //   _viewModel.getAssistants(searchQuery: _searchController.text);
-    // });
+  }
+
+  void _setupSearchController() {
+    _searchController.addListener(() {
+      _filterAssistants();
+    });
+  }
+
+  void _filterAssistants() {
+    if (_assistants.isEmpty) return;
+    
+    setState(() {
+      if (_searchController.text.isEmpty) {
+        _filteredAssistants = List.from(_assistants);
+      } else {
+        _filteredAssistants = _assistants
+            .where((assistant) =>
+                assistant.assistantName
+                    .toLowerCase()
+                    .contains(_searchController.text.toLowerCase()) ||
+                (assistant.description ?? '')
+                    .toLowerCase()
+                    .contains(_searchController.text.toLowerCase()))
+            .toList();
+      }
+      
+      // Sort by creation time (newest first)
+      _filteredAssistants.sort((a, b) => 
+        DateTime.parse(b.createdAt).compareTo(DateTime.parse(a.createdAt))
+      );
+    });
+  }
+
+  void _setupStreams() {
+    _assistantsSubscription = _viewModel.outputAssistants.listen((assistants) {
+      setState(() {
+        _assistants = assistants;
+        _filterAssistants();
+      });
+    });
+
+    _loadingSubscription = _viewModel.outputIsLoading.listen((loading) {
+      setState(() {
+        _isLoading = loading;
+      });
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _scaffoldContext = context;
   }
 
   @override
   void dispose() {
-    _viewModel.dispose();
-    // _searchController.dispose();
+    // _viewModel.dispose();
+    _searchController.dispose();
+    _assistantsSubscription.cancel();
+    _loadingSubscription.cancel();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,7 +107,8 @@ class _ChatBotMainViewState extends State<ChatBotMainView> {
         centerTitle: true,
         centerWidget: const Text(
           "Bots",
-          style: TextStyle(fontSize: AppSize.s20, fontWeight: FontWeightManager.semiBold),
+          style: TextStyle(
+              fontSize: AppSize.s20, fontWeight: FontWeightManager.semiBold),
         ),
         actions: [
           Padding(
@@ -74,13 +118,17 @@ class _ChatBotMainViewState extends State<ChatBotMainView> {
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: ColorManager.teal,
-                  padding: const EdgeInsets.symmetric(horizontal: AppSize.s8, vertical: AppSize.s6),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AppSize.s8, vertical: AppSize.s6),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                onPressed: () {
-                  Navigator.of(context).pushNamed(Routes.createBotRoute);
+                onPressed: () async {
+                  final result = await Navigator.pushNamed(context, Routes.createBotRoute);
+                  if (result == true) {
+                    _viewModel.refreshAssistants();
+                  }
                 },
                 child: const Row(
                   children: [
@@ -88,7 +136,9 @@ class _ChatBotMainViewState extends State<ChatBotMainView> {
                       Icons.add,
                       size: 14,
                     ),
-                    SizedBox(width: 4,),
+                    SizedBox(
+                      width: 4,
+                    ),
                     Text(
                       'Create',
                       style: TextStyle(
@@ -113,17 +163,16 @@ class _ChatBotMainViewState extends State<ChatBotMainView> {
                 children: [
                   Expanded(
                     child: TextField(
+                      controller: _searchController,
                       decoration: InputDecoration(
-                        hintText: 'Search',
+                        hintText: 'Search bots...',
                         prefixIcon: const Icon(Icons.search),
                         suffixIcon: IconButton(
                           icon: const Icon(Icons.mic),
-                          onPressed: () {
-                          },
+                          onPressed: () {},
                         ),
                         fillColor: Colors.white,
                         filled: true,
-
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(40.0),
                         ),
@@ -141,159 +190,36 @@ class _ChatBotMainViewState extends State<ChatBotMainView> {
                 ],
               ),
             ),
-            Container(
-              height: 40,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: List.generate(_botData.length, (index) {
-                  final bool isSelected = _selectedIndex == index;
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedIndex = index;
-                      });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-                      margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                      decoration: BoxDecoration(
-                        color: isSelected ? Colors.teal : Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Text(
-                        'Tab ${index + 1}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: isSelected ? Colors.white : Colors.black,
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-              ),
-            ),
             Expanded(
-              child: StreamBuilder<bool>(
-                stream: _viewModel.outputIsLoading,
-                builder: (context, loadingSnapshot) {
-                  if (loadingSnapshot.data ?? false) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  
-                  return StreamBuilder<List<AssistantData>>(
-                    stream: _viewModel.outputAssistants,
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const Center(child: Text('No assistants found'));
-                      }
-
-                      final assistants = snapshot.data!;
-                      return ListView.builder(
-                        itemCount: assistants.length,
-                        itemBuilder: (context, index) {
-                          final assistant = assistants[index];
-                          return _buildAssistantCard(assistant);
-                        },
-                      );
-                    },
-                  );
-                },
+              child: RefreshIndicator(
+                onRefresh: _refreshAssistants, // Hàm để làm mới dữ liệu
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : _filteredAssistants.isEmpty
+                        ? const Center(child: Text('No assistants found'))
+                        : ListView.builder(
+                            itemCount: _filteredAssistants.length,
+                            itemBuilder: (context, index) {
+                              return _buildAssistantCard(_filteredAssistants[index]);
+                            },
+                          ),
               ),
             ),
-            /* Expanded(
-              child: ListView.builder(
-                itemCount: _botData[_selectedIndex].length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(vertical: AppSize.s6, horizontal: AppSize.s8),
-                    padding: const EdgeInsets.all(AppSize.s8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(AppSize.s12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          spreadRadius: 1,
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        const CircleAvatar(
-                          radius: AppSize.s24,
-                          backgroundImage: AssetImage('assets/images/avatar.png'),
-                        ),
-                        const SizedBox(width: AppSize.s12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                _botData[_selectedIndex][index],
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: AppSize.s16,
-                                ),
-                              ),
-                              const SizedBox(height: AppSize.s4),
-                              const Text(
-                                'A brief description or tagline for the bot.',
-                                style: TextStyle(
-                                  fontSize: AppSize.s14,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              const SizedBox(height: AppSize.s8),
-                              const Row(
-                                children: [
-                                  Text(
-                                    'By Monica Team',
-                                    style: TextStyle(
-                                      fontSize: AppSize.s12,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  SizedBox(width: AppSize.s8),
-                                  Icon(
-                                    Icons.public,
-                                    color: Colors.grey,
-                                    size: AppSize.s12,
-                                  ),
-                                  SizedBox(width: AppSize.s4),
-                                  Text(
-                                    '9.2k',
-                                    style: TextStyle(
-                                      fontSize: AppSize.s12,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.more_vert),
-                          onPressed: () {
-                            _showActions(context, _botData[_selectedIndex][index]);
-                          },
-                          color: Colors.grey,
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ), */
           ],
         ),
       ),
     );
   }
 
-  void _showActions(BuildContext context, String botName) {
+  void _showMessage(String message) {
+    if (_scaffoldContext != null && mounted) {
+      ScaffoldMessenger.of(_scaffoldContext!).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
+  }
+
+  void _showActions(BuildContext context, String assistantId) {
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -307,14 +233,49 @@ class _ChatBotMainViewState extends State<ChatBotMainView> {
                 title: const Text('Edit'),
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.of(context).pushNamed(Routes.editBotRoute);
+                  Navigator.of(context)
+                      .pushNamed(
+                    Routes.editBotRoute,
+                    arguments: assistantId,
+                  )
+                      .then((updated) {
+                    if (updated != null) {
+                      _viewModel.refreshAssistants(); // Refresh list
+                    }
+                  });
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.publish),
+                title: const Text('Publish'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.of(context)
+                      .pushNamed(
+                    Routes.publishBotRoute,
+                    arguments: assistantId,
+                  )
+                      .then((updated) {
+                    if (updated != null) {
+                      _viewModel.refreshAssistants(); // Refresh list
+                    }
+                  });
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.delete),
                 title: const Text('Delete'),
-                onTap: () {
+                onTap: () async {
                   Navigator.pop(context);
+                  final success = await _viewModel.deleteAssistant(assistantId);
+                  if (mounted) {
+                    if (success) {
+                      _showMessage('Assistant deleted successfully');
+                      _viewModel.refreshAssistants();
+                    } else {
+                      _showMessage('Failed to delete assistant');
+                    }
+                  }
                 },
               ),
             ],
@@ -324,34 +285,60 @@ class _ChatBotMainViewState extends State<ChatBotMainView> {
     );
   }
 
-  Widget _buildAssistantCard(AssistantData assistant) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: AppSize.s6, horizontal: AppSize.s8),
-      padding: const EdgeInsets.all(AppSize.s8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppSize.s12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: ListTile(
-        leading: const CircleAvatar(
-          radius: AppSize.s24,
-          backgroundImage: AssetImage('assets/images/avatar.png'),
+  Widget _buildAssistantCard(AssistantCustom assistant) {
+    return InkWell(
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          Routes.previewBotRoute,
+          arguments: assistant,
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(
+            vertical: AppSize.s6, horizontal: AppSize.s8),
+        padding: const EdgeInsets.all(AppSize.s8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(AppSize.s12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-        title: Text(assistant.assistantName),
-        subtitle: Text(assistant.description ?? ''),
-        trailing: IconButton(
-          icon: const Icon(Icons.more_vert),
-          onPressed: () => _showActions(context, assistant.assistantName),
+        child: ListTile(
+          leading: const CircleAvatar(
+            radius: AppSize.s24,
+            backgroundImage: AssetImage(ImageAssets.botIc),
+          ),
+          title: Text(assistant.assistantName),
+          subtitle: Text(assistant.description ?? ''),
+          trailing: IconButton(
+            icon: const Icon(Icons.more_vert),
+            onPressed: () => _showActions(context, assistant.id),
+          ),
         ),
       ),
     );
+  }
+
+  Future<void> _refreshAssistants() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      _viewModel.refreshAssistants();
+    } catch (e) {
+      debugPrint('Error refreshing assistants: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 }

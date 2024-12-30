@@ -132,51 +132,6 @@ class PromptCategoryItem {
   const PromptCategoryItem({this.value, required this.label});
 }
 
-
-// class GetAssistantsResponse {
-//   final List<AssistantData> data;
-//   final MetaData metaData;
-
-//   GetAssistantsResponse({required this.data, required this.metaData});
-
-// }
-
-// class AssistantData {
-//   final String createdAt;
-//   final String updatedAt;
-//   final String? createdBy;
-//   final String? updatedBy;
-//   final String? deletedAt;
-//   final String id;
-//   final String openAiAssistantId;
-//   final String description;
-//   final String instructions;
-//   final String assistantName;
-//   final String userId;
-//   final String openAiVectorStoreId;
-//   final String openAiThreadIdPlay;
-//   final bool isDefault;
-//   final bool isFavorite;
-
-//   AssistantData({
-//     required this.createdAt,
-//     required this.updatedAt,
-//     this.createdBy,
-//     this.updatedBy,
-//     this.deletedAt,
-//     required this.id,
-//     required this.openAiAssistantId,
-//     required this.description,
-//     required this.instructions,
-//     required this.assistantName,
-//     required this.userId,
-//     required this.openAiVectorStoreId,
-//     required this.openAiThreadIdPlay,
-//     required this.isDefault,
-//     required this.isFavorite,
-//   });
-// }
-
 class Knowledge {
   final String id;
   final String knowledgeName;
@@ -194,3 +149,109 @@ class Knowledge {
     required this.totalSize,
   });
 }
+
+class AssistantCustom {
+  final String createdAt;
+  final String? updatedAt;
+  final String? createdBy;
+  final String? updatedBy;
+  final String? deletedAt;
+  final String id;
+  final String openAiAssistantId;
+  final String? description;
+  final String? instructions;
+  final String assistantName;
+  final String? userId;
+  final String? openAiVectorStoreId;
+  final String? openAiThreadIdPlay;
+  final bool? isDefault;
+  final bool? isFavorite;
+
+  AssistantCustom({
+    required this.createdAt,
+    this.updatedAt,
+    this.createdBy,
+    this.updatedBy,
+    this.deletedAt,
+    required this.id,
+    required this.openAiAssistantId,
+    this.description,
+    this.instructions,
+    required this.assistantName,
+    this.userId,
+    this.openAiVectorStoreId,
+    this.openAiThreadIdPlay,
+    this.isDefault,
+    this.isFavorite,
+  });
+}
+
+class Assistants {
+  final List<AssistantCustom> data;
+  final MetaData meta;
+
+  Assistants({required this.data, required this.meta});
+}
+
+class MessageAssistant {
+  final String message;
+  final bool isUser;
+  
+  MessageAssistant({
+    required this.message,
+    required this.isUser,
+  });
+}
+
+class MessageAssistants {
+  final List<MessageAssistant> data;
+
+  MessageAssistants({required this.data});
+}
+
+class AssistantModel {
+  final String id;
+  final String name;
+  final bool isBuiltIn;
+  String? _openAiThreadId;
+
+  AssistantModel({
+    required this.id,
+    required this.name,
+    required this.isBuiltIn,
+    String? openAiThreadId,
+  }) : _openAiThreadId = openAiThreadId;
+
+  String? get openAiThreadId => _openAiThreadId;
+
+  set openAiThreadId(String? value) {
+    _openAiThreadId = value;
+  }
+}
+
+class Thread {
+  final String threadName;
+  final String assistantId;
+  final String createdAt;
+  final String? createdBy;
+  final String id;
+  final String openAiThreadId;
+  final String? integratedPlatform;
+  final String? updatedAt;
+  final String? updatedBy;
+  final String? deletedAt;
+  
+  Thread({
+    required this.threadName,
+    required this.assistantId,
+    required this.createdAt,
+    this.createdBy,
+    required this.id,
+    this.integratedPlatform,
+    required this.openAiThreadId,
+    this.updatedAt,
+    this.updatedBy,
+    this.deletedAt,
+  });
+}
+

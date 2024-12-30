@@ -6,14 +6,14 @@ part 'create_assistant_response.g.dart';
 @JsonSerializable()
 class CreateAssistantResponse {
     String assistantName;
-    DateTime createdAt;
+    String createdAt;
     String? createdBy;
     String? description;
     String id;
     String? instructions;
     String openAiAssistantId;
     String? openAiThreadIdPlay;
-    DateTime? updatedAt;
+    String? updatedAt;
     String? updatedBy;
 
   CreateAssistantResponse({

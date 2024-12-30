@@ -2,17 +2,17 @@ import 'package:dartz/dartz.dart';
 import 'package:jarvis/app/constant.dart';
 import 'package:jarvis/data/network/failure.dart';
 import 'package:jarvis/data/request/ai_bot/get_assistants_request.dart';
-import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
+import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 import 'package:jarvis/domain/usecase/base_usecase.dart';
 
-class GetAssistantsUseCase implements BaseUseCase<GetAssistantsUseCaseInput, GetAssistantsResponse> {
+class GetAssistantsUseCase implements BaseUseCase<GetAssistantsUseCaseInput, Assistants> {
   final Repository _repository;
 
   GetAssistantsUseCase(this._repository);
 
   @override
-  Future<Either<Failure, GetAssistantsResponse>> execute(GetAssistantsUseCaseInput input) async {
+  Future<Either<Failure, Assistants>> execute(GetAssistantsUseCaseInput input) async {
     return await _repository.getAssistants(
       GetAssistantsRequest(
         isFavorite: input.isFavorite,

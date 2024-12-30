@@ -8,7 +8,7 @@ class DetailProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.teal[50],
       appBar: CustomHeaderBar(
         centerWidget: const Text(
           'Profile',
@@ -38,7 +38,6 @@ class DetailProfileView extends StatelessWidget {
                       radius: 40.0,
                       backgroundImage: AssetImage('assets/images/avt.png'),
                     ),
-
                     SizedBox(height: 5.0),
                     Text(
                       'Click to change avatar',
@@ -85,12 +84,20 @@ class DetailProfileView extends StatelessWidget {
 
   Widget _buildEditableField(String title, String value, BuildContext context, {bool editable = true, bool isDelete = false}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         decoration: BoxDecoration(
-          color: Colors.teal.shade50,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(10.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         height: 50.0,
         child: Row(
