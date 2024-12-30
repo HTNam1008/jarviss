@@ -33,8 +33,8 @@ ImportedKnowledge _$ImportedKnowledgeFromJson(Map<String, dynamic> json) =>
       knowledgeName: json['knowledgeName'] as String,
       description: json['description'] as String,
       userId: json['userId'] as String,
-      numUnits: (json['numUnits'] as num).toInt(),
-      totalSize: (json['totalSize'] as num).toInt(),
+      // numUnits: (json['numUnits'] as num).toInt(),
+      // totalSize: (json['totalSize'] as num).toInt(),
     );
 
 Map<String, dynamic> _$ImportedKnowledgeToJson(ImportedKnowledge instance) =>
@@ -48,8 +48,8 @@ Map<String, dynamic> _$ImportedKnowledgeToJson(ImportedKnowledge instance) =>
       'knowledgeName': instance.knowledgeName,
       'description': instance.description,
       'userId': instance.userId,
-      'numUnits': instance.numUnits,
-      'totalSize': instance.totalSize,
+      // 'numUnits': instance.numUnits,
+      // 'totalSize': instance.totalSize,
     };
 
 Meta _$MetaFromJson(Map<String, dynamic> json) => Meta(

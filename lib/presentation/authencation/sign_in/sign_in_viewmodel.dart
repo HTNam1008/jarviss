@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:jarvis/app/app_prefs.dart';
 import 'package:jarvis/app/extensions.dart';
+import 'package:jarvis/domain/usecase/sign_in_kb_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_in_usecase.dart';
 import 'package:jarvis/presentation/base/baseviewmodel.dart';
 import 'package:jarvis/presentation/common/freezed_data_classes.dart';
@@ -24,10 +26,12 @@ class SignInViewModel extends BaseViewModel
   var signInObject = const SignInObject(email: '', password: '');
 
   final SignInUseCase _signInUseCase;
+  final SignInKbUseCase _signInKbUseCase;
+
 
   final AppPreferences _appPreferences;
 
-  SignInViewModel(this._signInUseCase, this._appPreferences);
+  SignInViewModel(this._signInUseCase, this._appPreferences, this._signInKbUseCase);
 
   @override
   void start() {}
@@ -72,14 +76,21 @@ class SignInViewModel extends BaseViewModel
         _errorStreamController.add(failure.message); 
         _signInStreamController.add(false);
       },
-      (token) {
+      (token) async {
         print('SignIn successful. Access Token: ${token.accessToken}');
         _appPreferences.setAccessToken(token.accessToken); 
         _appPreferences.setRefreshToken(token.refreshToken.orEmpty()); 
+        final result = await _signInKnowledgeBase(token.accessToken);
+        if (!result) {
+          _errorStreamController.add("Sign in knowledge base failed");
+          _signInStreamController.add(false);
+        }
         _signInStreamController.add(true); 
       },
     );
   }
+
+  
 
   @override
   void setEmail(String email) {
@@ -110,7 +121,27 @@ class SignInViewModel extends BaseViewModel
   Future<void> navigateNamed(BuildContext context, String route) async {
     Navigator.pushNamed(context, route);
   }
-}
+  
+  Future<bool> _signInKnowledgeBase(String token) async {
+      if (token.isNotEmpty) {
+        final result = await _signInKbUseCase.execute(SignInKbUseCaseInput(token));
+        result.fold(
+          (failure) {
+            log(failure.message);
+            return false;
+          },
+          (response) async {
+            await _appPreferences.setAccessTokenKb(response.accessToken);
+            await _appPreferences.setRefreshTokenKb(response.refreshToken ?? "");
+          },
+        );
+        return true;
+      } else {
+        log("Access token is empty");
+        return false;
+      }
+    }
+  }
 
 abstract class SignInViewModelInputs {
   void setEmail(String email);

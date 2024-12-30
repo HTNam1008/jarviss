@@ -140,7 +140,7 @@ Future<void> setupLocator() async {
 
   // Register ViewModels
   getIt.registerFactory<SignInViewModel>(
-    () => SignInViewModel(getIt<SignInUseCase>(), getIt<AppPreferences>()),
+    () => SignInViewModel(getIt<SignInUseCase>(), getIt<AppPreferences>(), getIt<SignInKbUseCase>()),
   );
 
   getIt.registerFactory<SignUpViewModel>(

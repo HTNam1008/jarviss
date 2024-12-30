@@ -27,8 +27,8 @@ class ImportedKnowledge {
   final String knowledgeName;
   final String description;
   final String userId;
-  final int numUnits;
-  final int totalSize;
+  // final int numUnits;
+  // final int totalSize;
 
   ImportedKnowledge({
     this.createdAt,
@@ -40,8 +40,8 @@ class ImportedKnowledge {
     required this.knowledgeName,
     required this.description,
     required this.userId,
-    required this.numUnits,
-    required this.totalSize,
+    // required this.numUnits,
+    // required this.totalSize,
   });
 
   factory ImportedKnowledge.fromJson(Map<String, dynamic> json) => _$ImportedKnowledgeFromJson(json);
