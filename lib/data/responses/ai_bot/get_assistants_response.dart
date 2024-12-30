@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
 import 'package:json_annotation/json_annotation.dart';
+
+import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
 
 part 'get_assistants_response.g.dart';
 
@@ -98,6 +99,7 @@ class KnowledgeData {
   final String? createdBy;
   final String? updatedBy;
   final String? userId;
+  final String id;
   final String knowledgeName;
   final String description;
   final int? numUnits;
@@ -111,6 +113,7 @@ class KnowledgeData {
     this.createdBy,
     this.updatedBy,
     this.userId,
+    required this.id,
     required this.knowledgeName,
     required this.description,
     this.numUnits,
@@ -128,7 +131,8 @@ class KnowledgeData {
       createdAt: json['createdAt'] as String?,
       updatedAt: json['updatedAt'] as String?,
       numUnits: json['numUnits'] as int?,
-      totalSize: json['totalSize'] as int?,
+      totalSize: json['totalSize'] as int?, 
+      id: json['id'] as String,
     );
   }
 

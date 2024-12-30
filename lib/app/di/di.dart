@@ -27,10 +27,12 @@ import 'package:jarvis/domain/usecase/get_conversations_usecase.dart';
 import 'package:jarvis/domain/usecase/create_prompt_usecase.dart';
 import 'package:jarvis/domain/usecase/get_knowledge_usecase.dart';
 import 'package:jarvis/domain/usecase/get_units_usecase.dart';
+import 'package:jarvis/domain/usecase/import_knowledge_usecase.dart';
 import 'package:jarvis/domain/usecase/publish_messenger_bot_integration_usecase.dart';
 import 'package:jarvis/domain/usecase/publish_slack_bot_integration_usecase.dart';
 import 'package:jarvis/domain/usecase/publish_telegram_bot_integration_usecase.dart';
 import 'package:jarvis/domain/usecase/refresh_token_usecase.dart';
+import 'package:jarvis/domain/usecase/remove_knowledge_usecase.dart';
 import 'package:jarvis/domain/usecase/retrieve_message_thread_usecase.dart';
 import 'package:jarvis/domain/usecase/send_message_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_in_kb_usecase.dart';
@@ -247,8 +249,16 @@ Future<void> setupLocator() async {
     () => CreateAssistantUseCase(getIt<Repository>()),
   );
 
+  getIt.registerFactory<ImportKnowledgeUsecase>(
+    () => ImportKnowledgeUsecase(getIt<Repository>()),
+  );
+
+  getIt.registerFactory<RemoveKnowledgeUsecase>(
+    () => RemoveKnowledgeUsecase(getIt<Repository>()),
+  );
+
   getIt.registerFactory<CreateBotViewModel>(
-    () => CreateBotViewModel(getIt<CreateAssistantUseCase>()),
+    () => CreateBotViewModel(getIt<CreateAssistantUseCase>(), getIt<GetKnowledgeUsecase>(), getIt<ImportKnowledgeUsecase>()),
   );
 
   getIt.registerFactory<UpdateAssistantUseCase>(
