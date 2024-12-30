@@ -308,11 +308,11 @@ class _ChatInputBoxState extends State<ChatInputBox> {
             child: TextField(
               controller: widget.controller,
               focusNode: _focusNode,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: AppStrings.chatHintText,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppSize.s32),
-                  borderSide: BorderSide(color: Colors.transparent),
+                  borderSide: const BorderSide(color: Colors.transparent),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppSize.s32),

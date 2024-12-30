@@ -283,9 +283,13 @@ Future<void> setupLocator() async {
 
   getIt.registerFactory<UnitViewModel>(
         () => UnitViewModel(getIt<UploadLocalFileUsecase>(),getIt<UploadWebFileUsecase>(), getIt<UploadSlackFileUsecase>(),getIt<UploadConfluenceFileUsecase>(),getIt<GetUnitsUsecase>()),
-    
+  );
+  
   getIt.registerFactory<EditBotViewModel>(
-    () => EditBotViewModel(getIt<UpdateAssistantUseCase>(), getIt<GetAssistantUseCase>()),
+    () => EditBotViewModel(
+      getIt<UpdateAssistantUseCase>(), 
+      getIt<GetAssistantUseCase>()
+      ),
   );
 
   getIt.registerFactory<DeleteAssistantUseCase>(

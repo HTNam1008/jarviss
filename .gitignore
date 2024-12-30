@@ -45,3 +45,4 @@ app.*.map.json
 .vscode/settings.json
 android/app/src/main/AndroidManifest.xml
 android/gradle.properties
+pubspec.lock

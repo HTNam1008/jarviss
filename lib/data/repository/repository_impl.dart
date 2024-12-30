@@ -29,6 +29,7 @@ import 'package:jarvis/data/request/bot_integration/publish_telegram_bot_request
 import 'package:jarvis/data/request/bot_integration/verify_messenger_bot_integration_request.dart';
 import 'package:jarvis/data/request/bot_integration/verify_slack_bot_integration_request.dart';
 import 'package:jarvis/data/request/bot_integration/verify_telegram_bot_integration_request.dart';
+import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:jarvis/data/responses/bot_integration/get_configurations_response.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/domain/repository/repository.dart';

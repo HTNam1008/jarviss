@@ -69,8 +69,6 @@ abstract class RemoteDataSource {
   Future<GetAssistantsResponse> getAssistants(GetAssistantsRequest getAssistantsRequest);
   Future<GetAssistantResponse> getAssistant(GetAssistantRequest getAssistantRequest);
   Future<void> deleteAssistant(DeleteAssistantRequest deleteAssistantRequest);
-  Future<UpdateAssistantResponse> updateAssistant(
-      UpdateAssistantRequest updateAssistantRequest);
   Future<KnowledgeResponse> createKnowledge(CreateKnowledgeRequest request);
   Future<KnowledgeResponse> updateKnowledge(String id, CreateKnowledgeRequest request);
   Future<GetKnowledgeResponse> getKnowledge({
