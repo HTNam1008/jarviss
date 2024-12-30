@@ -29,6 +29,10 @@ class ConstantAPI {
   static const getAssistants = '/kb-core/v1/ai-assistant';
   static const retrieveMessageThread = '/kb-core/v1/ai-assistant/thread/{${ConstantPath.openAiThreadId}}/messages';
   static const signInKnowledgeBase = '/kb-core/v1/auth/external-sign-in';
+  static const createKnowledge = '/kb-core/v1/knowledge';
+  static const updateKnowledge = '/kb-core/v1/knowledge/{${ConstantPath.knowledgeId}}';
+  static const deleteKnowledge = '/kb-core/v1/knowledge/{${ConstantPath.knowledgeId}}';
+  static const getKnowledge = '/kb-core/v1/knowledge';
   static const createThread = '/kb-core/v1/ai-assistant/thread';
   static const importKnowledgeToAssistant = '/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}/knowledges/{${ConstantPath.knowledgeId}}';
   static const removeKnowledgeFromAssistant = '/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}/knowledges/{${ConstantPath.knowledgeId}}';

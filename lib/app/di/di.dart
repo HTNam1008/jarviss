@@ -12,6 +12,8 @@ import 'package:jarvis/data/network/dio_factory.dart';
 import 'package:jarvis/data/network/network_info.dart';
 import 'package:jarvis/data/repository/repository_impl.dart';
 import 'package:jarvis/domain/repository/repository.dart';
+import 'package:jarvis/domain/usecase/create_knowledge_usecase.dart';
+import 'package:jarvis/domain/usecase/delete_knowledge_usecase.dart';
 import 'package:jarvis/domain/usecase/ask_assistant_usecase.dart';
 import 'package:jarvis/domain/usecase/create_assistant_usecase.dart';
 import 'package:jarvis/domain/usecase/create_thread_usecase.dart';
@@ -23,6 +25,8 @@ import 'package:jarvis/domain/usecase/get_configurations_usecase.dart';
 import 'package:jarvis/domain/usecase/get_conversation_history_usecase.dart';
 import 'package:jarvis/domain/usecase/get_conversations_usecase.dart';
 import 'package:jarvis/domain/usecase/create_prompt_usecase.dart';
+import 'package:jarvis/domain/usecase/get_knowledge_usecase.dart';
+import 'package:jarvis/domain/usecase/get_units_usecase.dart';
 import 'package:jarvis/domain/usecase/publish_messenger_bot_integration_usecase.dart';
 import 'package:jarvis/domain/usecase/publish_slack_bot_integration_usecase.dart';
 import 'package:jarvis/domain/usecase/publish_telegram_bot_integration_usecase.dart';
@@ -33,6 +37,10 @@ import 'package:jarvis/domain/usecase/sign_in_kb_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_in_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_out_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_up_usecase.dart';
+import 'package:jarvis/domain/usecase/update_knowledge_usecase.dart';
+import 'package:jarvis/domain/usecase/upload_confluence_file_usecase.dart';
+import 'package:jarvis/domain/usecase/upload_slack_file_usecase.dart';
+import 'package:jarvis/domain/usecase/upload_web_file_usecase.dart';
 import 'package:jarvis/domain/usecase/update_assistant_new_thread_playground_usecase.dart';
 import 'package:jarvis/domain/usecase/update_assistant_usecase.dart';
 import 'package:jarvis/domain/usecase/usage_token_usecase.dart';
@@ -59,7 +67,10 @@ import '../../domain/repository/prompt_repository.dart';
 import '../../domain/usecase/delete_prompt_usecase.dart';
 import '../../domain/usecase/get_public_prompts_usecase.dart';
 import '../../domain/usecase/update _prompt_usecase.dart';
+import '../../domain/usecase/upload_local_file_usecase.dart';
+import '../../presentation/knowledge/knowledge_view.dart';
 import '../../presentation/prompt/main_prompt_view.dart';
+import '../../presentation/unit_add/unit_view_model.dart';
 
 final getIt = GetIt.instance;
 
@@ -244,6 +255,35 @@ Future<void> setupLocator() async {
     () => UpdateAssistantUseCase(getIt<Repository>()),
   );
 
+  getIt.registerLazySingleton<GetKnowledgeUsecase>(() => GetKnowledgeUsecase(getIt<Repository>()));
+  
+  getIt.registerFactory<CreateKnowledgeUsecase>(
+        () => CreateKnowledgeUsecase(getIt<Repository>()),
+  );
+  getIt.registerFactory<UpdateKnowledgeUseCase>(
+        () => UpdateKnowledgeUseCase(getIt<Repository>()),
+  );
+  getIt.registerFactory<DeleteKnowledgeUsecase>(
+        () => DeleteKnowledgeUsecase(getIt<Repository>()),
+  );
+  getIt.registerFactory<KnowledgeViewModel>(() => KnowledgeViewModel(getIt<GetKnowledgeUsecase>(),getIt<CreateKnowledgeUsecase>(),getIt<UpdateKnowledgeUseCase>(),getIt<DeleteKnowledgeUsecase>()));
+  getIt.registerFactory<UploadLocalFileUsecase>(
+        () => UploadLocalFileUsecase(getIt<Repository>()),
+  );
+  getIt.registerFactory<UploadWebFileUsecase>(
+        () => UploadWebFileUsecase(getIt<Repository>()),
+  );
+  getIt.registerFactory<UploadSlackFileUsecase>(
+        () => UploadSlackFileUsecase(getIt<Repository>()),
+  );
+  getIt.registerFactory<UploadConfluenceFileUsecase>(
+        () => UploadConfluenceFileUsecase(getIt<Repository>()),
+  );
+  getIt.registerLazySingleton<GetUnitsUsecase>(() => GetUnitsUsecase(getIt<Repository>()));
+
+  getIt.registerFactory<UnitViewModel>(
+        () => UnitViewModel(getIt<UploadLocalFileUsecase>(),getIt<UploadWebFileUsecase>(), getIt<UploadSlackFileUsecase>(),getIt<UploadConfluenceFileUsecase>(),getIt<GetUnitsUsecase>()),
+    
   getIt.registerFactory<EditBotViewModel>(
     () => EditBotViewModel(getIt<UpdateAssistantUseCase>(), getIt<GetAssistantUseCase>()),
   );

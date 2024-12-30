@@ -1,3 +1,9 @@
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+import 'package:dio/src/multipart_file.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:jarvis/data/network/app_api.dart';
 import 'package:jarvis/data/network/app_kb_api.dart';
 import 'package:jarvis/data/request/ai_bot/ask_assistant_request.dart';
@@ -36,6 +42,8 @@ import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.
 import 'package:jarvis/data/responses/bot_integration/get_configurations_response.dart';
 import 'package:jarvis/data/responses/responses.dart';
 import 'package:jarvis/data/responses/token/token_usage_response.dart';
+import '../../../app/constant.dart';
+
 
 abstract class RemoteDataSource {
   Future<SignInResponse> signIn(SignInRequest signInRequest);
@@ -61,6 +69,30 @@ abstract class RemoteDataSource {
   Future<GetAssistantsResponse> getAssistants(GetAssistantsRequest getAssistantsRequest);
   Future<GetAssistantResponse> getAssistant(GetAssistantRequest getAssistantRequest);
   Future<void> deleteAssistant(DeleteAssistantRequest deleteAssistantRequest);
+  Future<UpdateAssistantResponse> updateAssistant(
+      UpdateAssistantRequest updateAssistantRequest);
+  Future<KnowledgeResponse> createKnowledge(CreateKnowledgeRequest request);
+  Future<KnowledgeResponse> updateKnowledge(String id, CreateKnowledgeRequest request);
+  Future<GetKnowledgeResponse> getKnowledge({
+    int? limit,
+    int? offset,
+    EnumOrder? order,
+    String? orderField,
+    String? q,
+  });
+  Future<GetUnitsResponse> getUnits({
+    required String id,
+    int? limit,
+    int? offset,
+    EnumOrder? order,
+    String? orderField,
+    String? q,
+  });
+  Future<void> deleteKnowledge(String id);
+  Future<UnitResponse> uploadLocalFile(String id, File file);
+  Future<UnitResponse> uploadWebFile(String id, UploadWebFileRequest request);
+  Future<UnitResponse> uploadSlackFile(String id, UploadSlackFileRequest request);
+  Future<UnitResponse> uploadConfluenceFile(String id, UploadConfluenceFileRequest request);
   Future<UpdateAssistantResponse> updateAssistant(UpdateAssistantRequest updateAssistantRequest);
   Future<UpdateAssistantNewThreadPlayGroundResponse> updateAssistantNewThreadPlayGround(
       UpdateAssistantNewThreadPlayGroundRequest updateAssistantNewThreadPlayGroundRequest);
@@ -191,6 +223,92 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   }
 
   @override
+  Future<KnowledgeResponse> createKnowledge(CreateKnowledgeRequest request) =>
+      _appKbServiceClient.createKnowledge(request);
+
+  @override
+  Future<KnowledgeResponse> updateKnowledge(String id, CreateKnowledgeRequest request) =>
+      _appKbServiceClient.updateKnowledge(id, request);
+
+  @override
+  Future<GetKnowledgeResponse> getKnowledge({int? limit, int? offset, EnumOrder? order,String? orderField,String? q,}) async {
+    log('Fetched knowledge datasource');
+    try {
+      final response = await _appKbServiceClient.getKnowledge(
+        limit: limit,
+        offset: offset,
+        order: order,
+        orderField: orderField,
+        q: q,);
+      log('API call successful: $response');
+      return response;
+    } catch (e, stackTrace) {
+      log('Error in _remoteDataSource.getKnowledge: $e', stackTrace: stackTrace);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<GetUnitsResponse> getUnits({required String id, int? limit, int? offset, EnumOrder? order,String? orderField,String? q,}) async {
+    log('Fetched knowledge datasource');
+    try {
+      final response = await _appKbServiceClient.getUnits(
+        knowledgeId: id,
+        limit: limit,
+        offset: offset,
+        order: order,
+        orderField: orderField,
+        q: q,);
+      log('API call successful: $response');
+      return response;
+    } catch (e, stackTrace) {
+      log('Error in _remoteDataSource.getKnowledge: $e', stackTrace: stackTrace);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> deleteKnowledge(String id) =>
+      _appKbServiceClient.deleteKnowledge(id);
+
+  @override
+  Future<UnitResponse> uploadLocalFile(String id, File file) async {
+    String? mimeType = FileUploadHelper.getMimeType(file.path);
+    if (mimeType == null) {
+      throw Exception('Unsupported file format');
+    }
+    // Convert the file to MultipartFile
+    MultipartFile multipartFile = await MultipartFile.fromFile(
+      file.path,
+      filename: file.path.split('/').last,
+      contentType: MediaType.parse(mimeType), // Adjust for your file type
+    );
+
+    // Create FormData with the MultipartFile
+    FormData formData = FormData.fromMap({
+      'file': multipartFile,
+    });
+
+    // Debugging: Log FormData content
+    print('Uploading file: ${file.path}');
+    print('FormData: ${formData.files.map((f) => f.value.filename).toList()}');
+
+    // Call the API
+    return await _appKbServiceClient.uploadLocalFile(id, formData);
+  }
+
+  @override
+  Future<UnitResponse> uploadWebFile(String id, UploadWebFileRequest request) =>
+      _appKbServiceClient.uploadWebFile(id, request);
+
+  @override
+  Future<UnitResponse> uploadSlackFile(String id, UploadSlackFileRequest request) =>
+      _appKbServiceClient.uploadSlackFile(id, request);
+
+  @override
+  Future<UnitResponse> uploadConfluenceFile(String id, UploadConfluenceFileRequest request) =>
+      _appKbServiceClient.uploadConfluenceFile(id, request);
+
   Future<CreateAssistantResponse> createAssistant(CreateAssistantRequest createAssistantRequest) async {
     return await _appKbServiceClient.createAssistant(createAssistantRequest);
   }
@@ -257,5 +375,31 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   @override
   Future<void> disconnectBotIntegration(DisconnectBotIntegrationRequest disconnectBotIntegrationRequest) async {
     return await _appKbServiceClient.disconnectBotIntegration(disconnectBotIntegrationRequest.assistantId, disconnectBotIntegrationRequest.type);
+  }
+}
+
+class FileUploadHelper {
+  // Map of file extensions to MIME types
+  static const Map<String, String> mimeTypes = {
+    '.c': 'text/x-c',
+    '.cpp': 'text/x-c++',
+    '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    '.html': 'text/html',
+    '.java': 'text/x-java',
+    '.json': 'application/json',
+    '.md': 'text/markdown',
+    '.pdf': 'application/pdf',
+    '.php': 'text/x-php',
+    '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    '.py': 'text/x-python',
+    '.rb': 'text/x-ruby',
+    '.tex': 'text/x-tex',
+    '.txt': 'text/plain',
+  };
+
+  // Method to determine MIME type based on file extension
+  static String? getMimeType(String filePath) {
+    final extension = filePath.split('.').last.toLowerCase();
+    return mimeTypes['.$extension'];
   }
 }

@@ -1,3 +1,6 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:jarvis/data/data_source/remote_data_source.dart';
 import 'package:jarvis/data/mapper/mapper.dart';
@@ -29,6 +32,9 @@ import 'package:jarvis/data/request/bot_integration/verify_telegram_bot_integrat
 import 'package:jarvis/data/responses/bot_integration/get_configurations_response.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/domain/repository/repository.dart';
+import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
+import '../../../app/constant.dart';
+
 
 class RepositoryImpl implements Repository {
   final RemoteDataSource _remoteDataSource;
@@ -410,6 +416,127 @@ class RepositoryImpl implements Repository {
       }
     } else {
       return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, KnowledgeResponse>> createKnowledge(CreateKnowledgeRequest request) async {
+    try {
+      final response = await _remoteDataSource.createKnowledge(request);
+      return Right(response);
+    } catch (error) {
+      return Left(ErrorHandler.handle(error).failure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, KnowledgeResponse>> updateKnowledge(String id, CreateKnowledgeRequest request) async {
+    try {
+      final response = await _remoteDataSource.updateKnowledge(id, request);
+      return Right(response);
+    } catch (error) {
+      return Left(ErrorHandler.handle(error).failure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, GetKnowledgeResponse>> getKnowledge({
+    int? limit,
+    int? offset,
+    EnumOrder? order,
+    String? orderField,
+    String? q,
+  }) async {
+    try {
+      log('Fetched knowledge repositry');
+      final response = await _remoteDataSource.getKnowledge(
+        limit: limit,
+        offset: offset,
+        order: order,
+        orderField: orderField,
+        q: q,
+      );
+      print("response: $response");
+      return Right(response);
+    } catch (error) {
+      return Left(ErrorHandler.handle(error).failure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, GetUnitsResponse>> getUnits({
+    required String id,
+    int? limit,
+    int? offset,
+    EnumOrder? order,
+    String? orderField,
+    String? q,
+  }) async {
+    try {
+      log('Fetched knowledge repositry');
+      final response = await _remoteDataSource.getUnits(
+        id: id,
+        limit: limit,
+        offset: offset,
+        order: order,
+        orderField: orderField,
+        q: q,
+      );
+      print("response: $response");
+      return Right(response);
+    } catch (error) {
+      return Left(ErrorHandler.handle(error).failure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteKnowledge(String id) async {
+    try {
+      await _remoteDataSource.deleteKnowledge(id);
+      return const Right(null);
+    } catch (error) {
+      return Left(ErrorHandler.handle(error).failure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, UnitResponse>> uploadLocalFile(String id, File file) async {
+    try {
+      final response = await  _remoteDataSource.uploadLocalFile(id, file);
+      log(file.path);
+      return Right(response);
+    } catch (error) {
+      return Left(ErrorHandler.handle(error).failure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, UnitResponse>> uploadSlackFile(String id, UploadSlackFileRequest request) async {
+    try {
+      final response = await _remoteDataSource.uploadSlackFile(id, request);
+      return Right(response);
+    } catch (error) {
+      return Left(ErrorHandler.handle(error).failure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, UnitResponse>> uploadWebFile(String id, UploadWebFileRequest request) async {
+    try {
+      final response = await _remoteDataSource.uploadWebFile(id, request);
+      return Right(response);
+    } catch (error) {
+      return Left(ErrorHandler.handle(error).failure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, UnitResponse>> uploadConfluenceFile(String id, UploadConfluenceFileRequest request) async {
+    try {
+      final response = await _remoteDataSource.uploadConfluenceFile(id, request);
+      return Right(response);
+    } catch (error) {
+      return Left(ErrorHandler.handle(error).failure);
     }
   }
 }

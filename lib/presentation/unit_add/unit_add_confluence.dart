@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:jarvis/presentation/common/bottom_navigation.dart';
 import 'package:jarvis/presentation/common/chat_input_box.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
@@ -6,8 +7,14 @@ import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:jarvis/presentation/unit_add/unit_view_model.dart';
+
+import '../common/dialog_util.dart';
 
 class UnitAddConfluence extends StatefulWidget {
+  final String knowledgeId;
+  UnitAddConfluence({super.key, required this.knowledgeId});
+
   @override
   State<UnitAddConfluence> createState() => _UnitAddConfluenceState();
 }
@@ -15,77 +22,53 @@ class UnitAddConfluence extends StatefulWidget {
 class _UnitAddConfluenceState extends State<UnitAddConfluence> {
   final TextEditingController _urlController = TextEditingController();
   final TextEditingController _labelController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _tokenController = TextEditingController();
+
   String? _urlErrorText;
   String? _labelErrorText;
+  final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
   @override
   void dispose() {
     _urlController.dispose();
     _labelController.dispose();
+    _nameController.dispose();
+    _tokenController.dispose();
     super.dispose();
   }
 
-  bool _isValidUrl(String url) {
-    Uri? uri = Uri.tryParse(url);
-    return uri != null &&
-        (uri.scheme == 'http' || uri.scheme == 'https') &&
-        uri.host.isNotEmpty;
-  }
+  Future<void> _uploadConfluenceFile() async {
+    if (!_formKey.currentState!.validate()) return;
 
-  Future<void> _handleConnect() async {
-    final url = _urlController.text.trim();
-    final label = _labelController.text.trim();
-    bool hasError = false;
+    setState(() => _isLoading = true);
 
-    if (url.isEmpty) {
-      setState(() {
-        _urlErrorText = 'Please enter a URL';
-      });
-      hasError = true;
-    } else if (!_isValidUrl(url)) {
-      setState(() {
-        _urlErrorText = 'Please enter a valid URL';
-      });
-      hasError = true;
-    }
+    try {;
+    await GetIt.instance<UnitViewModel>().uploadConfluenceFile(
+      widget.knowledgeId,
+      _labelController.text,
+      _urlController.text,
+      _nameController.text,
+      _tokenController.text
+    );
 
-    if (label.isEmpty) {
-      setState(() {
-        _labelErrorText = 'Please enter a label';
-      });
-      hasError = true;
-    }
-
-    if (hasError) return;
-
-    setState(() {
-      _isLoading = true;
-      _urlErrorText = null;
-      _labelErrorText = null;
-    });
-
-    try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 1));
-      if (mounted) {
-        Navigator.pop(context, {
-          'url': url,
-          'label': label,
-        });
-      }
+    Navigator.pop(context);
+    showCustomDialog(
+      context: context,
+      type: DialogType.success,
+      title: 'Success',
+      message: 'Upload successfully',
+    );
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          _urlErrorText = 'Failed to connect to website';
-        });
-      }
+      showCustomDialog(
+        context: context,
+        type: DialogType.error,
+        title: 'Error',
+        message: 'Failed to upload file: $e',
+      );
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      setState(() => _isLoading = false);
     }
   }
 
@@ -98,11 +81,15 @@ class _UnitAddConfluenceState extends State<UnitAddConfluence> {
       ),
       child: Container(
         padding: const EdgeInsets.all(AppPadding.p20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Row(
+        width: 900,
+        child: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+             children: [
+               const Row(
               children: [
                 Expanded(
                   child: Text(
@@ -149,7 +136,7 @@ class _UnitAddConfluenceState extends State<UnitAddConfluence> {
                         TextField(
                           controller: _labelController,
                           decoration: InputDecoration(
-                            hintText: 'Enter label',
+                            hintText: 'Enter unit name',
                             hintStyle: TextStyle(
                               color: Colors.grey[400],
                             ),
@@ -182,7 +169,7 @@ class _UnitAddConfluenceState extends State<UnitAddConfluence> {
                         TextField(
                           controller: _urlController,
                           decoration: InputDecoration(
-                            hintText: 'Enter website URL',
+                            hintText: 'Enter wiki url',
                             hintStyle: TextStyle(
                               color: Colors.grey[400],
                             ),
@@ -211,7 +198,77 @@ class _UnitAddConfluenceState extends State<UnitAddConfluence> {
                           },
                           keyboardType: TextInputType.url,
                           textInputAction: TextInputAction.done,
-                          onSubmitted: (_) => _handleConnect(),
+                          onSubmitted: (_) => _uploadConfluenceFile,
+                        ),
+                        const SizedBox(height: AppSize.s12),
+                        TextField(
+                          controller: _nameController,
+                          decoration: InputDecoration(
+                            hintText: 'Enter confluence username',
+                            hintStyle: TextStyle(
+                              color: Colors.grey[400],
+                            ),
+                            errorText: _urlErrorText,
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(AppSize.s12),
+                              borderSide: BorderSide.none,
+                            ),
+                            prefixIcon: Icon(
+                              Icons.link,
+                              color: Colors.grey[400],
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: AppPadding.p16,
+                              vertical: AppPadding.p12,
+                            ),
+                          ),
+                          onChanged: (value) {
+                            if (_urlErrorText != null) {
+                              setState(() {
+                                _urlErrorText = null;
+                              });
+                            }
+                          },
+                          keyboardType: TextInputType.url,
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (_) => _uploadConfluenceFile,
+                        ),
+                        const SizedBox(height: AppSize.s12),
+                        TextField(
+                          controller: _tokenController,
+                          decoration: InputDecoration(
+                            hintText: 'Enter access token',
+                            hintStyle: TextStyle(
+                              color: Colors.grey[400],
+                            ),
+                            errorText: _urlErrorText,
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(AppSize.s12),
+                              borderSide: BorderSide.none,
+                            ),
+                            prefixIcon: Icon(
+                              Icons.link,
+                              color: Colors.grey[400],
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: AppPadding.p16,
+                              vertical: AppPadding.p12,
+                            ),
+                          ),
+                          onChanged: (value) {
+                            if (_urlErrorText != null) {
+                              setState(() {
+                                _urlErrorText = null;
+                              });
+                            }
+                          },
+                          keyboardType: TextInputType.url,
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (_) => _uploadConfluenceFile,
                         ),
                       ],
                     ),
@@ -222,7 +279,7 @@ class _UnitAddConfluenceState extends State<UnitAddConfluence> {
             ),
             const SizedBox(height: AppSize.s24),
             ElevatedButton(
-              onPressed: _isLoading ? null : _handleConnect,
+              onPressed: _isLoading ? null : _uploadConfluenceFile,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: AppPadding.p16),
                 backgroundColor: ColorManager.teal,
@@ -232,13 +289,10 @@ class _UnitAddConfluenceState extends State<UnitAddConfluence> {
                 disabledBackgroundColor: Colors.grey[300],
               ),
               child: _isLoading
-                  ? SizedBox(
-                height: AppSize.s20,
-                width: AppSize.s20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
+                  ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
               )
                   : const Text(
                 'Connect',
@@ -250,6 +304,8 @@ class _UnitAddConfluenceState extends State<UnitAddConfluence> {
               ),
             ),
           ],
+        ),
+         ),
         ),
       ),
     );

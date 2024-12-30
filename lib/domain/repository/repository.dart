@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:jarvis/data/network/failure.dart';
 import 'package:jarvis/data/request/ai_bot/ask_assistant_request.dart';
@@ -24,6 +26,9 @@ import 'package:jarvis/data/request/bot_integration/verify_telegram_bot_integrat
 import 'package:jarvis/data/responses/bot_integration/get_configurations_response.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/data/request/authentication/request.dart';
+import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
+import '../../../app/constant.dart';
+
 
 abstract class Repository {
   Future<Either<Failure, Token>> signIn(SignInRequest signInRequest);
@@ -35,6 +40,29 @@ abstract class Repository {
   Future<Either<Failure, Conversations>> getConversations(ConversationsRequest conversationsRequest);
   Future<Either<Failure, ConversationHistory>> getConversationHistory(ConversationHistoryRequest conversationsRequest);
   Future<Either<Failure, Token>> signInKnowledgeBase(KnowledgeAuthRequest signInKbRequest);
+  Future<Either<Failure, GetAssistantsResponse>> getAssistants(GetAssistantsRequest getAssistantsRequest);
+  Future<Either<Failure, KnowledgeResponse>> createKnowledge(CreateKnowledgeRequest request);
+  Future<Either<Failure, KnowledgeResponse>> updateKnowledge(String id, CreateKnowledgeRequest request);
+  Future<Either<Failure, GetKnowledgeResponse>> getKnowledge({
+    int? limit,
+    int? offset,
+    EnumOrder? order,
+    String? orderField,
+    String? q,
+  });
+  Future<Either<Failure, GetUnitsResponse>> getUnits({
+    required String id,
+    int? limit,
+    int? offset,
+    EnumOrder? order,
+    String? orderField,
+    String? q,
+  });
+  Future<Either<Failure, void>> deleteKnowledge(String id);
+  Future<Either<Failure, UnitResponse>> uploadLocalFile(String knowledgeId, File file);
+  Future<Either<Failure, UnitResponse>> uploadSlackFile(String id, UploadSlackFileRequest request);
+  Future<Either<Failure, UnitResponse>> uploadWebFile(String id, UploadWebFileRequest request);
+  Future<Either<Failure, UnitResponse>> uploadConfluenceFile(String id, UploadConfluenceFileRequest request);
   Future<Either<Failure, Assistants>> getAssistants(GetAssistantsRequest getAssistantsRequest);
   Future<Either<Failure, AssistantCustom>> getAssistant(GetAssistantRequest getAssistantRequest);
   Future<Either<Failure, AssistantCustom>> createAssistant(CreateAssistantRequest createAssistantRequest);

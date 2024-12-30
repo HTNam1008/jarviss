@@ -132,14 +132,23 @@ class PromptCategoryItem {
   const PromptCategoryItem({this.value, required this.label});
 }
 
+class Knowledge {
+  final String id;
+  final String knowledgeName;
+  final String description;
+  final String userId;
+  final int numUnits;
+  final int totalSize;
 
-// class GetAssistantsResponse {
-//   final List<AssistantData> data;
-//   final MetaData metaData;
-
-//   GetAssistantsResponse({required this.data, required this.metaData});
-
-// }
+  Knowledge({
+    required this.id,
+    required this.knowledgeName,
+    required this.description,
+    required this.userId,
+    required this.numUnits,
+    required this.totalSize,
+  });
+}
 
 class AssistantCustom {
   final String createdAt;
@@ -245,3 +254,4 @@ class Thread {
     this.deletedAt,
   });
 }
+
