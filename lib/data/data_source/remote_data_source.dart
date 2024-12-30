@@ -14,6 +14,7 @@ import 'package:jarvis/data/request/ai_chat/conversation/conversations_request.d
 import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.dart';
 import 'package:jarvis/data/request/authentication/request.dart';
 import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dart';
+import 'package:jarvis/data/request/bot_integration/get_configurations_request.dart';
 import 'package:jarvis/data/responses/ai_bot/create_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/create_thread_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistant_response.dart';
@@ -25,6 +26,7 @@ import 'package:jarvis/data/responses/ai_chat/get_conversation_history_response.
 import 'package:jarvis/data/responses/ai_chat/get_conversations_response.dart';
 import 'package:jarvis/data/responses/ai_chat/send_message_response.dart';
 import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
+import 'package:jarvis/data/responses/bot_integration/get_configurations_response.dart';
 import 'package:jarvis/data/responses/responses.dart';
 import 'package:jarvis/data/responses/token/token_usage_response.dart';
 
@@ -58,6 +60,7 @@ abstract class RemoteDataSource {
   Future<String> askAssistant(AskAssistantRequest createAssistantRequest);
   Future<CreateThreadResponse> createThread(CreateThreadRequest createThreadRequest);
   Future<RetrieveMessageThreadResponse> retrieveMessageThread(RetrieveMessageThreadRequest retrieveMessageThreadRequest);
+  Future<GetConfigurationsResponse> getConfigurations(GetConfigurationsRequest getConfigurationsRequest);
 }
 
 class RemoteDataSourceImplementer implements RemoteDataSource {
@@ -195,5 +198,10 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   @override
   Future<CreateThreadResponse> createThread(CreateThreadRequest createThreadRequest) async {
     return await _appKbServiceClient.createThread(createThreadRequest);
+  }
+  
+  @override
+  Future<GetConfigurationsResponse> getConfigurations(GetConfigurationsRequest getConfigurationsRequest) async {
+    return await _appKbServiceClient.getConfigurations(getConfigurationsRequest.assistantId);
   }
 }

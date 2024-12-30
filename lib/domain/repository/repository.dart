@@ -13,6 +13,8 @@ import 'package:jarvis/data/request/ai_chat/conversation/conversation_history_re
 import 'package:jarvis/data/request/ai_chat/conversation/conversations_request.dart';
 import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.dart';
 import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dart';
+import 'package:jarvis/data/request/bot_integration/get_configurations_request.dart';
+import 'package:jarvis/data/responses/bot_integration/get_configurations_response.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/data/request/authentication/request.dart';
 
@@ -35,5 +37,5 @@ abstract class Repository {
   Future<Either<Failure, MessageAssistant>> askAssistant(AskAssistantRequest askAssistantRequest);
   Future<Either<Failure, MessageAssistants>> retrieveMessageThread(RetrieveMessageThreadRequest retrieveMessageThreadRequest);
   Future<Either<Failure, Thread>> createThread(CreateThreadRequest createThreadRequest);
-
+  Future<Either<Failure, List<Configuration>>> getConfigurations(GetConfigurationsRequest getConfigurationsRequest);
 }

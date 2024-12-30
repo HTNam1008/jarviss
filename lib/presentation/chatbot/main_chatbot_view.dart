@@ -246,6 +246,23 @@ class _ChatBotMainViewState extends State<ChatBotMainView> {
                 },
               ),
               ListTile(
+                leading: const Icon(Icons.publish),
+                title: const Text('Publish'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.of(context)
+                      .pushNamed(
+                    Routes.publishBotRoute,
+                    arguments: assistantId,
+                  )
+                      .then((updated) {
+                    if (updated != null) {
+                      _viewModel.refreshAssistants(); // Refresh list
+                    }
+                  });
+                },
+              ),
+              ListTile(
                 leading: const Icon(Icons.delete),
                 title: const Text('Delete'),
                 onTap: () async {

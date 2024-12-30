@@ -47,6 +47,8 @@ class SplashViewModel extends BaseViewModel {
           await _appPreferences.setRefreshTokenKb(response.refreshToken ?? "");
         },
       );
+    } else {
+      log("Access token is empty");
     }
   }
 

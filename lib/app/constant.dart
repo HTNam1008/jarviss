@@ -10,6 +10,7 @@ class Constant {
 }
 
 class ConstantAPI {
+
   static const signIn = '/api/v1/auth/sign-in';
   static const signUp = '/api/v1/auth/sign-up';
   static const signOut = '/api/v1/auth/sign-out';
@@ -17,6 +18,8 @@ class ConstantAPI {
   static const sendMessage = '/api/v1/ai-chat/messages';
   static const tokenUsage = '/api/v1/tokens/usage';
   static const getConversations = '/api/v1/ai-chat/conversations';
+
+  // knowledge base
   static const createAssistant = '/kb-core/v1/ai-assistant';
   static const updateAssistant = '/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}';
   static const updateAssistantNewThreadPlayGround = '/kb-core/v1/ai-assistant/thread/playground';
@@ -27,6 +30,19 @@ class ConstantAPI {
   static const retrieveMessageThread = '/kb-core/v1/ai-assistant/thread/{${ConstantPath.openAiThreadId}}/messages';
   static const signInKnowledgeBase = '/kb-core/v1/auth/external-sign-in';
   static const createThread = '/kb-core/v1/ai-assistant/thread';
+  static const importKnowledgeToAssistant = '/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}/knowledges/{${ConstantPath.knowledgeId}}';
+  static const removeKnowledgeFromAssistant = '/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}/knowledges/{${ConstantPath.knowledgeId}}';
+  static const getImportedKnowledge = '/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}/knowledges';
+
+  // bot integration
+  static const publishMessengerBot = '/kb-core/v1/bot-integration/messenger/publish/{${ConstantPath.assistantId}}';
+  static const publishSlackBot = '/kb-core/v1/bot-integration/slack/publish/{${ConstantPath.assistantId}}';
+  static const publishTelegramBot = '/kb-core/v1/bot-integration/telegram/publish/{${ConstantPath.assistantId}}';
+  static const getConfigurations = '/kb-core/v1/bot-integration/{${ConstantPath.assistantId}}/configurations';
+  static const disconnectBotIntegration = '/kb-core/v1/bot-integration/{${ConstantPath.assistantId}}/{${ConstantPath.type}}';
+  static const verifyTelegramBotConfigure = '/kb-core/v1/bot-integration/telegram/validation';
+  static const verifySlackBotConfigure = '/kb-core/v1/bot-integration/slack/validation';
+  static const verifyMessengerBotConfigure = '/kb-core/v1/bot-integration/messenger/validation';
 }
 
 class ConstantAssistantID {
@@ -45,9 +61,17 @@ class ConstantAssistantModel {
 class ConstantPath {
   static const String assistantId = "assistantId";
   static const String openAiThreadId = "openAiThreadId";
+  static const String type = "type";
+  static const String knowledgeId = "knowledgeId";
 }
 
 enum EnumOrder {
   ASC,
   DESC
+}
+
+enum PlatformType {
+  slack,
+  telegram,
+  messenger
 }

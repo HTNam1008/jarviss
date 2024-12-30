@@ -18,6 +18,8 @@ import 'package:jarvis/data/request/ai_chat/conversation/conversations_request.d
 import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.dart';
 import 'package:jarvis/data/request/authentication/request.dart';
 import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dart';
+import 'package:jarvis/data/request/bot_integration/get_configurations_request.dart';
+import 'package:jarvis/data/responses/bot_integration/get_configurations_response.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 
@@ -283,6 +285,20 @@ class RepositoryImpl implements Repository {
     if (await _networkInfo.isConnected) {
       try {
         final response = await _remoteDataSource.createThread(createThreadRequest);
+        return Right(response.toDomain());
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Configuration>>> getConfigurations(GetConfigurationsRequest getConfigurationsRequest) async {
+      if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.getConfigurations(getConfigurationsRequest);
         return Right(response.toDomain());
       } catch (error) {
         return Left(ErrorHandler.handle(error).failure);
