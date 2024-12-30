@@ -229,56 +229,59 @@ class _ChatViewState extends State<ChatView> {
   }
 
   Widget _buildInitialContent() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppSize.s16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Hi, good afternoon!',
-            style: TextStyle(
-                fontSize: AppSize.s24,
-                fontWeight: FontWeightManager.bold),
-          ),
-          const SizedBox(height: AppSize.s8),
-          Text(
-            'I\'m a chatbot.',
-            style: TextStyle(
-                fontSize: AppSize.s16, color: ColorManager.grey),
-          ),
-          const SizedBox(height: AppSize.s20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildUploadButton(
-                icon: Icons.image,
-                label: 'Upload your image',
-                color: Colors.teal.shade100,
-              ),
-              _buildUploadButton(
-                icon: Icons.folder,
-                label: 'Upload your file',
-                color: Colors.blue.shade100,
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSize.s20),
-          const Text('You can ask me like this',
-              style: TextStyle(fontSize: AppSize.s18)),
-          const SizedBox(height: AppSize.s10),
-          ListView(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            children: [
-              _buildSuggestion('Write an email', 'to submission project'),
-              _buildSuggestion('Suggest events', 'for this summer'),
-              _buildSuggestion('List some books',
-                  'related to adventure'),
-              _buildSuggestion('Explain an issue',
-                  'why the earth is round'),
-            ],
-          ),
-        ],
+    return Container(
+      color: Colors.teal.shade50,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(AppSize.s16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Hi, good afternoon!',
+              style: TextStyle(
+                  fontSize: AppSize.s24,
+                  fontWeight: FontWeightManager.bold),
+            ),
+            const SizedBox(height: AppSize.s8),
+            Text(
+              'I\'m a chatbot.',
+              style: TextStyle(
+                  fontSize: AppSize.s16, color: ColorManager.grey),
+            ),
+            const SizedBox(height: AppSize.s20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildUploadButton(
+                  icon: Icons.image,
+                  label: 'Upload your image',
+                  color: Colors.teal.shade100,
+                ),
+                _buildUploadButton(
+                  icon: Icons.folder,
+                  label: 'Upload your file',
+                  color: Colors.blue.shade100,
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSize.s20),
+            const Text('You can ask me like this',
+                style: TextStyle(fontSize: AppSize.s18)),
+            const SizedBox(height: AppSize.s10),
+            ListView(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              children: [
+                _buildSuggestion('Write an email', 'to submission project'),
+                _buildSuggestion('Suggest events', 'for this summer'),
+                _buildSuggestion('List some books',
+                    'related to adventure'),
+                _buildSuggestion('Explain an issue',
+                    'why the earth is round'),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -412,11 +415,23 @@ class _ChatViewState extends State<ChatView> {
 
   Widget _buildSuggestion(String title, String subtitle) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: AppSize.s8),
+      margin: const EdgeInsets.symmetric(vertical: AppSize.s6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppSize.s10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: ListTile(
         title: Text(title),
         subtitle: Text(subtitle),
-        tileColor: Colors.teal.shade50,
+        tileColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSize.s10),
         ),

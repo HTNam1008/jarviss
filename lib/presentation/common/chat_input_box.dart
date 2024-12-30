@@ -279,8 +279,19 @@ class _ChatInputBoxState extends State<ChatInputBox> {
       child: Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSize.s8, vertical: AppSize.s10),
       decoration: BoxDecoration(
-        color: Colors.teal.shade50,
-        //borderRadius: BorderRadius.all(Radius.circular(AppSize.s16)),
+        color: Colors.teal[50],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 5,
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(AppSize.s8),
+          topRight: Radius.circular(AppSize.s8),
+        ),
       ),
       child: Row(
         children: [
@@ -296,13 +307,20 @@ class _ChatInputBoxState extends State<ChatInputBox> {
               focusNode: _focusNode,
               decoration: InputDecoration(
                 hintText: AppStrings.chatHintText,
-
-                // border: OutlineInputBorder(
-                //   borderRadius: BorderRadius.circular(AppSize.s100),
-                //   borderSide: BorderSide(color: Colors.blue),
-                // ),
-                // filled: true,
-                // fillColor: ColorManager.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSize.s32),
+                  borderSide: BorderSide(color: Colors.transparent),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSize.s32),
+                  borderSide: BorderSide(color: Colors.teal.shade200, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSize.s32),
+                  borderSide: BorderSide(color: Colors.teal.shade200, width: 2),
+                ),
+                filled: true,
+                fillColor: ColorManager.white,
               ),
             ),
           ),
