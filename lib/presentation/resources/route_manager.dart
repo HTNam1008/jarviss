@@ -18,6 +18,7 @@ import 'package:jarvis/presentation/profile/profile_view.dart';
 import 'package:jarvis/presentation/prompt/create_prompt/create_prompt_view.dart';
 import 'package:jarvis/presentation/prompt/main_prompt_view.dart';
 import 'package:jarvis/presentation/authencation/sign_up/sign_up.dart';
+import 'package:jarvis/presentation/publish_bot/publish_bot_view.dart';
 import 'package:jarvis/presentation/resources/strings_manager.dart';
 import 'package:jarvis/presentation/splash/splash.dart';
 import 'package:jarvis/presentation/upgrade/upgrade.dart';
@@ -44,6 +45,7 @@ class Routes {
   static const String detailKnowledgeRoute = "/detailKnowledge";
   static const String upgradeProRoute = "/upgradePro";
   static const String chatRoute = "/chat";
+  static const String publishBotRoute = "/publish";
 }
 
 class RouteGenerator {
@@ -95,6 +97,9 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const UpgradeView());
       case Routes.chatRoute:
         return MaterialPageRoute(builder: (_) => const ChatView());
+      case Routes.publishBotRoute:
+        final String assistantId = routeSettings.arguments as String;
+        return MaterialPageRoute(builder: (_) => PublishBotView(assistantId: assistantId));
       default:
         return UndefinedRoute();
     }
