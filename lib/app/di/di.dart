@@ -16,6 +16,7 @@ import 'package:jarvis/domain/usecase/ask_assistant_usecase.dart';
 import 'package:jarvis/domain/usecase/create_assistant_usecase.dart';
 import 'package:jarvis/domain/usecase/create_thread_usecase.dart';
 import 'package:jarvis/domain/usecase/delete_assistant_usecase.dart';
+import 'package:jarvis/domain/usecase/disconnect_bot_integration_usecase.dart';
 import 'package:jarvis/domain/usecase/get_assistant_usecase.dart';
 import 'package:jarvis/domain/usecase/get_assistants_usecase.dart';
 import 'package:jarvis/domain/usecase/get_configurations_usecase.dart';
@@ -300,11 +301,17 @@ Future<void> setupLocator() async {
     () => VerifyTelegramBotIntegrationUsecase(getIt<Repository>()),
   );
 
+  getIt.registerFactory<DisconnectBotIntegrationUsecase>(
+    () => DisconnectBotIntegrationUsecase(getIt<Repository>()),
+  );
+  
+
   getIt.registerFactory<ConfigureViewModel>(
     () => ConfigureViewModel(
       getIt<VerifySlackBotIntegrationUsecase>(),
       getIt<VerifyTelegramBotIntegrationUsecase>(),
       getIt<VerifyMessengerBotIntegrationUsecase>(),
+      getIt<DisconnectBotIntegrationUsecase>(),
     ),
   );
 }

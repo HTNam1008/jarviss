@@ -2,35 +2,32 @@
 import 'package:dartz/dartz.dart';
 
 import 'package:jarvis/data/network/failure.dart';
-import 'package:jarvis/data/request/bot_integration/verify_messenger_bot_integration_request.dart';
+import 'package:jarvis/data/request/bot_integration/disconnect_bot_integration_request.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 import 'package:jarvis/domain/usecase/base_usecase.dart';
 
-class DisconnectBotIntegrationUsecase implements BaseUseCase<VerifyBotMessengerIntegrationUsecaseInput, void> {
+class DisconnectBotIntegrationUsecase implements BaseUseCase<DisconnectBotIntegrationUsecaseInput, void> {
   final Repository _repository;
 
   DisconnectBotIntegrationUsecase(this._repository);
 
   @override
-  Future<Either<Failure, void>> execute(VerifyBotMessengerIntegrationUsecaseInput input) async {
-    return await _repository.verifyBotMessengerIntegration(
-      VerifyMessengerBotIntegrationRequest(
-        appSecret: input.appSecret,
-        botToken: input.botToken,
-        pageId: input.pageId,
+  Future<Either<Failure, void>> execute(DisconnectBotIntegrationUsecaseInput input) async {
+    return await _repository.disconnectBotIntegration(
+      DisconnectBotIntegrationRequest(
+        assistantId: input.assistandId, 
+        type: input.type
       ),
     );
   }
 }
 
-class VerifyBotMessengerIntegrationUsecaseInput {
-  final String appSecret;
-  final String botToken;
-  final String pageId;
+class DisconnectBotIntegrationUsecaseInput {
+  final String assistandId;
+  final String type;
 
-  VerifyBotMessengerIntegrationUsecaseInput({
-    required this.appSecret,
-    required this.botToken,
-    required this.pageId,
+  DisconnectBotIntegrationUsecaseInput({
+    required this.assistandId,
+    required this.type,
   });
 }

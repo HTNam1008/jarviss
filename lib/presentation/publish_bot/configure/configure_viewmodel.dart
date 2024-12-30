@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:jarvis/app/constant.dart';
 import 'package:jarvis/data/network/failure.dart';
+import 'package:jarvis/domain/usecase/disconnect_bot_integration_usecase.dart';
 import 'package:jarvis/presentation/base/baseviewmodel.dart';
 import 'package:jarvis/domain/usecase/verify_slack_bot_integration_usecase.dart';
 import 'package:jarvis/domain/usecase/verify_telegram_bot_integration_usecase.dart';
@@ -13,6 +14,7 @@ class ConfigureViewModel extends BaseViewModel implements ConfigureViewModelInpu
   final VerifySlackBotIntegrationUsecase _verifySlackUsecase;
   final VerifyTelegramBotIntegrationUsecase _verifyTelegramUsecase;
   final VerifyMessengerBotIntegrationUsecase _verifyMessengerUsecase;
+  final DisconnectBotIntegrationUsecase _disconnectBotIntegrationUsecase;
 
   final StreamController<String> _errorController = StreamController<String>();
   final StreamController<bool> _isLoadingController = StreamController<bool>();
@@ -23,7 +25,8 @@ class ConfigureViewModel extends BaseViewModel implements ConfigureViewModelInpu
   ConfigureViewModel(
     this._verifySlackUsecase,
     this._verifyTelegramUsecase,
-    this._verifyMessengerUsecase,
+    this._verifyMessengerUsecase, 
+    this._disconnectBotIntegrationUsecase,
   );
 
   void init(Platform platform) {
@@ -96,6 +99,30 @@ class ConfigureViewModel extends BaseViewModel implements ConfigureViewModelInpu
         );
       default:
         throw Exception('Unknown platform type');
+    }
+  }
+
+  Future<bool> disconnectBot() async {
+    inputIsLoading.add(true);
+    try {
+      if (platform == null) {
+        inputIsLoading.add(false);
+        return false;
+      }
+
+      final result = await _disconnectBotIntegrationUsecase.execute(DisconnectBotIntegrationUsecaseInput(assistandId: platform!.assistantId, type: platform!.type));
+      return result.fold(
+        (failure) {
+          inputError.add(failure.message);
+          return false;
+        },
+        (_) => true,
+      );
+    } catch (e) {
+      inputError.add(e.toString());
+      return false;
+    } finally {
+      inputIsLoading.add(false);
     }
   }
 

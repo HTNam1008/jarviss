@@ -13,6 +13,7 @@ import 'package:jarvis/data/request/ai_chat/conversation/conversation_history_re
 import 'package:jarvis/data/request/ai_chat/conversation/conversations_request.dart';
 import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.dart';
 import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dart';
+import 'package:jarvis/data/request/bot_integration/disconnect_bot_integration_request.dart';
 import 'package:jarvis/data/request/bot_integration/get_configurations_request.dart';
 import 'package:jarvis/data/request/bot_integration/publish_messenger_bot_request.dart';
 import 'package:jarvis/data/request/bot_integration/publish_slack_bot_request.dart';
@@ -50,4 +51,5 @@ abstract class Repository {
   Future<Either<Failure, void>> publishBotTelegramIntegration(PublishTelegramBotRequest publishTelegramBotRequest);
   Future<Either<Failure, void>> publishBotSlackIntegration(PublishSlackBotRequest publishSlackBotRequest);
   Future<Either<Failure, void>> publishBotMessengerIntegration(PublishMessengerBotRequest publishMessengerBotRequest);
+  Future<Either<Failure, void>> disconnectBotIntegration(DisconnectBotIntegrationRequest disconnectBotIntegrationRequest);
 }

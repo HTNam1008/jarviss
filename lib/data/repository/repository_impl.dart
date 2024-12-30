@@ -18,6 +18,7 @@ import 'package:jarvis/data/request/ai_chat/conversation/conversations_request.d
 import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.dart';
 import 'package:jarvis/data/request/authentication/request.dart';
 import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dart';
+import 'package:jarvis/data/request/bot_integration/disconnect_bot_integration_request.dart';
 import 'package:jarvis/data/request/bot_integration/get_configurations_request.dart';
 import 'package:jarvis/data/request/bot_integration/publish_messenger_bot_request.dart';
 import 'package:jarvis/data/request/bot_integration/publish_slack_bot_request.dart';
@@ -358,7 +359,7 @@ class RepositoryImpl implements Repository {
 
   @override
   Future<Either<Failure, void>> publishBotMessengerIntegration(PublishMessengerBotRequest publishMessengerBotRequest) async {
-        if (await _networkInfo.isConnected) {
+    if (await _networkInfo.isConnected) {
       try {
         await _remoteDataSource.publishBotMessengerIntegration(publishMessengerBotRequest);
         return const Right(null);
@@ -372,7 +373,7 @@ class RepositoryImpl implements Repository {
 
   @override
   Future<Either<Failure, void>> publishBotSlackIntegration(PublishSlackBotRequest publishSlackBotRequest) async {
-        if (await _networkInfo.isConnected) {
+    if (await _networkInfo.isConnected) {
       try {
         await _remoteDataSource.publishBotSlackIntegration(publishSlackBotRequest);
         return const Right(null);
@@ -386,9 +387,23 @@ class RepositoryImpl implements Repository {
 
   @override
   Future<Either<Failure, void>> publishBotTelegramIntegration(PublishTelegramBotRequest publishTelegramBotRequest) async {
-        if (await _networkInfo.isConnected) {
+    if (await _networkInfo.isConnected) {
       try {
         await _remoteDataSource.publishBotTelegramIntegration(publishTelegramBotRequest);
+        return const Right(null);
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> disconnectBotIntegration(DisconnectBotIntegrationRequest disconnectBotIntegrationRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        await _remoteDataSource.disconnectBotIntegration(disconnectBotIntegrationRequest);
         return const Right(null);
       } catch (error) {
         return Left(ErrorHandler.handle(error).failure);

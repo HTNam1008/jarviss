@@ -192,6 +192,8 @@ class PublishBotViewModel extends BaseViewModel implements PublishBotViewModelIn
       platform.isVerified = true;
       platform.metadata = createMetadata(result, platform);
       inputPlatforms.add(_platforms);
+    } else {
+      await getConfigurations();
     }
   }
 

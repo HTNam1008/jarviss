@@ -14,6 +14,7 @@ import 'package:jarvis/data/request/ai_chat/conversation/conversations_request.d
 import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.dart';
 import 'package:jarvis/data/request/authentication/request.dart';
 import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dart';
+import 'package:jarvis/data/request/bot_integration/disconnect_bot_integration_request.dart';
 import 'package:jarvis/data/request/bot_integration/get_configurations_request.dart';
 import 'package:jarvis/data/request/bot_integration/publish_messenger_bot_request.dart';
 import 'package:jarvis/data/request/bot_integration/publish_slack_bot_request.dart';
@@ -74,6 +75,7 @@ abstract class RemoteDataSource {
   Future<void> publishBotTelegramIntegration(PublishTelegramBotRequest publishTelegramBotRequest);
   Future<void> publishBotMessengerIntegration(PublishMessengerBotRequest publishMessengerBotRequest);
   Future<void> publishBotSlackIntegration(PublishSlackBotRequest publishSlackBotRequest);
+  Future<void> disconnectBotIntegration(DisconnectBotIntegrationRequest disconnectBotIntegrationRequest);
 }
 
 class RemoteDataSourceImplementer implements RemoteDataSource {
@@ -250,5 +252,10 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   Future<void> publishBotTelegramIntegration(PublishTelegramBotRequest publishTelegramBotRequest) async {
     return await _appKbServiceClient.publishTelegramBot(publishTelegramBotRequest.assistandId, publishTelegramBotRequest);
 
+  }
+  
+  @override
+  Future<void> disconnectBotIntegration(DisconnectBotIntegrationRequest disconnectBotIntegrationRequest) async {
+    return await _appKbServiceClient.disconnectBotIntegration(disconnectBotIntegrationRequest.assistantId, disconnectBotIntegrationRequest.type);
   }
 }

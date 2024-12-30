@@ -277,9 +277,7 @@ class _ConfigureViewState extends State<ConfigureView> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.teal,
                     ),
-                    onPressed: () {
-                      // TODO: Add delete configuration logic
-                    },
+                    onPressed: _handleDisconnect,
                     child: const Text('Disconnect'),
                   )
                 : ElevatedButton(
@@ -300,6 +298,13 @@ class _ConfigureViewState extends State<ConfigureView> {
     final success = await _viewModel.verifyBot(values);
     if (success && mounted) {
       Navigator.pop(context, values);
+    }
+  }  
+
+  Future<void> _handleDisconnect() async {
+    final success = await _viewModel.disconnectBot();
+    if (success && mounted) {
+      Navigator.pop(context);
     }
   }
 }
