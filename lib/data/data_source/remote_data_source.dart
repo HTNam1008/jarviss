@@ -15,6 +15,9 @@ import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.da
 import 'package:jarvis/data/request/authentication/request.dart';
 import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dart';
 import 'package:jarvis/data/request/bot_integration/get_configurations_request.dart';
+import 'package:jarvis/data/request/bot_integration/verify_messenger_bot_integration_request.dart';
+import 'package:jarvis/data/request/bot_integration/verify_slack_bot_integration_request.dart';
+import 'package:jarvis/data/request/bot_integration/verify_telegram_bot_integration_request.dart';
 import 'package:jarvis/data/responses/ai_bot/create_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/create_thread_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistant_response.dart';
@@ -55,12 +58,16 @@ abstract class RemoteDataSource {
   Future<GetAssistantResponse> getAssistant(GetAssistantRequest getAssistantRequest);
   Future<void> deleteAssistant(DeleteAssistantRequest deleteAssistantRequest);
   Future<UpdateAssistantResponse> updateAssistant(UpdateAssistantRequest updateAssistantRequest);
-  Future<UpdateAssistantNewThreadPlayGroundResponse> updateAssistantNewThreadPlayGround(UpdateAssistantNewThreadPlayGroundRequest updateAssistantNewThreadPlayGroundRequest);
+  Future<UpdateAssistantNewThreadPlayGroundResponse> updateAssistantNewThreadPlayGround(
+      UpdateAssistantNewThreadPlayGroundRequest updateAssistantNewThreadPlayGroundRequest);
   Future<CreateAssistantResponse> createAssistant(CreateAssistantRequest createAssistantRequest);
   Future<String> askAssistant(AskAssistantRequest createAssistantRequest);
   Future<CreateThreadResponse> createThread(CreateThreadRequest createThreadRequest);
   Future<RetrieveMessageThreadResponse> retrieveMessageThread(RetrieveMessageThreadRequest retrieveMessageThreadRequest);
   Future<GetConfigurationsResponse> getConfigurations(GetConfigurationsRequest getConfigurationsRequest);
+  Future<void> verifyBotSlackIntegration(VerifySlackBotIntegrationRequest verifySlackBotIntegrationRequest);
+  Future<void> verifyBotTelegramIntegration(VerifyTelegramBotIntegrationRequest verifyTelegramBotIntegrationRequest);
+  Future<void> verifyBotMessengerIntegration(VerifyMessengerBotIntegrationRequest verifyMessengerBotIntegrationRequest);
 }
 
 class RemoteDataSourceImplementer implements RemoteDataSource {
@@ -184,24 +191,40 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   Future<String> askAssistant(AskAssistantRequest askAssistantRequest) async {
     return await _appKbServiceClient.askAssistant(askAssistantRequest.assistandId, askAssistantRequest);
   }
-  
+
   @override
   Future<RetrieveMessageThreadResponse> retrieveMessageThread(RetrieveMessageThreadRequest retrieveMessageThreadRequest) async {
     return await _appKbServiceClient.retrieveMessageThread(retrieveMessageThreadRequest.openAiThreadId);
   }
-  
+
   @override
-  Future<UpdateAssistantNewThreadPlayGroundResponse> updateAssistantNewThreadPlayGround(UpdateAssistantNewThreadPlayGroundRequest updateAssistantNewThreadPlayGroundRequest) async {
+  Future<UpdateAssistantNewThreadPlayGroundResponse> updateAssistantNewThreadPlayGround(
+      UpdateAssistantNewThreadPlayGroundRequest updateAssistantNewThreadPlayGroundRequest) async {
     return await _appKbServiceClient.updateAssistantNewThreadPlayGround(updateAssistantNewThreadPlayGroundRequest);
   }
-  
+
   @override
   Future<CreateThreadResponse> createThread(CreateThreadRequest createThreadRequest) async {
     return await _appKbServiceClient.createThread(createThreadRequest);
   }
-  
+
   @override
   Future<GetConfigurationsResponse> getConfigurations(GetConfigurationsRequest getConfigurationsRequest) async {
     return await _appKbServiceClient.getConfigurations(getConfigurationsRequest.assistantId);
+  }
+
+  @override
+  Future<void> verifyBotMessengerIntegration(VerifyMessengerBotIntegrationRequest verifyMessengerBotIntegrationRequest) async {
+    return await _appKbServiceClient.verifyMessengerBotConfigure(verifyMessengerBotIntegrationRequest);
+  }
+
+  @override
+  Future<void> verifyBotSlackIntegration(VerifySlackBotIntegrationRequest verifySlackBotIntegrationRequest) async {
+    return await _appKbServiceClient.verifySlackBotConfigure(verifySlackBotIntegrationRequest);
+  }
+
+  @override
+  Future<void> verifyBotTelegramIntegration(VerifyTelegramBotIntegrationRequest verifyTelegramBotIntegrationRequest) async {
+    return await _appKbServiceClient.verifyTelegramBotConfigure(verifyTelegramBotIntegrationRequest);
   }
 }

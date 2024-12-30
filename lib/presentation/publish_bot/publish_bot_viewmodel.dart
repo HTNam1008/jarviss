@@ -42,9 +42,16 @@ class PublishBotViewModel extends BaseViewModel implements PublishBotViewModelIn
 
   Future<void> init(String assistantId) async {
     this.assistantId = assistantId;
-    inputIsLoading.add(true);
+    await getConfigurations();
+  }
 
-    final result = await _getConfigurationsUseCase.execute(GetConfigurationsUseCaseInput(assistantId: assistantId));
+  Future<void> getConfigurations() async {
+    if (assistantId == null) return;
+    
+    inputIsLoading.add(true);
+    final result = await _getConfigurationsUseCase.execute(
+      GetConfigurationsUseCaseInput(assistantId: assistantId!)
+    );
 
     result.fold(
       (error) => inputError.add(error.toString()),
@@ -52,41 +59,33 @@ class PublishBotViewModel extends BaseViewModel implements PublishBotViewModelIn
         _platforms.clear();
 
         for (var type in PlatformType.values) {
-          final config = configurations.firstWhere((c) => c.type == type.name.toLowerCase(), orElse: () => Configuration());
+          final config = configurations.firstWhere(
+            (c) => c.type == type.name.toLowerCase(), 
+            orElse: () => Configuration()
+          );
+          
           if (config.type == null) {
-            _platforms.add(
-              Platform(
-                name: type.name.capitalize(),
-                metadata: null,
-                isVerified: false,
-                assistantId: assistantId,
-              ),
-            );
+            _platforms.add(Platform(
+              name: type.name.capitalize(),
+              metadata: null,
+              isVerified: false,
+              assistantId: assistantId!,
+            ));
             continue;
           }
 
-          _platforms.add(
-            Platform(
-              name: type.name.capitalize(),
-              metadata: config.metadata, // null if no config
-              isVerified: config.metadata != null, // false if no config
-              assistantId: assistantId,
-            ),
-          );
+          _platforms.add(Platform(
+            name: type.name.capitalize(),
+            metadata: config.metadata,
+            isVerified: config.metadata != null,
+            assistantId: assistantId!,
+          ));
         }
         inputPlatforms.add(_platforms);
       },
     );
 
     inputIsLoading.add(false);
-  }
-
-  Configuration? findConfig(List<Configuration> configurations, String type) {
-    try {
-      return configurations.firstWhere((c) => c.type == type);
-    } catch (e) {
-      return null;
-    }
   }
 
   @override
@@ -126,7 +125,6 @@ class PublishBotViewModel extends BaseViewModel implements PublishBotViewModelIn
         return false;
       }
 
-      // Add API call here
       await Future.delayed(const Duration(seconds: 2));
 
       inputIsLoading.add(false);
@@ -139,7 +137,7 @@ class PublishBotViewModel extends BaseViewModel implements PublishBotViewModelIn
   }
 
   Future<void> navigateToConfigureView(BuildContext context, Platform platform) async {
-    await Navigator.push(
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ConfigureView(
@@ -148,6 +146,11 @@ class PublishBotViewModel extends BaseViewModel implements PublishBotViewModelIn
         ),
       ),
     );
+
+    if (result == true) {
+      platform.isVerified = true;
+      inputPlatforms.add(_platforms);
+    }
   }
 
   @override

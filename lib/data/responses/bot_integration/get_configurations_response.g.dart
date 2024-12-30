@@ -28,11 +28,11 @@ Configuration _$ConfigurationFromJson(Map<String, dynamic> json) =>
       createdBy: json['createdBy'] as String?,
       updatedBy: json['updatedBy'] as String?,
       deletedAt: json['deletedAt'] as String?,
-      id: json['id'] as String,
-      type: json['type'] as String,
-      accessToken: json['accessToken'] as String,
+      id: json['id'] as String?,
+      type: json['type'] as String?,
+      accessToken: json['accessToken'] as String?,
       metadata: json['metadata'],
-      assistantId: json['assistantId'] as String,
+      assistantId: json['assistantId'] as String?,
     );
 
 Map<String, dynamic> _$ConfigurationToJson(Configuration instance) =>
@@ -80,13 +80,15 @@ Map<String, dynamic> _$TelegramMetadataToJson(TelegramMetadata instance) =>
 MessengerMetadata _$MessengerMetadataFromJson(Map<String, dynamic> json) =>
     MessengerMetadata(
       botToken: json['botToken'] as String,
-      botPageId: json['botPageId'] as String,
-      botAppSecret: json['botAppSecret'] as String,
+      pageId: json['pageId'] as String,
+      appSecret: json['appSecret'] as String,
+      redirect: json['redirect'] as String,
     );
 
 Map<String, dynamic> _$MessengerMetadataToJson(MessengerMetadata instance) =>
     <String, dynamic>{
       'botToken': instance.botToken,
-      'botPageId': instance.botPageId,
-      'botAppSecret': instance.botAppSecret,
+      'pageId': instance.pageId,
+      'appSecret': instance.appSecret,
+      'redirect': instance.redirect,
     };

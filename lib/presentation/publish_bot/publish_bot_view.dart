@@ -85,7 +85,6 @@ class _PublishBotViewState extends State<PublishBotView> {
                     final platform = snapshot.data![index];
                     return PlatformListItem(
                       platform: platform,
-                      // onConfigureTap: () => _viewModel.configurePlatform(platform),
                       onConfigureTap: () => _viewModel.navigateToConfigureView(context, platform),
                       onCheckChanged: (value) => 
                           _viewModel.togglePlatform(platform, value ?? false),

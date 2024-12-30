@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:json_annotation/json_annotation.dart';
 
 part 'get_configurations_response.g.dart';
@@ -121,13 +122,16 @@ class TelegramMetadata {
 @JsonSerializable()
 class MessengerMetadata {
   final String botToken;
-  final String botPageId;
-  final String botAppSecret;
+  final String pageId;
+  final String appSecret;
+  final String redirect;
+
 
   MessengerMetadata({
     required this.botToken,
-    required this.botPageId,
-    required this.botAppSecret,
+    required this.pageId,
+    required this.appSecret,
+    required this.redirect,
   });
 
   factory MessengerMetadata.fromJson(Map<String, dynamic> json) =>

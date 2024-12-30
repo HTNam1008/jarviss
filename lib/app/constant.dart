@@ -75,3 +75,39 @@ enum PlatformType {
   telegram,
   messenger
 }
+
+enum ConfigField {
+  botToken('Bot Token'),
+  clientId('Client ID'),
+  clientSecret('Client Secret'),
+  signingSecret('Signing Secret'),
+  pageId('Bot Page ID'),
+  appSecret('Bot App Secret');
+
+  final String label;
+  const ConfigField(this.label);
+}
+
+class PlatformConfig {
+  final List<ConfigField> fields;
+  const PlatformConfig({required this.fields});
+}
+
+class ConfigurationFields {
+  static const Map<PlatformType, PlatformConfig> platformConfigs = {
+    PlatformType.slack: PlatformConfig(fields: [
+      ConfigField.botToken,
+      ConfigField.clientId,
+      ConfigField.clientSecret,
+      ConfigField.signingSecret,
+    ]),
+    PlatformType.telegram: PlatformConfig(fields: [
+      ConfigField.botToken,
+    ]),
+    PlatformType.messenger: PlatformConfig(fields: [
+      ConfigField.botToken,
+      ConfigField.pageId,
+      ConfigField.appSecret,
+    ]),
+  };
+}

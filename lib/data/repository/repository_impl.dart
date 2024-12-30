@@ -19,6 +19,9 @@ import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.da
 import 'package:jarvis/data/request/authentication/request.dart';
 import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dart';
 import 'package:jarvis/data/request/bot_integration/get_configurations_request.dart';
+import 'package:jarvis/data/request/bot_integration/verify_messenger_bot_integration_request.dart';
+import 'package:jarvis/data/request/bot_integration/verify_slack_bot_integration_request.dart';
+import 'package:jarvis/data/request/bot_integration/verify_telegram_bot_integration_request.dart';
 import 'package:jarvis/data/responses/bot_integration/get_configurations_response.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/domain/repository/repository.dart';
@@ -300,6 +303,48 @@ class RepositoryImpl implements Repository {
       try {
         final response = await _remoteDataSource.getConfigurations(getConfigurationsRequest);
         return Right(response.toDomain());
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> verifyBotMessengerIntegration(VerifyMessengerBotIntegrationRequest verifyMessengerBotIntegrationRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        await _remoteDataSource.verifyBotMessengerIntegration(verifyMessengerBotIntegrationRequest);
+        return const Right(null);
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> verifyBotSlackIntegration(VerifySlackBotIntegrationRequest verifySlackBotIntegrationRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        await _remoteDataSource.verifyBotSlackIntegration(verifySlackBotIntegrationRequest);
+        return const Right(null);
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> verifyBotTelegramIntegration(VerifyTelegramBotIntegrationRequest verifyTelegramBotIntegrationRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        await _remoteDataSource.verifyBotTelegramIntegration(verifyTelegramBotIntegrationRequest);
+        return const Right(null);
       } catch (error) {
         return Left(ErrorHandler.handle(error).failure);
       }

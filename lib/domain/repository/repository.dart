@@ -14,6 +14,9 @@ import 'package:jarvis/data/request/ai_chat/conversation/conversations_request.d
 import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.dart';
 import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dart';
 import 'package:jarvis/data/request/bot_integration/get_configurations_request.dart';
+import 'package:jarvis/data/request/bot_integration/verify_messenger_bot_integration_request.dart';
+import 'package:jarvis/data/request/bot_integration/verify_slack_bot_integration_request.dart';
+import 'package:jarvis/data/request/bot_integration/verify_telegram_bot_integration_request.dart';
 import 'package:jarvis/data/responses/bot_integration/get_configurations_response.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/data/request/authentication/request.dart';
@@ -38,4 +41,7 @@ abstract class Repository {
   Future<Either<Failure, MessageAssistants>> retrieveMessageThread(RetrieveMessageThreadRequest retrieveMessageThreadRequest);
   Future<Either<Failure, Thread>> createThread(CreateThreadRequest createThreadRequest);
   Future<Either<Failure, List<Configuration>>> getConfigurations(GetConfigurationsRequest getConfigurationsRequest);
+  Future<Either<Failure, void>> verifyBotSlackIntegration(VerifySlackBotIntegrationRequest verifySlackBotIntegrationRequest);
+  Future<Either<Failure, void>> verifyBotMessengerIntegration(VerifyMessengerBotIntegrationRequest verifyMessengerBotIntegrationRequest);
+  Future<Either<Failure, void>> verifyBotTelegramIntegration(VerifyTelegramBotIntegrationRequest verifyTelegramBotIntegrationRequest);
 }

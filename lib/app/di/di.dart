@@ -32,6 +32,9 @@ import 'package:jarvis/domain/usecase/sign_up_usecase.dart';
 import 'package:jarvis/domain/usecase/update_assistant_new_thread_playground_usecase.dart';
 import 'package:jarvis/domain/usecase/update_assistant_usecase.dart';
 import 'package:jarvis/domain/usecase/usage_token_usecase.dart';
+import 'package:jarvis/domain/usecase/verify_messenger_bot_integration_usecase.dart';
+import 'package:jarvis/domain/usecase/verify_slack_bot_integration_usecase.dart';
+import 'package:jarvis/domain/usecase/verify_telegram_bot_integration_usecase.dart';
 import 'package:jarvis/presentation/authencation/sign_in/sign_in_viewmodel.dart';
 import 'package:jarvis/presentation/authencation/sign_out/sign_out_viewmodel.dart';
 import 'package:jarvis/presentation/authencation/sign_up/sign_up_viewmodel.dart';
@@ -42,6 +45,7 @@ import 'package:jarvis/presentation/chatbot/main_chatbot_viewmodel.dart';
 import 'package:jarvis/presentation/chatbot/preview_bot/preview_bot_viewmodel.dart';
 import 'package:jarvis/presentation/left_side_bar/app_drawer_viewmodel.dart';
 import 'package:jarvis/presentation/main/sign_in_kb_viewmodel.dart';
+import 'package:jarvis/presentation/publish_bot/configure/configure_viewmodel.dart';
 import 'package:jarvis/presentation/publish_bot/publish_bot_viewmodel.dart';
 import 'package:jarvis/presentation/splash/splash_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -266,5 +270,25 @@ Future<void> setupLocator() async {
 
   getIt.registerFactory<PublishBotViewModel>(
     () => PublishBotViewModel(getIt<GetConfigurationsUseCase>()),
+  );
+
+  getIt.registerFactory<VerifyMessengerBotIntegrationUsecase>(
+    () => VerifyMessengerBotIntegrationUsecase(getIt<Repository>()),
+  );
+
+  getIt.registerFactory<VerifySlackBotIntegrationUsecase>(
+    () => VerifySlackBotIntegrationUsecase(getIt<Repository>()),
+  );
+
+  getIt.registerFactory<VerifyTelegramBotIntegrationUsecase>(
+    () => VerifyTelegramBotIntegrationUsecase(getIt<Repository>()),
+  );
+
+  getIt.registerFactory<ConfigureViewModel>(
+    () => ConfigureViewModel(
+      getIt<VerifySlackBotIntegrationUsecase>(),
+      getIt<VerifyTelegramBotIntegrationUsecase>(),
+      getIt<VerifyMessengerBotIntegrationUsecase>(),
+    ),
   );
 }
