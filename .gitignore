@@ -42,3 +42,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 /android/gradle
+.vscode/settings.json
+android/app/src/main/AndroidManifest.xml
+android/gradle.properties

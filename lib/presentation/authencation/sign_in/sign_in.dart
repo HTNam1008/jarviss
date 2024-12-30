@@ -161,7 +161,7 @@ class _SignInViewState extends State<SignInView> {
                   ),
                 ),
                 const SizedBox(height: AppSize.s16),
-                isSignIn ? CircularProgressIndicator() : SizedBox.shrink(),
+                isSignIn ? const CircularProgressIndicator() : const SizedBox.shrink(),
                 const SizedBox(height: AppSize.s16),
                 const Text('Or Sign In With'),
                 const SizedBox(height: 8),

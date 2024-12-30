@@ -14,18 +14,30 @@ class MainView extends StatefulWidget {
 
 class _MainViewState extends State<MainView> {
   int _currentIndex = 0;
-
   List<Widget> body = [
     const ChatView(),
     const ChatBotMainView(),
     const PromptView(),
-     KnowledgeView(),
+    KnowledgeView(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: body[_currentIndex],
+      body: IndexedStack(
+        index: _currentIndex,
+        children: body,
+      ),
       bottomNavigationBar: BottomNavigation(
         currentIndex: _currentIndex,
         onTap: _onItemTapped,
