@@ -14,6 +14,9 @@ import 'package:jarvis/data/request/ai_chat/conversation/conversations_request.d
 import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.dart';
 import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dart';
 import 'package:jarvis/data/request/bot_integration/get_configurations_request.dart';
+import 'package:jarvis/data/request/bot_integration/publish_messenger_bot_request.dart';
+import 'package:jarvis/data/request/bot_integration/publish_slack_bot_request.dart';
+import 'package:jarvis/data/request/bot_integration/publish_telegram_bot_request.dart';
 import 'package:jarvis/data/request/bot_integration/verify_messenger_bot_integration_request.dart';
 import 'package:jarvis/data/request/bot_integration/verify_slack_bot_integration_request.dart';
 import 'package:jarvis/data/request/bot_integration/verify_telegram_bot_integration_request.dart';
@@ -44,4 +47,7 @@ abstract class Repository {
   Future<Either<Failure, void>> verifyBotSlackIntegration(VerifySlackBotIntegrationRequest verifySlackBotIntegrationRequest);
   Future<Either<Failure, void>> verifyBotMessengerIntegration(VerifyMessengerBotIntegrationRequest verifyMessengerBotIntegrationRequest);
   Future<Either<Failure, void>> verifyBotTelegramIntegration(VerifyTelegramBotIntegrationRequest verifyTelegramBotIntegrationRequest);
+  Future<Either<Failure, void>> publishBotTelegramIntegration(PublishTelegramBotRequest publishTelegramBotRequest);
+  Future<Either<Failure, void>> publishBotSlackIntegration(PublishSlackBotRequest publishSlackBotRequest);
+  Future<Either<Failure, void>> publishBotMessengerIntegration(PublishMessengerBotRequest publishMessengerBotRequest);
 }

@@ -15,6 +15,9 @@ import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.da
 import 'package:jarvis/data/request/authentication/request.dart';
 import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dart';
 import 'package:jarvis/data/request/bot_integration/get_configurations_request.dart';
+import 'package:jarvis/data/request/bot_integration/publish_messenger_bot_request.dart';
+import 'package:jarvis/data/request/bot_integration/publish_slack_bot_request.dart';
+import 'package:jarvis/data/request/bot_integration/publish_telegram_bot_request.dart';
 import 'package:jarvis/data/request/bot_integration/verify_messenger_bot_integration_request.dart';
 import 'package:jarvis/data/request/bot_integration/verify_slack_bot_integration_request.dart';
 import 'package:jarvis/data/request/bot_integration/verify_telegram_bot_integration_request.dart';
@@ -68,6 +71,9 @@ abstract class RemoteDataSource {
   Future<void> verifyBotSlackIntegration(VerifySlackBotIntegrationRequest verifySlackBotIntegrationRequest);
   Future<void> verifyBotTelegramIntegration(VerifyTelegramBotIntegrationRequest verifyTelegramBotIntegrationRequest);
   Future<void> verifyBotMessengerIntegration(VerifyMessengerBotIntegrationRequest verifyMessengerBotIntegrationRequest);
+  Future<void> publishBotTelegramIntegration(PublishTelegramBotRequest publishTelegramBotRequest);
+  Future<void> publishBotMessengerIntegration(PublishMessengerBotRequest publishMessengerBotRequest);
+  Future<void> publishBotSlackIntegration(PublishSlackBotRequest publishSlackBotRequest);
 }
 
 class RemoteDataSourceImplementer implements RemoteDataSource {
@@ -226,5 +232,23 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   @override
   Future<void> verifyBotTelegramIntegration(VerifyTelegramBotIntegrationRequest verifyTelegramBotIntegrationRequest) async {
     return await _appKbServiceClient.verifyTelegramBotConfigure(verifyTelegramBotIntegrationRequest);
+  }
+  
+  @override
+  Future<void> publishBotMessengerIntegration(PublishMessengerBotRequest publishMessengerBotRequest) async {
+    return await _appKbServiceClient.publishMessengerBot(publishMessengerBotRequest.assistandId, publishMessengerBotRequest);
+
+  }
+  
+  @override
+  Future<void> publishBotSlackIntegration(PublishSlackBotRequest publishSlackBotRequest) async {
+    return await _appKbServiceClient.publishSlackBot(publishSlackBotRequest.assistandId, publishSlackBotRequest);
+
+  }
+  
+  @override
+  Future<void> publishBotTelegramIntegration(PublishTelegramBotRequest publishTelegramBotRequest) async {
+    return await _appKbServiceClient.publishTelegramBot(publishTelegramBotRequest.assistandId, publishTelegramBotRequest);
+
   }
 }

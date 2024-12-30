@@ -7,16 +7,10 @@ part 'publish_telegram_bot_request.g.dart';
 class PublishTelegramBotRequest {
     final String assistandId;
     final String botToken;
-    final String clientId;
-    final String clientSecret;
-    final String signingSecret;
 
   PublishTelegramBotRequest({
     required this.assistandId,
     required this.botToken,
-    required this.clientId,
-    required this.clientSecret,
-    required this.signingSecret,
   });
 
   factory PublishTelegramBotRequest.fromJson(Map<String, dynamic> json) =>

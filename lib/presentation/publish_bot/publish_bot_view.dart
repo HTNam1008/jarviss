@@ -115,9 +115,7 @@ class _PublishBotViewState extends State<PublishBotView> {
 
   void _onPublishPressed() async {
     final success = await _viewModel.publishBot();
-    if (success && mounted) {
-      Navigator.pop(context, true);
-    }
+    // TODO: show dialog success or error and show redirect url
   }
 }
 

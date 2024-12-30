@@ -22,6 +22,9 @@ import 'package:jarvis/domain/usecase/get_configurations_usecase.dart';
 import 'package:jarvis/domain/usecase/get_conversation_history_usecase.dart';
 import 'package:jarvis/domain/usecase/get_conversations_usecase.dart';
 import 'package:jarvis/domain/usecase/create_prompt_usecase.dart';
+import 'package:jarvis/domain/usecase/publish_messenger_bot_integration_usecase.dart';
+import 'package:jarvis/domain/usecase/publish_slack_bot_integration_usecase.dart';
+import 'package:jarvis/domain/usecase/publish_telegram_bot_integration_usecase.dart';
 import 'package:jarvis/domain/usecase/refresh_token_usecase.dart';
 import 'package:jarvis/domain/usecase/retrieve_message_thread_usecase.dart';
 import 'package:jarvis/domain/usecase/send_message_usecase.dart';
@@ -268,8 +271,21 @@ Future<void> setupLocator() async {
     () => GetConfigurationsUseCase(getIt<Repository>()),
   );
 
+  getIt.registerFactory<PublishMessengerBotIntegrationUsecase>(
+    () => PublishMessengerBotIntegrationUsecase(getIt<Repository>()),
+  );
+
+  getIt.registerFactory<PublishSlackBotIntegrationUsecase>(
+    () => PublishSlackBotIntegrationUsecase(getIt<Repository>()),
+  );
+
+  getIt.registerFactory<PublishTelegramBotIntegrationUsecase>(
+    () => PublishTelegramBotIntegrationUsecase(getIt<Repository>()),
+  );
+
   getIt.registerFactory<PublishBotViewModel>(
-    () => PublishBotViewModel(getIt<GetConfigurationsUseCase>()),
+    () => PublishBotViewModel(getIt<GetConfigurationsUseCase>(), getIt<PublishMessengerBotIntegrationUsecase>(), getIt<PublishSlackBotIntegrationUsecase>(),
+        getIt<PublishTelegramBotIntegrationUsecase>()),
   );
 
   getIt.registerFactory<VerifyMessengerBotIntegrationUsecase>(

@@ -299,7 +299,7 @@ class _ConfigureViewState extends State<ConfigureView> {
     final values = controllers.map((key, controller) => MapEntry(key, controller.text));
     final success = await _viewModel.verifyBot(values);
     if (success && mounted) {
-      Navigator.pop(context, true);
+      Navigator.pop(context, values);
     }
   }
 }
