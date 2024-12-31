@@ -128,7 +128,7 @@ class _EditBotViewState extends State<EditBotView> {
                 child: Center(
                   child: CircleAvatar(
                     radius: 40.0,
-                    backgroundImage: AssetImage('assets/images/avt.png'),
+                    backgroundImage: AssetImage('assets/images/chatbot_avt.png'),
                   ),
                 ),
               ),
