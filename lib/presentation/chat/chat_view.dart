@@ -180,7 +180,18 @@ class _ChatViewState extends State<ChatView> {
               items: _allModels.map<DropdownMenuItem<AssistantModel>>((AssistantModel value) {
                 return DropdownMenuItem<AssistantModel>(
                   value: value,
-                  child: Text(value.name),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: AssetImage('assets/images/chatbot_avt.png'),
+                        radius: 10,
+                      ),
+                      const SizedBox(width: 6), // Khoảng cách giữa avatar và tên
+                      Text(
+                        value.name,
+                      ),
+                    ],
+                  ),
                 );
               }).toList(),
             ),
