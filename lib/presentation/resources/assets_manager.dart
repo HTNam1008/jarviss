@@ -15,11 +15,28 @@ class ImageAssets {
   static const String logoIc = "$IMAGE_PATH/logo_ic.svg";
 
   static const String gettingStartedLogo = "$IMAGE_PATH/logo_ic_1.png";
-  static const String botIc = "$IMAGE_PATH/bot_ic.png";
+  static const String botIc = "$IMAGE_PATH/chatbot_avt.png";
   static const String addIc = "$IMAGE_PATH/add_ic.png";
   static const String knowledgeIc = "$IMAGE_PATH/knowledge_ic.png";
   static const String messageCircleIc = "$IMAGE_PATH/message_circle_ic.png";
   static const String fb_ic = "$IMAGE_PATH/fb_ic.png";
   static const String gg_ic = "$IMAGE_PATH/gg_ic.png";
   static const String apple_ic = "$IMAGE_PATH/apple_ic.png";
+
+  static const String slack_ic = "$IMAGE_PATH/slack_ic.png";
+  static const String mess_ic = "$IMAGE_PATH/mess_ic.png";
+  static const String telegram_ic = "$IMAGE_PATH/telegram_ic.png";
+
+  static String getPlatformIcon(String platform){
+    switch(platform){
+      case "Slack":
+        return slack_ic;
+      case "Messenger":
+        return mess_ic;
+      case "Telegram":
+        return telegram_ic;
+      default:
+        return "";
+    }
+  }
 }

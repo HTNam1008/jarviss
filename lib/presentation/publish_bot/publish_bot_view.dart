@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jarvis/app/di/di.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/common/loading_overlay.dart';
+import 'package:jarvis/presentation/resources/assets_manager.dart';
 import 'publish_bot_viewmodel.dart';
 
 class PublishBotView extends StatefulWidget {
@@ -139,6 +140,10 @@ class PlatformListItem extends StatelessWidget {
         Checkbox(
           value: platform.isSelected,
           onChanged: onCheckChanged,
+        ),
+        CircleAvatar(
+          backgroundImage: AssetImage(ImageAssets.getPlatformIcon(platform.name)),
+          backgroundColor: Colors.transparent,
         ),
         Expanded(
           child: Column(

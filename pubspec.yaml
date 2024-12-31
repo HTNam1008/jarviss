@@ -100,6 +100,10 @@ flutter:
    - assets/images/message_circle_ic.png
    - assets/images/gg_ic.png
    - assets/images/avt.png
+   - assets/images/chatbot_avt.png
+   - assets/images/slack_ic.png
+   - assets/images/mess_ic.png
+   - assets/images/telegram_ic.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
