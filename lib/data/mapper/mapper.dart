@@ -1,10 +1,17 @@
 import 'package:jarvis/app/extensions.dart';
 import 'package:jarvis/data/request/ai_chat/send_message/assistant.dart';
-import 'package:jarvis/data/request/ai_chat/send_message/chat_message.dart';
-import 'package:jarvis/data/request/ai_chat/send_message/message_role.dart';
+import 'package:jarvis/data/responses/ai_bot/create_assistant_response.dart';
+import 'package:jarvis/data/responses/ai_bot/create_thread_response.dart';
+import 'package:jarvis/data/responses/ai_bot/get_assistant_response.dart';
+import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
+import 'package:jarvis/data/responses/ai_bot/retrieve_message_thread_response.dart';
+import 'package:jarvis/data/responses/ai_bot/update_assistant_new_thread_playground_response.dart';
+import 'package:jarvis/data/responses/ai_bot/update_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_chat/get_conversation_history_response.dart';
 import 'package:jarvis/data/responses/ai_chat/get_conversations_response.dart';
 import 'package:jarvis/data/responses/ai_chat/send_message_response.dart';
+import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
+import 'package:jarvis/data/responses/bot_integration/get_configurations_response.dart';
 import 'package:jarvis/data/responses/responses.dart';
 import 'package:jarvis/data/responses/token/token_usage_response.dart';
 import 'package:jarvis/domain/model/model.dart';
@@ -36,6 +43,12 @@ extension TokenResponseMapper on TokenResponse {
 }
 
 extension SignInResponseMapper on SignInResponse {
+  Token toDomain() {
+    return token.toDomain();
+  }
+}
+
+extension SignInKbResponseMapper on KnowledgeAuthResponse {
   Token toDomain() {
     return token.toDomain();
   }
@@ -91,9 +104,7 @@ extension ConversationHistoryMapper on ConversationHistoryResponse {
           remainingUsage: 0,
           isUser: true,
           assistant: assistant,
-          timestamp: detail.createdAt != null
-              ? DateTime.fromMillisecondsSinceEpoch(detail.createdAt! * 1000)
-              : DateTime.now(),
+          timestamp: detail.createdAt != null ? DateTime.fromMillisecondsSinceEpoch(detail.createdAt! * 1000) : DateTime.now(),
         );
         messages.add(userMessage);
       }
@@ -103,11 +114,9 @@ extension ConversationHistoryMapper on ConversationHistoryResponse {
         Message assistantMessage = Message(
           conversationId: detail.id ?? '',
           message: detail.answer!,
-          remainingUsage: 0, 
+          remainingUsage: 0,
           isUser: false,
-          timestamp: detail.createdAt != null
-              ? DateTime.fromMillisecondsSinceEpoch(detail.createdAt! * 1000)
-              : DateTime.now(),
+          timestamp: detail.createdAt != null ? DateTime.fromMillisecondsSinceEpoch(detail.createdAt! * 1000) : DateTime.now(),
           assistant: assistant,
         );
         messages.add(assistantMessage);
@@ -117,4 +126,153 @@ extension ConversationHistoryMapper on ConversationHistoryResponse {
     return ConversationHistory(has_more: has_more, limit: limit, cursor: cursor, items: messages);
   }
 }
+
+extension CreateAssistantResponseMapper on CreateAssistantResponse {
+  AssistantCustom toDomain() {
+    return AssistantCustom(
+      updatedAt: updatedAt,
+      createdAt: createdAt,
+      createdBy: createdBy,
+      updatedBy: updatedBy,
+      id: id,
+      description: description,
+      instructions: instructions,
+      assistantName: assistantName,
+      openAiAssistantId: openAiAssistantId,
+    );
+  }
+}
+
+extension UpdateAssistantResponseMapper on UpdateAssistantResponse {
+  AssistantCustom toDomain() {
+    return AssistantCustom(
+      updatedAt: updatedAt,
+      createdAt: createdAt,
+      createdBy: createdBy,
+      updatedBy: updatedBy,
+      id: id,
+      description: description,
+      instructions: instructions,
+      assistantName: assistantName,
+      openAiAssistantId: openAiAssistantId,
+      openAiThreadIdPlay: openAiThreadIdPlay,
+    );
+  }
+}
+
+extension GetAssistantResponseMapper on GetAssistantResponse {
+  AssistantCustom toDomain() {
+    return AssistantCustom(
+      updatedAt: updatedAt,
+      createdAt: createdAt,
+      createdBy: createdBy,
+      updatedBy: updatedBy,
+      id: id,
+      description: description,
+      instructions: instructions,
+      assistantName: assistantName,
+      openAiAssistantId: openAiAssistantId,
+      openAiThreadIdPlay: openAiThreadIdPlay,
+      openAiVectorStoreId: openAiVectorStoreId,
+      isDefault: isDefault,
+      isFavorite: isFavorite,
+      userId: userId,
+      deletedAt: deletedAt,
+    );
+  }
+}
+
+extension AssistantDataMapper on AssistantData {
+  AssistantCustom toDomain() {
+    return AssistantCustom(
+      updatedAt: updatedAt,
+      createdAt: createdAt,
+      createdBy: createdBy,
+      updatedBy: updatedBy,
+      id: id,
+      description: description,
+      instructions: instructions,
+      assistantName: assistantName,
+      openAiAssistantId: openAiAssistantId,
+      openAiThreadIdPlay: openAiThreadIdPlay,
+      openAiVectorStoreId: openAiVectorStoreId,
+      isDefault: isDefault,
+      isFavorite: isFavorite,
+      userId: userId,
+      deletedAt: deletedAt,
+    );
+  }
+}
+extension GetAssistantsResponseMapper on GetAssistantsResponse {
+  Assistants toDomain() {
+    return Assistants(
+      data: List<AssistantCustom>.from(data.map((e) => e.toDomain())), 
+      meta: meta,
+    );
+  }
+}
+
+extension AskAssistantsResponseMapper on String {
+  MessageAssistant toDomain() {
+    return MessageAssistant(message: this, isUser: false);
+  }
+}
+
+extension MessageAssistantResponseMapper on MessageAssistantResponse {
+  MessageAssistant toDomain() {
+    return MessageAssistant(message: content.first.text.value, isUser: role == 'user' ? true : false);
+  }
+}
+
+extension RetrieveMessageThreadResponseMapper on RetrieveMessageThreadResponse {
+  MessageAssistants toDomain() {
+    return MessageAssistants(data: List<MessageAssistant>.from(messages.map((e) => e.toDomain())));
+  }
+}
+
+extension UpdateAssistantNewThreadPlayGroundResponseMapper on UpdateAssistantNewThreadPlayGroundResponse {
+  AssistantCustom toDomain() {
+    return AssistantCustom(
+      updatedAt: updatedAt,
+      createdAt: createdAt,
+      createdBy: createdBy,
+      updatedBy: updatedBy,
+      id: id,
+      description: description,
+      instructions: instructions,
+      assistantName: assistantName,
+      openAiAssistantId: openAiAssistantId,
+      openAiThreadIdPlay: openAiThreadIdPlay,
+      openAiVectorStoreId: openAiVectorStoreId,
+      isDefault: isDefault,
+      isFavorite: isFavorite,
+      userId: userId,
+      deletedAt: deletedAt,
+    );
+  }
+}
+
+extension CreateThreadResponseMappper on CreateThreadResponse {
+  Thread toDomain() {
+    return Thread(
+      threadName: threadName,
+      assistantId: assistantId,
+      createdAt: createdAt,
+      createdBy: createdBy,
+      id: id,
+      openAiThreadId: openAiThreadId,
+      updatedAt: updatedAt,
+      updatedBy: updatedBy,
+      deletedAt: deletedAt,
+    );
+  }
+}
+
+extension GetConfigurationsResponseMapper on GetConfigurationsResponse {
+  List<Configuration> toDomain() {
+    return configurations;
+  }
+}
+
+
 

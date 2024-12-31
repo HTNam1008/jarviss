@@ -19,7 +19,7 @@ class DioFactory {
 
     Map<String, String> headers = {
       Constant.CONTENT_TYPE: Constant.APPLICATION_JSON,
-      Constant.ACCEPT: Constant.APPLICATION_JSON,
+      Constant.ACCEPT: '*/*',
       Constant.DEFAULT_LANGUAGE: language,
       // AUTHORIZATION will be added by the AuthInterceptor
     };

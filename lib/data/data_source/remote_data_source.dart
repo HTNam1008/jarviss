@@ -1,15 +1,48 @@
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:dio/dio.dart';
+import 'package:dio/src/multipart_file.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:jarvis/data/network/app_api.dart';
+import 'package:jarvis/data/network/app_kb_api.dart';
+import 'package:jarvis/data/request/ai_bot/ask_assistant_request.dart';
+import 'package:jarvis/data/request/ai_bot/create_assistant_request.dart';
+import 'package:jarvis/data/request/ai_bot/create_thread_request.dart';
+import 'package:jarvis/data/request/ai_bot/delete_assistant_request.dart';
+import 'package:jarvis/data/request/ai_bot/get_assistant_request.dart';
+import 'package:jarvis/data/request/ai_bot/get_assistants_request.dart';
+import 'package:jarvis/data/request/ai_bot/retrieve_message_thread_request.dart';
+import 'package:jarvis/data/request/ai_bot/update_assistant_new_thread_playground_request.dart';
+import 'package:jarvis/data/request/ai_bot/update_assistant_request.dart';
 import 'package:jarvis/data/request/ai_chat/conversation/conversation_history_request.dart';
 import 'package:jarvis/data/request/ai_chat/conversation/conversations_request.dart';
 import 'package:jarvis/data/request/ai_chat/send_message/send_message_request.dart';
 import 'package:jarvis/data/request/authentication/request.dart';
+import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dart';
+import 'package:jarvis/data/request/bot_integration/disconnect_bot_integration_request.dart';
+import 'package:jarvis/data/request/bot_integration/get_configurations_request.dart';
+import 'package:jarvis/data/request/bot_integration/publish_messenger_bot_request.dart';
+import 'package:jarvis/data/request/bot_integration/publish_slack_bot_request.dart';
+import 'package:jarvis/data/request/bot_integration/publish_telegram_bot_request.dart';
+import 'package:jarvis/data/request/bot_integration/verify_messenger_bot_integration_request.dart';
+import 'package:jarvis/data/request/bot_integration/verify_slack_bot_integration_request.dart';
+import 'package:jarvis/data/request/bot_integration/verify_telegram_bot_integration_request.dart';
+import 'package:jarvis/data/responses/ai_bot/create_assistant_response.dart';
+import 'package:jarvis/data/responses/ai_bot/create_thread_response.dart';
+import 'package:jarvis/data/responses/ai_bot/get_assistant_response.dart';
+import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
+import 'package:jarvis/data/responses/ai_bot/retrieve_message_thread_response.dart';
+import 'package:jarvis/data/responses/ai_bot/update_assistant_new_thread_playground_response.dart';
+import 'package:jarvis/data/responses/ai_bot/update_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_chat/get_conversation_history_response.dart';
 import 'package:jarvis/data/responses/ai_chat/get_conversations_response.dart';
 import 'package:jarvis/data/responses/ai_chat/send_message_response.dart';
+import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
+import 'package:jarvis/data/responses/bot_integration/get_configurations_response.dart';
 import 'package:jarvis/data/responses/responses.dart';
 import 'package:jarvis/data/responses/token/token_usage_response.dart';
+import '../../../app/constant.dart';
 
 
 abstract class RemoteDataSource {
@@ -21,17 +54,65 @@ abstract class RemoteDataSource {
   Future<TokenUsageResponse> getTokenUsage();
   Future<ConversationsResponse> getConversations(ConversationsRequest conversationsRequest);
   Future<ConversationHistoryResponse> getConversationHistory(ConversationHistoryRequest conversationHistoryRequest);
-  Future<GetPromptsResponse> getPrompts(String? category, bool isPublic,  {bool? isFavorite, String? query, int? limit,});
+  Future<GetPromptsResponse> getPrompts(
+    String? category,
+    bool isPublic, {
+    bool? isFavorite,
+    String? query,
+    int? limit,
+  });
   Future<void> addToFavorites(String promptId);
   Future<PromptResponse> createPrompt(CreatePromptRequest request);
   Future<void> updatePrompt(String promptId, UpdatePromptRequest request);
   Future<void> deletePrompt(String promptId);
+  Future<KnowledgeAuthResponse> signInKnowledgeBase(KnowledgeAuthRequest signInRequest);
+  Future<GetAssistantsResponse> getAssistants(GetAssistantsRequest getAssistantsRequest);
+  Future<GetAssistantResponse> getAssistant(GetAssistantRequest getAssistantRequest);
+  Future<void> deleteAssistant(DeleteAssistantRequest deleteAssistantRequest);
+  Future<KnowledgeResponse> createKnowledge(CreateKnowledgeRequest request);
+  Future<KnowledgeResponse> updateKnowledge(String id, CreateKnowledgeRequest request);
+  Future<GetKnowledgeResponse> getKnowledge({
+    int? limit,
+    int? offset,
+    EnumOrder? order,
+    String? orderField,
+    String? q,
+  });
+  Future<GetUnitsResponse> getUnits({
+    required String id,
+    int? limit,
+    int? offset,
+    EnumOrder? order,
+    String? orderField,
+    String? q,
+  });
+  Future<void> deleteKnowledge(String id);
+  Future<UnitResponse> uploadLocalFile(String id, File file);
+  Future<UnitResponse> uploadWebFile(String id, UploadWebFileRequest request);
+  Future<UnitResponse> uploadSlackFile(String id, UploadSlackFileRequest request);
+  Future<UnitResponse> uploadConfluenceFile(String id, UploadConfluenceFileRequest request);
+  Future<UpdateAssistantResponse> updateAssistant(UpdateAssistantRequest updateAssistantRequest);
+  Future<UpdateAssistantNewThreadPlayGroundResponse> updateAssistantNewThreadPlayGround(
+      UpdateAssistantNewThreadPlayGroundRequest updateAssistantNewThreadPlayGroundRequest);
+  Future<CreateAssistantResponse> createAssistant(CreateAssistantRequest createAssistantRequest);
+  Future<String> askAssistant(AskAssistantRequest createAssistantRequest);
+  Future<CreateThreadResponse> createThread(CreateThreadRequest createThreadRequest);
+  Future<RetrieveMessageThreadResponse> retrieveMessageThread(RetrieveMessageThreadRequest retrieveMessageThreadRequest);
+  Future<GetConfigurationsResponse> getConfigurations(GetConfigurationsRequest getConfigurationsRequest);
+  Future<void> verifyBotSlackIntegration(VerifySlackBotIntegrationRequest verifySlackBotIntegrationRequest);
+  Future<void> verifyBotTelegramIntegration(VerifyTelegramBotIntegrationRequest verifyTelegramBotIntegrationRequest);
+  Future<void> verifyBotMessengerIntegration(VerifyMessengerBotIntegrationRequest verifyMessengerBotIntegrationRequest);
+  Future<void> publishBotTelegramIntegration(PublishTelegramBotRequest publishTelegramBotRequest);
+  Future<void> publishBotMessengerIntegration(PublishMessengerBotRequest publishMessengerBotRequest);
+  Future<void> publishBotSlackIntegration(PublishSlackBotRequest publishSlackBotRequest);
+  Future<void> disconnectBotIntegration(DisconnectBotIntegrationRequest disconnectBotIntegrationRequest);
 }
 
 class RemoteDataSourceImplementer implements RemoteDataSource {
   final AppServiceClient _appServiceClient;
+  final AppKbServiceClient _appKbServiceClient;
 
-  RemoteDataSourceImplementer(this._appServiceClient);
+  RemoteDataSourceImplementer(this._appServiceClient, this._appKbServiceClient);
 
   @override
   Future<SignInResponse> signIn(SignInRequest signInRequest) async {
@@ -62,20 +143,27 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   Future<TokenUsageResponse> getTokenUsage() async {
     return await _appServiceClient.getTokenUsage();
   }
-  
+
   @override
   Future<ConversationsResponse> getConversations(ConversationsRequest conversationsRequest) async {
     return await _appServiceClient.getConversations(conversationsRequest.assistandId, conversationsRequest.assistantModel, conversationsRequest.cursor);
   }
-  
+
   @override
-  Future<ConversationHistoryResponse> getConversationHistory(ConversationHistoryRequest conversationHistoryRequest) async{
-   return await _appServiceClient.getConversationHistory(conversationHistoryRequest.conversationId, conversationHistoryRequest.assistandId, conversationHistoryRequest.assistantModel, conversationHistoryRequest.cursor);
+  Future<ConversationHistoryResponse> getConversationHistory(ConversationHistoryRequest conversationHistoryRequest) async {
+    return await _appServiceClient.getConversationHistory(conversationHistoryRequest.conversationId, conversationHistoryRequest.assistandId,
+        conversationHistoryRequest.assistantModel, conversationHistoryRequest.cursor);
   }
 
   @override
-  Future<GetPromptsResponse> getPrompts(String? category, bool isPublic,  {bool? isFavorite, String? query, int? limit}) async {
-    return await _appServiceClient.getPrompts(category, isPublic, isFavorite, query, limit,);
+  Future<GetPromptsResponse> getPrompts(String? category, bool isPublic, {bool? isFavorite, String? query, int? limit}) async {
+    return await _appServiceClient.getPrompts(
+      category,
+      isPublic,
+      isFavorite,
+      query,
+      limit,
+    );
   }
 
   @override
@@ -83,6 +171,7 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
     return await _appServiceClient.addPromptToFavorite(promptId);
   }
 
+  @override
   Future<PromptResponse> createPrompt(CreatePromptRequest request) async {
     return await _appServiceClient.createPrompt(request);
   }
@@ -95,5 +184,220 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   @override
   Future<void> deletePrompt(String promptId) async {
     return await _appServiceClient.deletePrompt(promptId);
+  }
+
+  @override
+  Future<KnowledgeAuthResponse> signInKnowledgeBase(KnowledgeAuthRequest signInRequest) async {
+    return await _appKbServiceClient.signInKnowledgeBase(signInRequest);
+  }
+
+  @override
+  Future<void> deleteAssistant(DeleteAssistantRequest deleteAssistantRequest) async {
+    return await _appKbServiceClient.deleteAssistant(deleteAssistantRequest.assistantId);
+  }
+
+  @override
+  Future<GetAssistantResponse> getAssistant(GetAssistantRequest getAssistantRequest) async {
+    // const assistantId = "b0c0c146-2bab-49eb-80e5-69ece1e17775";
+    return await _appKbServiceClient.getAssistant(getAssistantRequest.assistantId);
+    // .getAssistant(assistantId);
+  }
+
+  @override
+  Future<UpdateAssistantResponse> updateAssistant(UpdateAssistantRequest updateAssistantRequest) async {
+    return await _appKbServiceClient.updateAssistant(updateAssistantRequest.assistantId, updateAssistantRequest);
+  }
+
+  @override
+  Future<GetAssistantsResponse> getAssistants(GetAssistantsRequest getAssistantsRequest) async {
+    return await _appKbServiceClient.getAssistants(
+        isFavorite: getAssistantsRequest.isFavorite,
+        isPublished: getAssistantsRequest.isPublished,
+        limit: getAssistantsRequest.limit,
+        offset: getAssistantsRequest.offset,
+        order: getAssistantsRequest.order,
+        orderField: getAssistantsRequest.orderField,
+        q: getAssistantsRequest.q);
+  }
+
+  @override
+  Future<KnowledgeResponse> createKnowledge(CreateKnowledgeRequest request) =>
+      _appKbServiceClient.createKnowledge(request);
+
+  @override
+  Future<KnowledgeResponse> updateKnowledge(String id, CreateKnowledgeRequest request) =>
+      _appKbServiceClient.updateKnowledge(id, request);
+
+  @override
+  Future<GetKnowledgeResponse> getKnowledge({int? limit, int? offset, EnumOrder? order,String? orderField,String? q,}) async {
+    log('Fetched knowledge datasource');
+    try {
+      final response = await _appKbServiceClient.getKnowledge(
+        limit: limit,
+        offset: offset,
+        order: order,
+        orderField: orderField,
+        q: q,);
+      log('API call successful: $response');
+      return response;
+    } catch (e, stackTrace) {
+      log('Error in _remoteDataSource.getKnowledge: $e', stackTrace: stackTrace);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<GetUnitsResponse> getUnits({required String id, int? limit, int? offset, EnumOrder? order,String? orderField,String? q,}) async {
+    log('Fetched knowledge datasource');
+    try {
+      final response = await _appKbServiceClient.getUnits(
+        knowledgeId: id,
+        limit: limit,
+        offset: offset,
+        order: order,
+        orderField: orderField,
+        q: q,);
+      log('API call successful: $response');
+      return response;
+    } catch (e, stackTrace) {
+      log('Error in _remoteDataSource.getKnowledge: $e', stackTrace: stackTrace);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> deleteKnowledge(String id) =>
+      _appKbServiceClient.deleteKnowledge(id);
+
+  @override
+  Future<UnitResponse> uploadLocalFile(String id, File file) async {
+    String? mimeType = FileUploadHelper.getMimeType(file.path);
+    if (mimeType == null) {
+      throw Exception('Unsupported file format');
+    }
+    // Convert the file to MultipartFile
+    MultipartFile multipartFile = await MultipartFile.fromFile(
+      file.path,
+      filename: file.path.split('/').last,
+      contentType: MediaType.parse(mimeType), // Adjust for your file type
+    );
+
+    // Create FormData with the MultipartFile
+    FormData formData = FormData.fromMap({
+      'file': multipartFile,
+    });
+
+    // Debugging: Log FormData content
+    print('Uploading file: ${file.path}');
+    print('FormData: ${formData.files.map((f) => f.value.filename).toList()}');
+
+    // Call the API
+    return await _appKbServiceClient.uploadLocalFile(id, formData);
+  }
+
+  @override
+  Future<UnitResponse> uploadWebFile(String id, UploadWebFileRequest request) =>
+      _appKbServiceClient.uploadWebFile(id, request);
+
+  @override
+  Future<UnitResponse> uploadSlackFile(String id, UploadSlackFileRequest request) =>
+      _appKbServiceClient.uploadSlackFile(id, request);
+
+  @override
+  Future<UnitResponse> uploadConfluenceFile(String id, UploadConfluenceFileRequest request) =>
+      _appKbServiceClient.uploadConfluenceFile(id, request);
+
+  Future<CreateAssistantResponse> createAssistant(CreateAssistantRequest createAssistantRequest) async {
+    return await _appKbServiceClient.createAssistant(createAssistantRequest);
+  }
+
+  @override
+  Future<String> askAssistant(AskAssistantRequest askAssistantRequest) async {
+    return await _appKbServiceClient.askAssistant(askAssistantRequest.assistandId, askAssistantRequest);
+  }
+
+  @override
+  Future<RetrieveMessageThreadResponse> retrieveMessageThread(RetrieveMessageThreadRequest retrieveMessageThreadRequest) async {
+    return await _appKbServiceClient.retrieveMessageThread(retrieveMessageThreadRequest.openAiThreadId);
+  }
+
+  @override
+  Future<UpdateAssistantNewThreadPlayGroundResponse> updateAssistantNewThreadPlayGround(
+      UpdateAssistantNewThreadPlayGroundRequest updateAssistantNewThreadPlayGroundRequest) async {
+    return await _appKbServiceClient.updateAssistantNewThreadPlayGround(updateAssistantNewThreadPlayGroundRequest);
+  }
+
+  @override
+  Future<CreateThreadResponse> createThread(CreateThreadRequest createThreadRequest) async {
+    return await _appKbServiceClient.createThread(createThreadRequest);
+  }
+
+  @override
+  Future<GetConfigurationsResponse> getConfigurations(GetConfigurationsRequest getConfigurationsRequest) async {
+    return await _appKbServiceClient.getConfigurations(getConfigurationsRequest.assistantId);
+  }
+
+  @override
+  Future<void> verifyBotMessengerIntegration(VerifyMessengerBotIntegrationRequest verifyMessengerBotIntegrationRequest) async {
+    return await _appKbServiceClient.verifyMessengerBotConfigure(verifyMessengerBotIntegrationRequest);
+  }
+
+  @override
+  Future<void> verifyBotSlackIntegration(VerifySlackBotIntegrationRequest verifySlackBotIntegrationRequest) async {
+    return await _appKbServiceClient.verifySlackBotConfigure(verifySlackBotIntegrationRequest);
+  }
+
+  @override
+  Future<void> verifyBotTelegramIntegration(VerifyTelegramBotIntegrationRequest verifyTelegramBotIntegrationRequest) async {
+    return await _appKbServiceClient.verifyTelegramBotConfigure(verifyTelegramBotIntegrationRequest);
+  }
+  
+  @override
+  Future<void> publishBotMessengerIntegration(PublishMessengerBotRequest publishMessengerBotRequest) async {
+    return await _appKbServiceClient.publishMessengerBot(publishMessengerBotRequest.assistandId, publishMessengerBotRequest);
+
+  }
+  
+  @override
+  Future<void> publishBotSlackIntegration(PublishSlackBotRequest publishSlackBotRequest) async {
+    return await _appKbServiceClient.publishSlackBot(publishSlackBotRequest.assistandId, publishSlackBotRequest);
+
+  }
+  
+  @override
+  Future<void> publishBotTelegramIntegration(PublishTelegramBotRequest publishTelegramBotRequest) async {
+    return await _appKbServiceClient.publishTelegramBot(publishTelegramBotRequest.assistandId, publishTelegramBotRequest);
+
+  }
+  
+  @override
+  Future<void> disconnectBotIntegration(DisconnectBotIntegrationRequest disconnectBotIntegrationRequest) async {
+    return await _appKbServiceClient.disconnectBotIntegration(disconnectBotIntegrationRequest.assistantId, disconnectBotIntegrationRequest.type);
+  }
+}
+
+class FileUploadHelper {
+  // Map of file extensions to MIME types
+  static const Map<String, String> mimeTypes = {
+    '.c': 'text/x-c',
+    '.cpp': 'text/x-c++',
+    '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    '.html': 'text/html',
+    '.java': 'text/x-java',
+    '.json': 'application/json',
+    '.md': 'text/markdown',
+    '.pdf': 'application/pdf',
+    '.php': 'text/x-php',
+    '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    '.py': 'text/x-python',
+    '.rb': 'text/x-ruby',
+    '.tex': 'text/x-tex',
+    '.txt': 'text/plain',
+  };
+
+  // Method to determine MIME type based on file extension
+  static String? getMimeType(String filePath) {
+    final extension = filePath.split('.').last.toLowerCase();
+    return mimeTypes['.$extension'];
   }
 }

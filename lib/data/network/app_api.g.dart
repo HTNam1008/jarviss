@@ -14,7 +14,7 @@ class _AppServiceClient implements AppServiceClient {
     this.baseUrl,
     this.errorLogger,
   }) {
-    baseUrl ??= 'https://api.dev.jarvis.cx';
+    baseUrl ??= 'https://api.jarvis.cx';
   }
 
   final Dio _dio;

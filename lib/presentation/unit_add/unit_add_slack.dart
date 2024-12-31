@@ -1,86 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
+import 'package:jarvis/presentation/unit_add/unit_view_model.dart';
+
+import '../common/dialog_util.dart';
 
 class UnitAddSlack extends StatefulWidget {
+  final String knowledgeId;
+
+  UnitAddSlack({super.key, required this.knowledgeId});
+
   @override
   State<UnitAddSlack> createState() => _UnitAddSlackState();
 }
 
 class _UnitAddSlackState extends State<UnitAddSlack> {
-  final TextEditingController _urlController = TextEditingController();
+  final TextEditingController _workspaceController = TextEditingController();
+  final TextEditingController _tokenController = TextEditingController();
   final TextEditingController _labelController = TextEditingController();
   String? _urlErrorText;
   String? _labelErrorText;
+  final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
   @override
   void dispose() {
-    _urlController.dispose();
+    _workspaceController.dispose();
+    _tokenController.dispose();
     _labelController.dispose();
     super.dispose();
   }
 
-  bool _isValidUrl(String url) {
-    Uri? uri = Uri.tryParse(url);
-    return uri != null &&
-        (uri.scheme == 'http' || uri.scheme == 'https') &&
-        uri.host.isNotEmpty;
-  }
+  Future<void> _uploadSlackFile() async {
+    if (!_formKey.currentState!.validate()) return;
 
-  Future<void> _handleConnect() async {
-    final url = _urlController.text.trim();
-    final label = _labelController.text.trim();
-    bool hasError = false;
+    setState(() => _isLoading = true);
 
-    if (url.isEmpty) {
-      setState(() {
-        _urlErrorText = 'Please enter a URL';
-      });
-      hasError = true;
-    } else if (!_isValidUrl(url)) {
-      setState(() {
-        _urlErrorText = 'Please enter a valid URL';
-      });
-      hasError = true;
-    }
+    try {;
+    await GetIt.instance<UnitViewModel>().uploadSlackFile(
+      widget.knowledgeId,
+      _labelController.text,
+      _workspaceController.text,
+      _tokenController.text,
+    );
 
-    if (label.isEmpty) {
-      setState(() {
-        _labelErrorText = 'Please enter a label';
-      });
-      hasError = true;
-    }
-
-    if (hasError) return;
-
-    setState(() {
-      _isLoading = true;
-      _urlErrorText = null;
-      _labelErrorText = null;
-    });
-
-    try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 1));
-      if (mounted) {
-        Navigator.pop(context, {
-          'url': url,
-          'label': label,
-        });
-      }
+    Navigator.pop(context);
+    showCustomDialog(
+      context: context,
+      type: DialogType.success,
+      title: 'Success',
+      message: 'Upload successfully',
+    );
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          _urlErrorText = 'Failed to connect to website';
-        });
-      }
+      showCustomDialog(
+        context: context,
+        type: DialogType.error,
+        title: 'Error',
+        message: 'Failed to upload file: $e',
+      );
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      setState(() => _isLoading = false);
     }
   }
 
@@ -93,11 +73,15 @@ class _UnitAddSlackState extends State<UnitAddSlack> {
       ),
       child: Container(
         padding: const EdgeInsets.all(AppPadding.p20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Row(
+        width: 900,
+        child: Form(
+         key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+             const Row(
               children: [
                 Expanded(
                   child: Text(
@@ -175,9 +159,9 @@ class _UnitAddSlackState extends State<UnitAddSlack> {
                         ),
                         const SizedBox(height: AppSize.s12),
                         TextField(
-                          controller: _urlController,
+                          controller: _workspaceController,
                           decoration: InputDecoration(
-                            hintText: 'Enter website URL',
+                            hintText: 'Enter slack workspace',
                             hintStyle: TextStyle(
                               color: Colors.grey[400],
                             ),
@@ -206,7 +190,42 @@ class _UnitAddSlackState extends State<UnitAddSlack> {
                           },
                           keyboardType: TextInputType.url,
                           textInputAction: TextInputAction.done,
-                          onSubmitted: (_) => _handleConnect(),
+                          onSubmitted: (_) => _uploadSlackFile,
+                        ),
+                        const SizedBox(height: AppSize.s12),
+                        TextField(
+                          controller: _tokenController,
+                          decoration: InputDecoration(
+                            hintText: 'Enter slack bot token',
+                            hintStyle: TextStyle(
+                              color: Colors.grey[400],
+                            ),
+                            errorText: _urlErrorText,
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(AppSize.s12),
+                              borderSide: BorderSide.none,
+                            ),
+                            prefixIcon: Icon(
+                              Icons.link,
+                              color: Colors.grey[400],
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: AppPadding.p16,
+                              vertical: AppPadding.p12,
+                            ),
+                          ),
+                          onChanged: (value) {
+                            if (_urlErrorText != null) {
+                              setState(() {
+                                _urlErrorText = null;
+                              });
+                            }
+                          },
+                          keyboardType: TextInputType.url,
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (_) => _uploadSlackFile,
                         ),
                       ],
                     ),
@@ -217,7 +236,7 @@ class _UnitAddSlackState extends State<UnitAddSlack> {
             ),
             const SizedBox(height: AppSize.s24),
             ElevatedButton(
-              onPressed: _isLoading ? null : _handleConnect,
+              onPressed: _isLoading ? null : _uploadSlackFile,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: AppPadding.p16),
                 backgroundColor: ColorManager.teal,
@@ -226,14 +245,11 @@ class _UnitAddSlackState extends State<UnitAddSlack> {
                 ),
                 disabledBackgroundColor: Colors.grey[300],
               ),
-              child: _isLoading
-                  ? SizedBox(
-                height: AppSize.s20,
-                width: AppSize.s20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
+              child:  _isLoading
+                  ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
               )
                   : const Text(
                 'Connect',
@@ -247,6 +263,8 @@ class _UnitAddSlackState extends State<UnitAddSlack> {
           ],
         ),
       ),
+      ),
+     ),
     );
   }
 }

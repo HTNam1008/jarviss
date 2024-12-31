@@ -12,11 +12,15 @@ class ChatInputBox extends StatefulWidget  {
   final TextEditingController controller;
   final VoidCallback onSend;
   final bool? isSending;
+  final bool showSuggestions;
+  final VoidCallback onAdd;
 
   ChatInputBox({
     required this.controller,
     required this.onSend, 
-    this.isSending,
+    this.isSending, 
+    required this.onAdd,
+    this.showSuggestions = true,
   });
 
   @override
@@ -26,7 +30,6 @@ class ChatInputBox extends StatefulWidget  {
 
 class _ChatInputBoxState extends State<ChatInputBox> {
   final FocusNode _focusNode = FocusNode();
-  bool _showSuggestions = false;
   final PromptViewModel _promptViewModel = GetIt.instance<PromptViewModel>();
   List<Prompt> _promptSuggestions = [];
   final LayerLink _layerLink = LayerLink();
@@ -37,8 +40,10 @@ class _ChatInputBoxState extends State<ChatInputBox> {
   @override
   void initState() {
     super.initState();
-    _focusNode.addListener(_onFocusChange);
-    widget.controller.addListener(_onTextChanged);
+    if (widget.showSuggestions) {
+      _focusNode.addListener(_onFocusChange);
+      widget.controller.addListener(_onTextChanged);
+    }
   }
 
   @override
@@ -296,10 +301,8 @@ class _ChatInputBoxState extends State<ChatInputBox> {
       child: Row(
         children: [
           IconButton(
-            icon: Icon(Icons.add_circle_outline),
-            onPressed: () {
-              // Logic khi nhấn nút thêm
-            },
+            icon: const Icon(Icons.add_circle_outline),
+            onPressed: widget.onAdd,
           ),
           Expanded(
             child: TextField(
@@ -309,7 +312,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
                 hintText: AppStrings.chatHintText,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppSize.s32),
-                  borderSide: BorderSide(color: Colors.transparent),
+                  borderSide: const BorderSide(color: Colors.transparent),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppSize.s32),
