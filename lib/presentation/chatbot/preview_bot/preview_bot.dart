@@ -241,7 +241,7 @@ class _PreviewBotViewState extends State<PreviewBotView> {
           const SizedBox(height: 30.0),
           const CircleAvatar(
             radius: 40.0,
-            backgroundImage: AssetImage('assets/images/avt.png'),
+            backgroundImage: AssetImage('assets/images/chatbot_avt.png'),
           ),
           const SizedBox(height: AppSize.s16),
           Text(
