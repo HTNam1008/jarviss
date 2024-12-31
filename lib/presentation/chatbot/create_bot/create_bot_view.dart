@@ -141,71 +141,6 @@ class _CreateBotViewState extends State<CreateBotView> {
     );
   }
 
-  /* Widget _buildKnowledgeField() {
-    return Padding(
-      padding: const EdgeInsets.all(AppPadding.p20),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(AppSize.s10),
-          border: Border.all(color: Colors.grey),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(AppPadding.p16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Knowledge',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            StreamBuilder<List<KnowledgeData>>(
-              stream: _viewModel.outputKnowledge,
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                final knowledgeList = snapshot.data!;
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: knowledgeList.length,
-                  itemBuilder: (context, index) {
-                    final knowledge = knowledgeList[index];
-                    return ListTile(
-                      title: Text(knowledge.knowledgeName),
-                      subtitle: Text(knowledge.description),
-                      trailing: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: ColorManager.teal,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        onPressed: () => _viewModel.toggleKnowledge(knowledge.id),
-                        child: const Text('Add'),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  } */
-
   Widget _buildKnowledgeField() {
     return StreamBuilder<Set<String>>(
         stream: _viewModel.outputSelectedIds,
@@ -233,17 +168,6 @@ class _CreateBotViewState extends State<CreateBotView> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        /* Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: ColorManager.teal),
-                            borderRadius: BorderRadius.circular(AppSize.s8),
-                          ),
-                          child: Text('${_viewModel.selectedKnowledgeCount} units'),
-                        ), */
                       ],
                     ),
                   ),

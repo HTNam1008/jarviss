@@ -37,6 +37,7 @@ class ConstantAPI {
   static const importKnowledgeToAssistant = '/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}/knowledges/{${ConstantPath.knowledgeId}}';
   static const removeKnowledgeFromAssistant = '/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}/knowledges/{${ConstantPath.knowledgeId}}';
   static const getImportedKnowledge = '/kb-core/v1/ai-assistant/{${ConstantPath.assistantId}}/knowledges';
+  static const getKnowledgeRelation = '/kb-core/v1/knowledge/assistant-relationship/{${ConstantPath.assistantId}}';
 
   // bot integration
   static const publishMessengerBot = '/kb-core/v1/bot-integration/messenger/publish/{${ConstantPath.assistantId}}';

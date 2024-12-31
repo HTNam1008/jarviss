@@ -25,6 +25,7 @@ import 'package:jarvis/domain/usecase/get_configurations_usecase.dart';
 import 'package:jarvis/domain/usecase/get_conversation_history_usecase.dart';
 import 'package:jarvis/domain/usecase/get_conversations_usecase.dart';
 import 'package:jarvis/domain/usecase/create_prompt_usecase.dart';
+import 'package:jarvis/domain/usecase/get_knowledge_relation_usecase.dart';
 import 'package:jarvis/domain/usecase/get_knowledge_usecase.dart';
 import 'package:jarvis/domain/usecase/get_units_usecase.dart';
 import 'package:jarvis/domain/usecase/import_knowledge_usecase.dart';
@@ -294,11 +295,18 @@ Future<void> setupLocator() async {
   getIt.registerFactory<UnitViewModel>(
         () => UnitViewModel(getIt<UploadLocalFileUsecase>(),getIt<UploadWebFileUsecase>(), getIt<UploadSlackFileUsecase>(),getIt<UploadConfluenceFileUsecase>(),getIt<GetUnitsUsecase>()),
   );
+
+  getIt.registerFactory<GetKnowledgeRelationUsecase>(
+    () => GetKnowledgeRelationUsecase(getIt<Repository>()),
+  );
   
   getIt.registerFactory<EditBotViewModel>(
     () => EditBotViewModel(
       getIt<UpdateAssistantUseCase>(), 
-      getIt<GetAssistantUseCase>()
+      getIt<GetAssistantUseCase>(),
+      getIt<GetKnowledgeRelationUsecase>(),
+      getIt<ImportKnowledgeUsecase>(),
+      getIt<RemoveKnowledgeUsecase>(),
       ),
   );
 

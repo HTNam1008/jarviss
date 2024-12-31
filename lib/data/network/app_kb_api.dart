@@ -20,6 +20,7 @@ import 'package:jarvis/data/responses/ai_bot/create_thread_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_imported_knowledge_response.dart';
+import 'package:jarvis/data/responses/ai_bot/get_knowledge_relation_response.dart';
 import 'package:jarvis/data/responses/ai_bot/retrieve_message_thread_response.dart';
 import 'package:jarvis/data/responses/ai_bot/update_assistant_new_thread_playground_response.dart';
 import 'package:jarvis/data/responses/ai_bot/update_assistant_response.dart';
@@ -201,5 +202,12 @@ abstract class AppKbServiceClient {
   Future<void> publishSlackBot(
     @Path(ConstantPath.assistantId) String assistantId,
     @Body() PublishSlackBotRequest  publishSlackBotRequest,
+  );
+
+  @GET(ConstantAPI.getKnowledgeRelation)
+  Future<GetKnowledgeRelationResponse> getKnowledgeRelation(
+    @Path(ConstantPath.assistantId) String assistantId,
+    @Query('limit') double? limit,
+    @Query('offset') double? offset,
   );
 }
