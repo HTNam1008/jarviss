@@ -4,6 +4,7 @@ import 'package:jarvis/app/di/di.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/publish_bot/configure/configure_viewmodel.dart';
 import 'package:jarvis/presentation/publish_bot/publish_bot_viewmodel.dart';
+import 'package:flutter/services.dart';
 // import 'package:url_launcher/url_launcher.dart';
 
 class ConfigureView extends StatefulWidget {
@@ -128,6 +129,21 @@ class _ConfigureViewState extends State<ConfigureView> {
     }
   }
 
+  /*void _launchHelpUrl() async {
+    final url = 'https://jarvis.cx/help/knowledge-base/publish-bot/slack';
+    final uri = Uri.parse(url);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not open the URL')),
+        );
+      }
+    }
+  }*/
+
   Widget _buildConfigurationFields() {
     return Column(
       children: [
@@ -165,15 +181,40 @@ class _ConfigureViewState extends State<ConfigureView> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4.0),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(_viewModel.getStepTitle(1)),
+          GestureDetector(
+            // onTap: _launchHelpUrl,
+            onTap: () => {},
+            child: Text(
+              'How to obtain Slack configurations?',
+              style: const TextStyle(
+                color: Colors.blue,
+                fontSize: 16,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(_viewModel.getStepTitle(1),
+            style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+              color: Colors.teal,
+            ),
+          ),
           const SizedBox(height: 8),
           Text('Copy the following content to your ${widget.platform.name} app configuration page.'),
           const SizedBox(height: 16),
           _buildUrlSection('OAuth2 Redirect URLs', _viewModel.getEventUrl('slack_oauth')),
           _buildUrlSection('Event Request URL', _viewModel.getEventUrl('slack_event')),
           _buildUrlSection('Slash Request URL', _viewModel.getEventUrl('slack_slash')),
-          Text(_viewModel.getStepTitle(2)),
+          Text(_viewModel.getStepTitle(2),
+            style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+              color: Colors.teal,
+            ),
+          ),
         ],
       ),
     );
@@ -184,21 +225,37 @@ class _ConfigureViewState extends State<ConfigureView> {
     String url,
   ) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           title,
           style: const TextStyle(
-            fontSize: 20,
+            fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(height: 8),
-        Text(
-          url,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.normal,
-          ),
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                url,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.copy, color: Colors.teal),
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: url));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('URL đã được sao chép!')),
+                );
+              },
+            ),
+          ],
         ),
         const SizedBox(height: 16),
       ],
@@ -207,27 +264,47 @@ class _ConfigureViewState extends State<ConfigureView> {
 
   Widget _buildStepConfigurationTelegram() {
     return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 4.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(_viewModel.getStepTitle(1)),
-            Text(_viewModel.getStepTitle(2)),
+            Text('Telegram information',
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.teal,
+              ),
+            ),
           ],
-        ));
+        )
+    );
   }
 
   Widget _buildStepConfigurationMessenger() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4.0),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(_viewModel.getStepTitle(1)),
+          Text(_viewModel.getStepTitle(1),
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.teal,
+            ),
+          ),
           const SizedBox(height: 8),
           Text('Copy the following content to your ${widget.platform.name} app configuration page.'),
           const SizedBox(height: 16),
           _buildUrlSection('Callback URL', _viewModel.getEventUrl('messenger_callback')),
           _buildUrlSection('Verify Token', 'knowledge'),
-          Text(_viewModel.getStepTitle(2)),
+          Text(_viewModel.getStepTitle(2),
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.teal,
+            ),
+          ),
         ],
       ),
     );
@@ -236,7 +313,7 @@ class _ConfigureViewState extends State<ConfigureView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.teal.shade50,
       appBar: CustomHeaderBar(
         centerWidget: Text(
           'Configure ${widget.platform.name} Bot',
@@ -269,7 +346,12 @@ class _ConfigureViewState extends State<ConfigureView> {
           children: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: const Text('Cancel',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             const SizedBox(width: 16),
             platform.isVerified
@@ -278,14 +360,26 @@ class _ConfigureViewState extends State<ConfigureView> {
                       backgroundColor: Colors.teal,
                     ),
                     onPressed: _handleDisconnect,
-                    child: const Text('Disconnect'),
+                    child: const Text('Disconnect',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                   )
                 : ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.teal,
                     ),
                     onPressed: _handleVerify,
-                    child: const Text('Save'),
+                    child: const Text('Save',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
           ],
         ),

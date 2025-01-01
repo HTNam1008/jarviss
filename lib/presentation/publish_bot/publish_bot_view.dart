@@ -34,7 +34,7 @@ class _PublishBotViewState extends State<PublishBotView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.teal.shade50,
       appBar: CustomHeaderBar(
         centerWidget: const Text(
           'Publish Bot',
@@ -109,7 +109,9 @@ class _PublishBotViewState extends State<PublishBotView> {
           minimumSize: const Size.fromHeight(50),
         ),
         onPressed: _onPublishPressed,
-        child: const Text('Publish Bot'),
+        child: const Text('Publish Bot',
+          style: TextStyle(color: Colors.white, fontSize: 14),
+        ),
       ),
     );
   }
@@ -117,6 +119,63 @@ class _PublishBotViewState extends State<PublishBotView> {
   void _onPublishPressed() async {
     final success = await _viewModel.publishBot();
     // TODO: show dialog success or error and show redirect url
+    if (success) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Publish Success!',
+              style: TextStyle(
+                color: Colors.teal,
+              ),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text('Redirect:'),
+                SizedBox(height: 8),
+                Text('- Slack: https://slack.com'),
+                SizedBox(height: 4),
+                Text('- Telegram: https://telegram.org'),
+                SizedBox(height: 4),
+                Text('- Messenger: https://messenger.com'),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Publish Failed!',
+              style: TextStyle(
+                color: Colors.red,
+              ),
+            ),
+            content: const Text('An error occurred while publishing the bot.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }
 
@@ -168,7 +227,16 @@ class PlatformListItem extends StatelessWidget {
         ),
         TextButton(
           onPressed: onConfigureTap,
-          child: const Text('Configure'),
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.teal,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+          child: const Text(
+            'Configure',
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       ],
     );
