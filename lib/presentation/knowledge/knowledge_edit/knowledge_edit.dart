@@ -11,6 +11,8 @@ import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 
+import '../../../data/responses/knowledge/get_knowledge_response.dart';
+
 class EditKnowledgeView extends StatefulWidget {
   final KnowledgeData knowledge;
 

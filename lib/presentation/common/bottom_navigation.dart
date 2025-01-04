@@ -31,6 +31,9 @@ class BottomNavigation extends StatelessWidget {
         BottomNavigationBarItem(
             icon: Icon(Icons.library_books, size: AppSize.s28),
             label: 'Knowledge'),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.email, size: AppSize.s28),
+            label: 'Email'),
       ],
       selectedItemColor: Colors.teal,
       unselectedItemColor: Colors.grey,

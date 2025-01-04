@@ -27,14 +27,26 @@ import 'package:jarvis/data/request/bot_integration/publish_telegram_bot_request
 import 'package:jarvis/data/request/bot_integration/verify_messenger_bot_integration_request.dart';
 import 'package:jarvis/data/request/bot_integration/verify_slack_bot_integration_request.dart';
 import 'package:jarvis/data/request/bot_integration/verify_telegram_bot_integration_request.dart';
+import 'package:jarvis/data/request/email/create_email_reply_request.dart';
+import 'package:jarvis/data/request/email/create_response_email_request.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_imported_knowledge_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_knowledge_relation_response.dart';
 import 'package:jarvis/data/responses/bot_integration/get_configurations_response.dart';
+import 'package:jarvis/data/responses/email/create_email_reply_response.dart';
+import 'package:jarvis/data/responses/email/create_response_email_response.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/data/request/authentication/request.dart';
 import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
 import '../../../app/constant.dart';
+import '../../data/request/knowledge/create_knowledge_request.dart';
+import '../../data/request/knowledge/upload_confluence_file_request.dart';
+import '../../data/request/knowledge/upload_slack_file_request.dart';
+import '../../data/request/knowledge/upload_web_file_request.dart';
+import '../../data/responses/knowledge/get_knowledge_response.dart';
+import '../../data/responses/knowledge/get_units_response.dart';
+import '../../data/responses/knowledge/knowledge_response.dart';
+import '../../data/responses/knowledge/unit_response.dart';
 
 
 abstract class Repository {
@@ -86,6 +98,8 @@ abstract class Repository {
   Future<Either<Failure, void>> publishBotSlackIntegration(PublishSlackBotRequest publishSlackBotRequest);
   Future<Either<Failure, void>> publishBotMessengerIntegration(PublishMessengerBotRequest publishMessengerBotRequest);
   Future<Either<Failure, void>> disconnectBotIntegration(DisconnectBotIntegrationRequest disconnectBotIntegrationRequest);
+  Future<Either<Failure, CreateEmailReplyResponse>> createEmailReply(CreateEmailReplyRequest emailReplyRequest);
+  Future<Either<Failure, CreateResponseEmailResponse>> createResponseEmail(CreaterResponseEmailRequest responseEmailRequest);
   Future<Either<Failure, void>> importKnowledgeAssistant(ImportKnowledgeRequest importKnowledgeRequest);
   Future<Either<Failure, void>> removeKnowledgeAssistant(RemoveKnowledgeRequest removeKnowledgeRequest);
   Future<Either<Failure, GetImportedKnowledgeResponse>> getImportedKnowledgeAssistant(GetImportedKnowledgeRequest getImportedKnowledgeRequest);

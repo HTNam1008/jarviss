@@ -7,6 +7,8 @@ import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 import 'package:jarvis/domain/usecase/base_usecase.dart';
 
+import '../../data/responses/knowledge/get_knowledge_response.dart';
+
 class GetKnowledgeUsecase implements BaseUseCase<GetKnowledgeUseCaseInput, GetKnowledgeResponse> {
   final Repository _repository;
 
