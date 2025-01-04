@@ -31,10 +31,14 @@ import 'package:jarvis/data/request/bot_integration/verify_slack_bot_integration
 import 'package:jarvis/data/request/bot_integration/verify_telegram_bot_integration_request.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:jarvis/data/responses/bot_integration/get_configurations_response.dart';
+import 'package:jarvis/data/responses/email/create_email_reply_response.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
 import '../../../app/constant.dart';
+import '../request/email/create_email_reply_request.dart';
+import '../request/email/create_response_email_request.dart';
+import '../responses/email/create_response_email_response.dart';
 
 
 class RepositoryImpl implements Repository {
@@ -538,6 +542,34 @@ class RepositoryImpl implements Repository {
       return Right(response);
     } catch (error) {
       return Left(ErrorHandler.handle(error).failure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, CreateEmailReplyResponse>> createEmailReply(CreateEmailReplyRequest request) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.createEmailReply(request);
+        return Right(response);
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, CreateResponseEmailResponse>> createResponseEmail(CreaterResponseEmailRequest request) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.createResponseEmail(request);
+        return Right(response);
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
     }
   }
 }

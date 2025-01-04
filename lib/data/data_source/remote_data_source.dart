@@ -43,6 +43,10 @@ import 'package:jarvis/data/responses/bot_integration/get_configurations_respons
 import 'package:jarvis/data/responses/responses.dart';
 import 'package:jarvis/data/responses/token/token_usage_response.dart';
 import '../../../app/constant.dart';
+import '../request/email/create_email_reply_request.dart';
+import '../request/email/create_response_email_request.dart';
+import '../responses/email/create_email_reply_response.dart';
+import '../responses/email/create_response_email_response.dart';
 
 
 abstract class RemoteDataSource {
@@ -106,6 +110,8 @@ abstract class RemoteDataSource {
   Future<void> publishBotMessengerIntegration(PublishMessengerBotRequest publishMessengerBotRequest);
   Future<void> publishBotSlackIntegration(PublishSlackBotRequest publishSlackBotRequest);
   Future<void> disconnectBotIntegration(DisconnectBotIntegrationRequest disconnectBotIntegrationRequest);
+  Future<CreateEmailReplyResponse> createEmailReply(CreateEmailReplyRequest CreateEmailReplyRequest);
+  Future<CreateResponseEmailResponse> createResponseEmail(CreaterResponseEmailRequest CreaterResponseEmailRequest);
 }
 
 class RemoteDataSourceImplementer implements RemoteDataSource {
@@ -184,6 +190,14 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   @override
   Future<void> deletePrompt(String promptId) async {
     return await _appServiceClient.deletePrompt(promptId);
+  }
+  @override
+  Future<CreateEmailReplyResponse> createEmailReply(CreateEmailReplyRequest request) async {
+    return await _appServiceClient.suggestReplyIdeas(request);
+  }
+  @override
+  Future<CreateResponseEmailResponse> createResponseEmail(CreaterResponseEmailRequest request) async {
+    return await _appServiceClient.createResponseEmail(request);
   }
 
   @override
@@ -400,4 +414,5 @@ class FileUploadHelper {
     final extension = filePath.split('.').last.toLowerCase();
     return mimeTypes['.$extension'];
   }
+
 }

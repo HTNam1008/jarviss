@@ -12,6 +12,7 @@ import 'package:jarvis/data/network/dio_factory.dart';
 import 'package:jarvis/data/network/network_info.dart';
 import 'package:jarvis/data/repository/repository_impl.dart';
 import 'package:jarvis/domain/repository/repository.dart';
+import 'package:jarvis/domain/usecase/create_email_reply_usecase.dart';
 import 'package:jarvis/domain/usecase/create_knowledge_usecase.dart';
 import 'package:jarvis/domain/usecase/delete_knowledge_usecase.dart';
 import 'package:jarvis/domain/usecase/ask_assistant_usecase.dart';
@@ -55,6 +56,7 @@ import 'package:jarvis/presentation/chatbot/create_bot/create_bot_viewmodel.dart
 import 'package:jarvis/presentation/chatbot/edit_bot/edit_bot_viewmodel.dart';
 import 'package:jarvis/presentation/chatbot/main_chatbot_viewmodel.dart';
 import 'package:jarvis/presentation/chatbot/preview_bot/preview_bot_viewmodel.dart';
+import 'package:jarvis/presentation/email/email_view.dart';
 import 'package:jarvis/presentation/left_side_bar/app_drawer_viewmodel.dart';
 import 'package:jarvis/presentation/main/sign_in_kb_viewmodel.dart';
 import 'package:jarvis/presentation/publish_bot/configure/configure_viewmodel.dart';
@@ -64,6 +66,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../data/repository/prompt_repository_impl.dart';
 import '../../domain/repository/prompt_repository.dart';
+import '../../domain/usecase/create_response_email_usecase.dart';
 import '../../domain/usecase/delete_prompt_usecase.dart';
 import '../../domain/usecase/get_public_prompts_usecase.dart';
 import '../../domain/usecase/update _prompt_usecase.dart';
@@ -283,6 +286,18 @@ Future<void> setupLocator() async {
 
   getIt.registerFactory<UnitViewModel>(
         () => UnitViewModel(getIt<UploadLocalFileUsecase>(),getIt<UploadWebFileUsecase>(), getIt<UploadSlackFileUsecase>(),getIt<UploadConfluenceFileUsecase>(),getIt<GetUnitsUsecase>()),
+  );
+
+  getIt.registerFactory<CreateEmailReplyUsecase>(
+        () => CreateEmailReplyUsecase(getIt<Repository>()),
+  );
+
+  getIt.registerFactory<CreateResponseEmailUsecase>(
+        () => CreateResponseEmailUsecase(getIt<Repository>()),
+  );
+
+  getIt.registerFactory<EmailViewModel>(
+        () => EmailViewModel(getIt<CreateEmailReplyUsecase>(), getIt<CreateResponseEmailUsecase>()),
   );
   
   getIt.registerFactory<EditBotViewModel>(

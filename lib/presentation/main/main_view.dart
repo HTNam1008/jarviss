@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jarvis/presentation/chat/chat_view.dart';
 import 'package:jarvis/presentation/chatbot/main_chatbot_view.dart';
 import 'package:jarvis/presentation/common/bottom_navigation.dart';
+import 'package:jarvis/presentation/email/email_view.dart';
 import 'package:jarvis/presentation/knowledge/knowledge_view.dart';
 import 'package:jarvis/presentation/prompt/main_prompt_view.dart';
 
@@ -19,6 +20,7 @@ class _MainViewState extends State<MainView> {
     const ChatBotMainView(),
     const PromptView(),
     KnowledgeView(),
+    EmailView()
   ];
 
   @override
