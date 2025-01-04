@@ -218,7 +218,7 @@ class _ChatViewState extends State<ChatView> {
                       margin: const EdgeInsets.only(right: AppSize.s8),
                       padding: const EdgeInsets.symmetric(horizontal: AppSize.s12, vertical: AppSize.s6),
                       decoration: BoxDecoration(
-                        color: Colors.teal[400],
+                        color: Colors.teal,
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                       child: Row(

@@ -72,14 +72,13 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
       builder: (context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12), // Thay đổi giá trị bo góc
+            borderRadius: BorderRadius.circular(16),
           ),
           title: Text('Input Email',
-          style: TextStyle(
-            color: Colors.teal,
-            fontWeight: FontWeight.bold
-          ),
-          ),
+            style: TextStyle(
+                color: Colors.teal,
+                fontWeight: FontWeight.bold
+            ),),
           content: SingleChildScrollView(
             child: Column(
               children: [
@@ -156,97 +155,97 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
       context: context,
       builder: (context) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: Text('Email Style',
             style: TextStyle(
                 color: Colors.teal,
                 fontWeight: FontWeight.bold
             ),),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Length',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold
-                  ),),
-                Row(
-                  children: ['Short', 'Medium', 'Long'].map((lengthOption) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: ChoiceChip(
-                        label: Text(lengthOption),
-                        selected: _selectedLength == lengthOption,
-                        selectedColor: Colors.tealAccent, // Customize the selected color
-                        onSelected: (selected) {
-                          setState(() {
-                            if (selected) {
-                              _selectedLength = lengthOption; // Update the selected length
-                            }
-                          });
-                        },
-                      ),
-                    );
-                  }).toList(),
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Length',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold
+                      ),),
+                    Row(
+                      children: ['Short', 'Medium', 'Long'].map((lengthOption) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: ChoiceChip(
+                            label: Text(lengthOption),
+                            selected: _selectedLength == lengthOption,
+                            selectedColor: Colors.tealAccent,
+                            onSelected: (selected) {
+                              setState(() {
+                                _selectedLength = lengthOption; // Update the selected length
+                              });
+                            },
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(height: 16),
+                    Text('Formality',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold
+                      ),),
+                    Row(
+                      children: ['Casual', 'Neutral', 'Formal'].map((formalityOption) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: ChoiceChip(
+                            label: Text(formalityOption),
+                            selected: _selectedFormality == formalityOption,
+                            selectedColor: Colors.tealAccent,
+                            onSelected: (selected) {
+                              setState(() {
+                                _selectedFormality = formalityOption; // Update the selected formality
+                              });
+                            },
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(height: 16),
+                    Text('Tone',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold
+                      ),),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        'Witty', 'Empathetic', 'Personable', 'Concerned', 'Friendly',
+                        'Direct', 'Sincere', 'Optimistic', 'Confident', 'Informational',
+                        'Enthusiastic',
+                      ].map((tone) {
+                        return ChoiceChip(
+                          label: Text(tone),
+                          selected: _selectedTone == tone,
+                          selectedColor: Colors.tealAccent,
+                          onSelected: (selected) {
+                            setState(() {
+                              _selectedTone = tone; // Update the selected tone
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ],
                 ),
-                SizedBox(height: 16),
-                Text('Formality',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold
-                  ),),
-                Row(
-                  children: ['Casual', 'Neutral', 'Formal'].map((formalityOption) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: ChoiceChip(
-                        label: Text(formalityOption),
-                        selected: _selectedFormality == formalityOption,
-                        selectedColor: Colors.tealAccent, // Customize the selected color
-                        onSelected: (selected) {
-                          setState(() {
-                            if (selected) {
-                              _selectedFormality = formalityOption; // Update the selected formality
-                            }
-                          });
-                        },
-                      ),
-                    );
-                  }).toList(),
-                ),
-                SizedBox(height: 16),
-                Text('Tone',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold
-                  ),),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: ['Witty', 'Empathetic', 'Personable', 'Concerned', 'Friendly', 'Direct', 'Sincere', 'Optimistic', 'Confident', 'Informational', 'Enthusiastic']
-                      .map((tone) {
-                    return ChoiceChip(
-                      label: Text(tone),
-                      selected: _selectedTone == tone, // Check if this tone is the selected one
-                      selectedColor: Colors.tealAccent, // Customize the selected color
-                      onSelected: (selected) {
-                        setState(() {
-                          if (selected) {
-                            _selectedTone = tone; // Update the selected tone
-                          } else {
-                            _selectedTone = ''; // Deselect tone by clearing the selection
-                          }
-                        });
-                      },
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
+              );
+            },
           ),
           actions: [
-            // Removed Apply button since we don't need it anymore.
-            // The changes now take effect immediately upon selection.
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
@@ -256,6 +255,7 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
             ),
           ],
         );
+
       },
     );
   }
@@ -415,9 +415,9 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
                       ElevatedButton(
                         onPressed: _showInputEmailDialog,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
+                          backgroundColor: Colors.teal, // Đặt màu nền cho button
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(8), // Đặt bo góc nếu cần
                           ),
                         ),
                         child: Row(
@@ -440,9 +440,9 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
                       ElevatedButton(
                         onPressed: () => _showEmailStyleDialog(),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
+                          backgroundColor: Colors.teal, // Đặt màu nền cho button
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(8), // Đặt bo góc nếu cần
                           ),
                         ),
                         child: Row(
@@ -467,9 +467,9 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
                           DropdownMenuItem(
                             value: 'English',
                             child: Text('English',
-                              style: TextStyle(
-                                  color: Colors.black
-                              ),),
+                            style: TextStyle(
+                              color: Colors.black
+                            ),),
                           ),
                           DropdownMenuItem(
                             value: 'Vietnamese',
@@ -480,7 +480,9 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
                           ),
                         ],
                         onChanged: (value) {
-                          selectedLanguage = value!;
+                          setState(() {
+                            selectedLanguage = value!; // Update the selected value and trigger rebuild
+                          });
                         },
                       )
                     ],
@@ -563,7 +565,7 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
                       ),
                     ),
                   ),
-                  SizedBox(width: 8), // Add space between the TextField and the ElevatedButton
+                  SizedBox(width: 8),
                   ElevatedButton(
                     onPressed: () {
                       setState(() {
@@ -589,11 +591,11 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.teal,
-                      padding: EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 10
-                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 10
                       ),
                     ),
                     child: Icon(Icons.send, color: Colors.white),
