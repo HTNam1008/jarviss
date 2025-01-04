@@ -141,10 +141,13 @@ class _EditBotViewState extends State<EditBotView> {
         builder: (context, snapshot) {
           return ElevatedButton(
             style: ElevatedButton.styleFrom(
-              // ...existing style...
+              backgroundColor: Colors.teal,
+              minimumSize: const Size.fromHeight(50),
             ),
             onPressed: (snapshot.data ?? false) ? _onSavePressed : null,
-            child: const Text('Save'),
+            child: const Text('Save',
+              style: TextStyle(color: Colors.white, fontSize: 16),
+            ),
           );
         },
       ),
@@ -176,6 +179,7 @@ class _EditBotViewState extends State<EditBotView> {
                 'Knowledge',
                 style: TextStyle(
                   fontSize: 16.0,
+                  color: Colors.teal,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -194,8 +198,16 @@ class _EditBotViewState extends State<EditBotView> {
                   itemBuilder: (context, index) {
                     final knowledge = knowledgeList[index];
                     return ListTile(
-                      title: Text(knowledge.knowledgeName),
-                      subtitle: Text(knowledge.description),
+                      title: Text(knowledge.knowledgeName,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: AppSize.s14,
+                        ),),
+                      subtitle: Text(knowledge.description,
+                        style: const TextStyle(
+                          fontSize: AppSize.s14,
+                          color: Colors.grey,
+                        ),),
                       trailing: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: knowledge.isImported ? Colors.red : ColorManager.teal,
@@ -205,7 +217,10 @@ class _EditBotViewState extends State<EditBotView> {
                         ),
                         onPressed: isLoading ? null : () => 
                           _viewModel.toggleKnowledge(knowledge.id),
-                        child: Text(knowledge.isImported ? 'Remove' : 'Add'),
+                        child: Text(knowledge.isImported ? 'Remove' : 'Add',
+                        style: TextStyle(
+                          color: Colors.white
+                        ),),
                       ),
                     );
                   },

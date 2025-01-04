@@ -200,7 +200,10 @@ class _CreateBotViewState extends State<CreateBotView> {
                               onPressed: () => setState(() {
                                 _viewModel.toggleKnowledge(knowledge.id);
                               }),
-                              child: Text(isSelected ? 'Remove' : 'Add'),
+                              child: Text(isSelected ? 'Remove' : 'Add',
+                              style: TextStyle(
+                                color: Colors.white
+                              )),
                             ),
                           );
                         },
