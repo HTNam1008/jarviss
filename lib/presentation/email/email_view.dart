@@ -149,80 +149,77 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
       builder: (context) {
         return AlertDialog(
           title: Text('Email Style'),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Length'),
-                Row(
-                  children: ['Short', 'Medium', 'Long'].map((lengthOption) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: ChoiceChip(
-                        label: Text(lengthOption),
-                        selected: _selectedLength == lengthOption,
-                        selectedColor: Colors.cyanAccent, // Customize the selected color
-                        onSelected: (selected) {
-                          setState(() {
-                            if (selected) {
-                              _selectedLength = lengthOption; // Update the selected length
-                            }
-                          });
-                        },
-                      ),
-                    );
-                  }).toList(),
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Length'),
+                    Row(
+                      children: ['Short', 'Medium', 'Long'].map((lengthOption) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: ChoiceChip(
+                            label: Text(lengthOption),
+                            selected: _selectedLength == lengthOption,
+                            selectedColor: Colors.cyanAccent,
+                            onSelected: (selected) {
+                              setState(() {
+                                _selectedLength = lengthOption; // Update the selected length
+                              });
+                            },
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(height: 16),
+                    Text('Formality'),
+                    Row(
+                      children: ['Casual', 'Neutral', 'Formal'].map((formalityOption) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: ChoiceChip(
+                            label: Text(formalityOption),
+                            selected: _selectedFormality == formalityOption,
+                            selectedColor: Colors.cyanAccent,
+                            onSelected: (selected) {
+                              setState(() {
+                                _selectedFormality = formalityOption; // Update the selected formality
+                              });
+                            },
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(height: 16),
+                    Text('Tone'),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        'Witty', 'Empathetic', 'Personable', 'Concerned', 'Friendly',
+                        'Direct', 'Sincere', 'Optimistic', 'Confident', 'Informational',
+                        'Enthusiastic',
+                      ].map((tone) {
+                        return ChoiceChip(
+                          label: Text(tone),
+                          selected: _selectedTone == tone,
+                          selectedColor: Colors.cyanAccent,
+                          onSelected: (selected) {
+                            setState(() {
+                              _selectedTone = tone; // Update the selected tone
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ],
                 ),
-                SizedBox(height: 16),
-                Text('Formality'),
-                Row(
-                  children: ['Casual', 'Neutral', 'Formal'].map((formalityOption) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: ChoiceChip(
-                        label: Text(formalityOption),
-                        selected: _selectedFormality == formalityOption,
-                        selectedColor: Colors.cyanAccent, // Customize the selected color
-                        onSelected: (selected) {
-                          setState(() {
-                            if (selected) {
-                              _selectedFormality = formalityOption; // Update the selected formality
-                            }
-                          });
-                        },
-                      ),
-                    );
-                  }).toList(),
-                ),
-                SizedBox(height: 16),
-                Text('Tone'),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: ['Witty', 'Empathetic', 'Personable', 'Concerned', 'Friendly', 'Direct', 'Sincere', 'Optimistic', 'Confident', 'Informational', 'Enthusiastic']
-                      .map((tone) {
-                    return ChoiceChip(
-                      label: Text(tone),
-                      selected: _selectedTone == tone, // Check if this tone is the selected one
-                      selectedColor: Colors.cyanAccent, // Customize the selected color
-                      onSelected: (selected) {
-                        setState(() {
-                          if (selected) {
-                            _selectedTone = tone; // Update the selected tone
-                          } else {
-                            _selectedTone = ''; // Deselect tone by clearing the selection
-                          }
-                        });
-                      },
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
+              );
+            },
           ),
           actions: [
-            // Removed Apply button since we don't need it anymore.
-            // The changes now take effect immediately upon selection.
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
@@ -232,6 +229,7 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
             ),
           ],
         );
+
       },
     );
   }
@@ -432,7 +430,9 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
                           ),
                         ],
                         onChanged: (value) {
-                          selectedLanguage = value!;
+                          setState(() {
+                            selectedLanguage = value!; // Update the selected value and trigger rebuild
+                          });
                         },
                       )
                     ],
