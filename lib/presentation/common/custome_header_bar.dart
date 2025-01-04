@@ -15,7 +15,7 @@ class CustomHeaderBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.teal.shade300,
+      backgroundColor: const Color.fromARGB(255, 21, 73, 68),
       elevation: 0,
       leading: leading,
       title: centerWidget,

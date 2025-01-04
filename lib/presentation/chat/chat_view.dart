@@ -54,7 +54,7 @@ class _ChatViewState extends State<ChatView> {
 
   late AssistantModel _selectedModel;
   List<AssistantModel> _allModels = [];
-  
+
   bool _isSending = false;
   bool isScrollBottom = true;
 
@@ -63,7 +63,7 @@ class _ChatViewState extends State<ChatView> {
     super.initState();
     _scrollController = ScrollController();
     selectedModel = assistantModels[1];
-    _viewModel = getIt<ChatViewModel>();    
+    _viewModel = getIt<ChatViewModel>();
     _viewModel.start();
 
     _errorSubscription = _viewModel.errorStream.listen((errorMessage) {
@@ -92,11 +92,13 @@ class _ChatViewState extends State<ChatView> {
   }
 
   void _initializeModels() async {
-    _allModels = assistantModels.map((model) => AssistantModel(
-      id: model,
-      name: model,
-      isBuiltIn: true,
-    )).toList();
+    _allModels = assistantModels
+        .map((model) => AssistantModel(
+              id: model,
+              name: model,
+              isBuiltIn: true,
+            ))
+        .toList();
 
     _selectedModel = _allModels.first;
 
@@ -121,16 +123,15 @@ class _ChatViewState extends State<ChatView> {
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent + 100,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOut,
-    );
+        _scrollController.position.maxScrollExtent + 100,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
     }
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels <=
-        _scrollController.position.minScrollExtent) {
+    if (_scrollController.position.pixels <= _scrollController.position.minScrollExtent) {
       if (_viewModel.hasMore && !_viewModel.isLoadingMore) {
         _fetchMoreConversations();
       }
@@ -165,74 +166,81 @@ class _ChatViewState extends State<ChatView> {
       key: _scaffoldKey,
       drawer: const AppDrawer(),
       appBar: CustomHeaderBar(
-              centerWidget: DropdownButton<AssistantModel>(
-              value: _selectedModel,
-              dropdownColor: ColorManager.teal,
-              style: TextStyle(color: ColorManager.white),
-              underline: const SizedBox(),
-              onChanged: (AssistantModel? newValue) {
-                if (newValue != null) {
-                  setState(() {
-                    _selectedModel = newValue;
-                  });
-                }
-              },
-              items: _allModels.map<DropdownMenuItem<AssistantModel>>((AssistantModel value) {
-                return DropdownMenuItem<AssistantModel>(
-                  value: value,
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundImage: AssetImage('assets/images/chatbot_avt.png'),
-                        radius: 10,
-                      ),
-                      const SizedBox(width: 6), // Khoảng cách giữa avatar và tên
-                      Text(
+        centerWidget: DropdownButton<AssistantModel>(
+          value: _selectedModel,
+          dropdownColor: ColorManager.teal,
+          style: TextStyle(color: ColorManager.white),
+          underline: const SizedBox(),
+          onChanged: (AssistantModel? newValue) {
+            if (newValue != null) {
+              setState(() {
+                _selectedModel = newValue;
+              });
+            }
+          },
+          items: _allModels.map<DropdownMenuItem<AssistantModel>>((AssistantModel value) {
+            return DropdownMenuItem<AssistantModel>(
+              value: value,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: 120),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: !value.isBuiltIn ? AssetImage('assets/images/chatbot_avt.png') : AssetImage('assets/images/splash_logo.png'),
+                      radius: 10,
+                    ),
+                    const SizedBox(width: 6),
+                    Flexible(
+                      fit: FlexFit.loose,
+                      child: Text(
                         value.name,
                       ),
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
-            leading: IconButton(
-              icon: const Icon(Icons.menu, color: Colors.white),
-              onPressed: () {
-                _scaffoldKey.currentState?.openDrawer();
-              },
-            ),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(Routes.upgradeProRoute);
-                    },
-                    child: Text(
-                      "Upgrade",
-                      style: TextStyle(color: Colors.blue.shade100, fontSize: AppSize.s16),
-                    )),
-                StreamBuilder<int>(
-                  stream: _viewModel.remainingUsageStream,
-                  builder: (context, snapshot) {
-                    int remainingUsage = snapshot.data ?? 50;
-                    return Container(
-                      margin: const EdgeInsets.only(right: AppSize.s8),
-                      padding: const EdgeInsets.symmetric(horizontal: AppSize.s12, vertical: AppSize.s6),
-                      decoration: BoxDecoration(
-                        color: Colors.teal,
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      child: Row(
-                        children: [
-                          Text('$remainingUsage', style: TextStyle(color: ColorManager.white, fontSize: AppSize.s16)),
-                          const SizedBox(width: AppSize.s4),
-                          Icon(Icons.star, color: ColorManager.white, size: AppSize.s16),
-                        ],
-                      ),
-                    );
-                  },
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            );
+          }).toList(),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.menu, color: Colors.white),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+        ),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(Routes.upgradeProRoute);
+              },
+              child: Text(
+                "Upgrade",
+                style: TextStyle(color: Colors.blue.shade100, fontSize: AppSize.s16),
+              )),
+          StreamBuilder<int>(
+            stream: _viewModel.remainingUsageStream,
+            builder: (context, snapshot) {
+              int remainingUsage = snapshot.data ?? 50;
+              return Container(
+                margin: const EdgeInsets.only(right: AppSize.s8),
+                padding: const EdgeInsets.symmetric(horizontal: AppSize.s12, vertical: AppSize.s6),
+                decoration: BoxDecoration(
+                  color: Colors.teal,
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                child: Row(
+                  children: [
+                    Text('$remainingUsage', style: TextStyle(color: ColorManager.white, fontSize: AppSize.s16)),
+                    const SizedBox(width: AppSize.s4),
+                    Icon(Icons.star, color: ColorManager.white, size: AppSize.s16),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [
@@ -240,7 +248,7 @@ class _ChatViewState extends State<ChatView> {
               child: StreamBuilder<List<Message>>(
                 stream: _viewModel.messagesStream,
                 builder: (context, snapshot) {
-                  if (widget.conversationId == null ) {
+                  if (widget.conversationId == null) {
                     if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                       isScrollBottom = true;
                       return _buildChatMessages(snapshot.data!);
@@ -250,13 +258,11 @@ class _ChatViewState extends State<ChatView> {
                   } else {
                     if (snapshot.connectionState == ConnectionState.waiting && _viewModel.messages.isEmpty) {
                       return const Center(child: CircularProgressIndicator());
-                    }
-                    else if (snapshot.hasError) {
+                    } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
-                    }
-                    else {
+                    } else {
                       return _buildChatMessages(_viewModel.messages);
-                    } 
+                    }
                   }
                 },
               ),
@@ -287,15 +293,12 @@ class _ChatViewState extends State<ChatView> {
           children: [
             const Text(
               'Hi, good afternoon!',
-              style: TextStyle(
-                  fontSize: AppSize.s24,
-                  fontWeight: FontWeightManager.bold),
+              style: TextStyle(fontSize: AppSize.s24, fontWeight: FontWeightManager.bold),
             ),
             const SizedBox(height: AppSize.s8),
             Text(
               'I\'m a chatbot.',
-              style: TextStyle(
-                  fontSize: AppSize.s16, color: ColorManager.grey),
+              style: TextStyle(fontSize: AppSize.s16, color: ColorManager.grey),
             ),
             const SizedBox(height: AppSize.s20),
             Row(
@@ -314,8 +317,7 @@ class _ChatViewState extends State<ChatView> {
               ],
             ),
             const SizedBox(height: AppSize.s20),
-            const Text('You can ask me like this',
-                style: TextStyle(fontSize: AppSize.s18)),
+            const Text('You can ask me like this', style: TextStyle(fontSize: AppSize.s18)),
             const SizedBox(height: AppSize.s10),
             ListView(
               physics: const NeverScrollableScrollPhysics(),
@@ -323,10 +325,8 @@ class _ChatViewState extends State<ChatView> {
               children: [
                 _buildSuggestion('Write an email', 'to submission project'),
                 _buildSuggestion('Suggest events', 'for this summer'),
-                _buildSuggestion('List some books',
-                    'related to adventure'),
-                _buildSuggestion('Explain an issue',
-                    'why the earth is round'),
+                _buildSuggestion('List some books', 'related to adventure'),
+                _buildSuggestion('Explain an issue', 'why the earth is round'),
               ],
             ),
           ],
@@ -350,21 +350,16 @@ class _ChatViewState extends State<ChatView> {
       itemBuilder: (context, index) {
         final message = messages[index];
         return Align(
-          alignment:
-              message.isUser ? Alignment.centerRight : Alignment.centerLeft,
+          alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
           child: Container(
             padding: const EdgeInsets.all(AppSize.s12),
             margin: const EdgeInsets.symmetric(vertical: AppSize.s4),
             decoration: BoxDecoration(
-              color: message.isUser
-                  ? ColorManager.primary
-                  : Colors.grey.shade300,
+              color: message.isUser ? ColorManager.primary : Colors.grey.shade300,
               borderRadius: BorderRadius.circular(AppSize.s8),
             ),
             child: Column(
-              crossAxisAlignment: message.isUser
-                  ? CrossAxisAlignment.end
-                  : CrossAxisAlignment.start,
+              crossAxisAlignment: message.isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
                 Text(
                   message.message,
@@ -388,15 +383,15 @@ class _ChatViewState extends State<ChatView> {
                         ),
                       ),
                     if (!message.isUser) const SizedBox(width: 4),
-                    message.timestamp !=null ? Text(
-                      '${message.timestamp!.hour}:${message.timestamp!.minute.toString().padLeft(2, '0')}',
-                      style: TextStyle(
-                        color: message.isUser
-                            ? Colors.white70
-                            : Colors.black54,
-                        fontSize: AppSize.s12,
-                      ),
-                    ) : const SizedBox.shrink(),
+                    message.timestamp != null
+                        ? Text(
+                            '${message.timestamp!.hour}:${message.timestamp!.minute.toString().padLeft(2, '0')}',
+                            style: TextStyle(
+                              color: message.isUser ? Colors.white70 : Colors.black54,
+                              fontSize: AppSize.s12,
+                            ),
+                          )
+                        : const SizedBox.shrink(),
                     // const SizedBox(width: 4),
                     // Text(
                     //   'Usage: ${message.remainingUsage}',
