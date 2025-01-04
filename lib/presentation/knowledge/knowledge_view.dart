@@ -6,21 +6,16 @@ import 'package:get_it/get_it.dart';
 import 'package:jarvis/data/request/authentication_kb/knowledge_auth_request.dart';
 import 'package:jarvis/domain/usecase/create_knowledge_usecase.dart';
 import 'package:jarvis/domain/usecase/update_knowledge_usecase.dart';
-import 'package:jarvis/presentation/common/bottom_navigation.dart';
-import 'package:jarvis/presentation/common/chat_input_box.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/knowledge/knowledge_create/knowledge_create.dart';
-import 'package:jarvis/presentation/knowledge/knowledge_delete/knowledge_delete.dart';
 import 'package:jarvis/presentation/knowledge/knowledge_detail/knowledge_detail.dart';
 import 'package:jarvis/presentation/knowledge/knowledge_edit/knowledge_edit.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
-import 'package:jarvis/presentation/resources/route_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 
 import '../../app/constant.dart';
 import '../../data/responses/ai_bot/get_assistants_response.dart';
-import '../../domain/model/model.dart';
 import '../../domain/usecase/delete_knowledge_usecase.dart';
 import '../../domain/usecase/get_knowledge_usecase.dart';
 import '../base/baseviewmodel.dart';
@@ -73,27 +68,27 @@ class _KnowledgeViewState extends State<KnowledgeView> {
         ),
         actions: [
           Padding(
-            padding: EdgeInsets.all(AppSize.s6),
+            padding: const EdgeInsets.all(AppSize.s6),
             child: Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: ColorManager.teal,
-                  padding: EdgeInsets.symmetric(horizontal: AppSize.s8, vertical: AppSize.s6),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSize.s8, vertical: AppSize.s6),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
                 onPressed: () {
-                  showDialog(context: context, builder: (builder) => CreateKnowledgeView());
+                  showDialog(context: context, builder: (builder) => const CreateKnowledgeView());
                 },
-                child: Row(
+                child: const Row(
                   children: [
                     Icon(
                       Icons.add,
                       size: 14,
                     ),
-                    const SizedBox(width: 4,),
+                    SizedBox(width: 4,),
                     Text(
                       'Create',
                       style: TextStyle(
@@ -122,7 +117,7 @@ class _KnowledgeViewState extends State<KnowledgeView> {
                       controller: _searchController,
                       decoration: InputDecoration(
                         hintText: 'Search',
-                        prefixIcon: Icon(Icons.search),
+                        prefixIcon: const Icon(Icons.search),
                         suffixIcon: _searchController.text.isNotEmpty
                             ? IconButton(
                           icon: const Icon(Icons.clear),
@@ -139,7 +134,7 @@ class _KnowledgeViewState extends State<KnowledgeView> {
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(40.0),
-                          borderSide: BorderSide(color: Colors.grey),
+                          borderSide: const BorderSide(color: Colors.grey),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(40.0),
@@ -192,8 +187,8 @@ class _KnowledgeViewState extends State<KnowledgeView> {
                         itemBuilder: (context, index) {
                           final knowledge = knowledgeList[index];
                           return Container(
-                            margin: EdgeInsets.symmetric(vertical: AppSize.s6, horizontal: AppSize.s8),
-                            padding: EdgeInsets.all(AppSize.s8),
+                            margin: const EdgeInsets.symmetric(vertical: AppSize.s6, horizontal: AppSize.s8),
+                            padding: const EdgeInsets.all(AppSize.s8),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(AppSize.s12),
@@ -319,7 +314,6 @@ class _KnowledgeViewState extends State<KnowledgeView> {
     super.dispose();
   }
 
-  @override
   bool get wantKeepAlive => true;
 }
 
@@ -371,6 +365,7 @@ class KnowledgeViewModel extends BaseViewModel {
         }
     );
   }
+  
   Future<void> createKnowledge(String knowledgeName,String? description) async {
     final request = CreateKnowledgeRequest(
         knowledgeName: knowledgeName,

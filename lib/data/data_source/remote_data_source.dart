@@ -12,6 +12,10 @@ import 'package:jarvis/data/request/ai_bot/create_thread_request.dart';
 import 'package:jarvis/data/request/ai_bot/delete_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/get_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/get_assistants_request.dart';
+import 'package:jarvis/data/request/ai_bot/get_imported_knowledge_request.dart';
+import 'package:jarvis/data/request/ai_bot/get_knowledge_relation_request.dart';
+import 'package:jarvis/data/request/ai_bot/import_knowledge_request.dart';
+import 'package:jarvis/data/request/ai_bot/remove_knowledge_request.dart';
 import 'package:jarvis/data/request/ai_bot/retrieve_message_thread_request.dart';
 import 'package:jarvis/data/request/ai_bot/update_assistant_new_thread_playground_request.dart';
 import 'package:jarvis/data/request/ai_bot/update_assistant_request.dart';
@@ -32,6 +36,8 @@ import 'package:jarvis/data/responses/ai_bot/create_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/create_thread_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistant_response.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
+import 'package:jarvis/data/responses/ai_bot/get_imported_knowledge_response.dart';
+import 'package:jarvis/data/responses/ai_bot/get_knowledge_relation_response.dart';
 import 'package:jarvis/data/responses/ai_bot/retrieve_message_thread_response.dart';
 import 'package:jarvis/data/responses/ai_bot/update_assistant_new_thread_playground_response.dart';
 import 'package:jarvis/data/responses/ai_bot/update_assistant_response.dart';
@@ -106,6 +112,10 @@ abstract class RemoteDataSource {
   Future<void> publishBotMessengerIntegration(PublishMessengerBotRequest publishMessengerBotRequest);
   Future<void> publishBotSlackIntegration(PublishSlackBotRequest publishSlackBotRequest);
   Future<void> disconnectBotIntegration(DisconnectBotIntegrationRequest disconnectBotIntegrationRequest);
+  Future<void> importKnowledgeAssistant(ImportKnowledgeRequest importKnowledgeRequest);
+  Future<void> removeKnowledgeAssistant(RemoveKnowledgeRequest removeKnowledgeRequest);
+  Future<GetImportedKnowledgeResponse> getImportedKnowledge(GetImportedKnowledgeRequest getImportedKnowledgeRequest);
+  Future<GetKnowledgeRelationResponse> getKnowledgeRelation(GetKnowledgeRelationRequest getKnowledgeRelationRequest);
 }
 
 class RemoteDataSourceImplementer implements RemoteDataSource {
@@ -307,6 +317,7 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   Future<UnitResponse> uploadConfluenceFile(String id, UploadConfluenceFileRequest request) =>
       _appKbServiceClient.uploadConfluenceFile(id, request);
 
+  @override
   Future<CreateAssistantResponse> createAssistant(CreateAssistantRequest createAssistantRequest) async {
     return await _appKbServiceClient.createAssistant(createAssistantRequest);
   }
@@ -373,6 +384,33 @@ class RemoteDataSourceImplementer implements RemoteDataSource {
   @override
   Future<void> disconnectBotIntegration(DisconnectBotIntegrationRequest disconnectBotIntegrationRequest) async {
     return await _appKbServiceClient.disconnectBotIntegration(disconnectBotIntegrationRequest.assistantId, disconnectBotIntegrationRequest.type);
+  }
+  
+  @override
+  Future<GetImportedKnowledgeResponse> getImportedKnowledge(GetImportedKnowledgeRequest getImportedKnowledgeRequest) async {
+    return await _appKbServiceClient.getImportedKnowledge(
+      getImportedKnowledgeRequest.assistandId, 
+      getImportedKnowledgeRequest.limit,
+      getImportedKnowledgeRequest.offset,
+      getImportedKnowledgeRequest.order,
+      getImportedKnowledgeRequest.orderField,
+      getImportedKnowledgeRequest.q,
+    );
+  }
+  
+  @override
+  Future<void> importKnowledgeAssistant(ImportKnowledgeRequest importKnowledgeRequest) async {
+    return await _appKbServiceClient.importKnowledgeToAssistant(importKnowledgeRequest.assistandId, importKnowledgeRequest.knowledgeId);
+  }
+  
+  @override
+  Future<void> removeKnowledgeAssistant(RemoveKnowledgeRequest removeKnowledgeRequest) async {
+    return await _appKbServiceClient.removeKnowledgeFromAssistant(removeKnowledgeRequest.assistandId, removeKnowledgeRequest.knowledgeId);
+  }
+  
+  @override
+  Future<GetKnowledgeRelationResponse> getKnowledgeRelation(GetKnowledgeRelationRequest getKnowledgeRelationRequest) async {
+    return await _appKbServiceClient.getKnowledgeRelation(getKnowledgeRelationRequest.assistandId, getKnowledgeRelationRequest.limit, getKnowledgeRelationRequest.offset);
   }
 }
 
