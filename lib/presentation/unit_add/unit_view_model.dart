@@ -14,6 +14,10 @@ import 'package:jarvis/domain/usecase/upload_local_file_usecase.dart';
 import 'package:jarvis/domain/usecase/upload_web_file_usecase.dart';
 
 import '../../app/constant.dart';
+import '../../data/request/knowledge/upload_confluence_file_request.dart';
+import '../../data/request/knowledge/upload_slack_file_request.dart';
+import '../../data/request/knowledge/upload_web_file_request.dart';
+import '../../data/responses/knowledge/get_units_response.dart';
 import '../../domain/usecase/upload_slack_file_usecase.dart';
 import '../base/baseviewmodel.dart';
 

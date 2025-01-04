@@ -6,6 +6,8 @@ import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.
 import 'package:jarvis/domain/model/prompt.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 
+import '../../data/request/knowledge/create_knowledge_request.dart';
+import '../../data/responses/knowledge/knowledge_response.dart';
 import 'base_usecase.dart';
 
 class CreateKnowledgeUsecase implements BaseUseCase<CreateKnowledgeRequest, KnowledgeResponse> {

@@ -33,6 +33,14 @@ import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/data/request/authentication/request.dart';
 import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
 import '../../../app/constant.dart';
+import '../../data/request/knowledge/create_knowledge_request.dart';
+import '../../data/request/knowledge/upload_confluence_file_request.dart';
+import '../../data/request/knowledge/upload_slack_file_request.dart';
+import '../../data/request/knowledge/upload_web_file_request.dart';
+import '../../data/responses/knowledge/get_knowledge_response.dart';
+import '../../data/responses/knowledge/get_units_response.dart';
+import '../../data/responses/knowledge/knowledge_response.dart';
+import '../../data/responses/knowledge/unit_response.dart';
 
 
 abstract class Repository {

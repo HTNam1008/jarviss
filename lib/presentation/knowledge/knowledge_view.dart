@@ -19,7 +19,9 @@ import 'package:jarvis/presentation/resources/route_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 
 import '../../app/constant.dart';
+import '../../data/request/knowledge/create_knowledge_request.dart';
 import '../../data/responses/ai_bot/get_assistants_response.dart';
+import '../../data/responses/knowledge/get_knowledge_response.dart';
 import '../../domain/model/model.dart';
 import '../../domain/usecase/delete_knowledge_usecase.dart';
 import '../../domain/usecase/get_knowledge_usecase.dart';

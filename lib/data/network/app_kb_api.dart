@@ -26,6 +26,15 @@ import 'package:jarvis/data/responses/ai_bot/update_assistant_response.dart';
 import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
 import 'package:jarvis/data/responses/bot_integration/get_configurations_response.dart';
 import 'package:retrofit/retrofit.dart';
+
+import '../request/knowledge/create_knowledge_request.dart';
+import '../request/knowledge/upload_confluence_file_request.dart';
+import '../request/knowledge/upload_slack_file_request.dart';
+import '../request/knowledge/upload_web_file_request.dart';
+import '../responses/knowledge/get_knowledge_response.dart';
+import '../responses/knowledge/get_units_response.dart';
+import '../responses/knowledge/knowledge_response.dart';
+import '../responses/knowledge/unit_response.dart';
 part 'app_kb_api.g.dart';
 
 @RestApi(baseUrl: Constant.baseKnowledgeUrl)

@@ -8,6 +8,7 @@ import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.
 import 'package:jarvis/domain/model/prompt.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 
+import '../../data/responses/knowledge/unit_response.dart';
 import 'base_usecase.dart';
 
 class UploadLocalFileUsecase implements BaseUseCase<UploadLocalFileParams, UnitResponse> {

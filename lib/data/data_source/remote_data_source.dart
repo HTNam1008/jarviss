@@ -45,8 +45,16 @@ import 'package:jarvis/data/responses/token/token_usage_response.dart';
 import '../../../app/constant.dart';
 import '../request/email/create_email_reply_request.dart';
 import '../request/email/create_response_email_request.dart';
+import '../request/knowledge/create_knowledge_request.dart';
+import '../request/knowledge/upload_confluence_file_request.dart';
+import '../request/knowledge/upload_slack_file_request.dart';
+import '../request/knowledge/upload_web_file_request.dart';
 import '../responses/email/create_email_reply_response.dart';
 import '../responses/email/create_response_email_response.dart';
+import '../responses/knowledge/get_knowledge_response.dart';
+import '../responses/knowledge/get_units_response.dart';
+import '../responses/knowledge/knowledge_response.dart';
+import '../responses/knowledge/unit_response.dart';
 
 
 abstract class RemoteDataSource {

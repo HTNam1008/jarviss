@@ -7,6 +7,8 @@ import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:jarvis/domain/repository/repository.dart';
 import 'package:jarvis/domain/usecase/base_usecase.dart';
 
+import '../../data/responses/knowledge/get_units_response.dart';
+
 class GetUnitsUsecase implements BaseUseCase<GetUnitsUseCaseInput, GetUnitsResponse> {
   final Repository _repository;
 
