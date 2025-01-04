@@ -1,4 +1,4 @@
-import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
+import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'get_knowledge_response.g.dart';
@@ -36,7 +36,7 @@ class MetaData {
   factory MetaData.fromJson(Map<String, dynamic> json) =>
       _$MetaDataFromJson(json);
 }
-
+/* 
 @JsonSerializable()
 class KnowledgeData {
   @JsonKey(name: '0')
@@ -81,4 +81,4 @@ class KnowledgeData {
   }
 
   Map<String, dynamic> toJson() => _$KnowledgeDataToJson(this);
-}
+} */

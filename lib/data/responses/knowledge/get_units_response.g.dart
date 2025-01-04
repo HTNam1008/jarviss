@@ -20,36 +20,6 @@ Map<String, dynamic> _$GetUnitsResponseToJson(GetUnitsResponse instance) =>
       'meta': instance.meta,
     };
 
-UnitData _$UnitDataFromJson(Map<String, dynamic> json) => UnitData(
-      createdAt: json['0'] as String,
-      updatedAt: json['updatedAt'] as String?,
-      createdBy: json['createdBy'] as String?,
-      updatedBy: json['updatedBy'] as String?,
-      id: json['id'] as String,
-      name: json['name'] as String,
-      status: json['status'] as bool,
-      userId: json['userId'] as String,
-      knowledgeId: json['knowledgeId'] as String,
-      type: json['type'] as String,
-      size: (json['size'] as num).toInt(),
-      metadata: json['metadata'] as Object,
-    );
-
-Map<String, dynamic> _$UnitDataToJson(UnitData instance) => <String, dynamic>{
-      '0': instance.createdAt,
-      'updatedAt': instance.updatedAt,
-      'createdBy': instance.createdBy,
-      'updatedBy': instance.updatedBy,
-      'id': instance.id,
-      'name': instance.name,
-      'status': instance.status,
-      'userId': instance.userId,
-      'type': instance.type,
-      'knowledgeId': instance.knowledgeId,
-      'size': instance.size,
-      'metadata': instance.metadata,
-    };
-
 MetaData _$MetaDataFromJson(Map<String, dynamic> json) => MetaData(
       limit: (json['limit'] as num).toDouble(),
       offset: (json['offset'] as num).toDouble(),

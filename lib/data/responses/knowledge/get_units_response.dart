@@ -1,4 +1,4 @@
-import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
+import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'get_units_response.g.dart';
@@ -18,7 +18,7 @@ class GetUnitsResponse {
 
   Map<String, dynamic> toJson() => _$GetUnitsResponseToJson(this);
 }
-
+/* 
 @JsonSerializable()
 class UnitData {
   @JsonKey(name: '0')
@@ -70,7 +70,7 @@ class UnitData {
 
   Map<String, dynamic> toJson() => _$UnitDataToJson(this);
 }
-
+ */
 @JsonSerializable()
 class MetaData {
   final double limit;

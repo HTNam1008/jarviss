@@ -4,13 +4,11 @@ import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/knowledge/knowledge_edit/knowledge_edit.dart';
 import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
-import 'package:jarvis/presentation/resources/route_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
 import 'package:jarvis/presentation/unit_add/unit_add.dart';
 import 'package:jarvis/presentation/unit_add/unit_view_model.dart';
 
 import '../../../data/responses/ai_bot/get_assistants_response.dart';
-import '../../../data/responses/knowledge/get_knowledge_response.dart';
 import '../../../data/responses/knowledge/get_units_response.dart';
 
 class DetailKnowledgeView extends StatefulWidget {
