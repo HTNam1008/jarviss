@@ -41,19 +41,20 @@ dependencies:
   retrofit_generator: ^9.1.3
   build_runner: ^2.1.11
   internet_connection_checker: ^1.0.0+1
+#  url_launcher: ^6.1.7
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
   pretty_dio_logger: ^1.4.0
   shared_preferences: ^2.3.2
-  device_info: ^2.0.3
+#  device_info: ^2.0.3
   freezed: ^2.5.7
   appinio_animated_toggle_tab: ^1.0.3
   json_annotation: ^4.9.0
   freezed_annotation: ^2.4.4
   get_it: ^8.0.2
-  flutter_secure_storage: ^4.2.1
+  flutter_secure_storage: ^9.2.2
   timeago: ^3.7.0
   rxdart: ^0.28.0
   # url_launcher: ^6.3.1
@@ -70,7 +71,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^3.0.0
+#  flutter_lints: ^3.0.0
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -101,6 +102,10 @@ flutter:
    - assets/images/message_circle_ic.png
    - assets/images/gg_ic.png
    - assets/images/avt.png
+   - assets/images/chatbot_avt.png
+   - assets/images/slack_ic.png
+   - assets/images/mess_ic.png
+   - assets/images/telegram_ic.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
