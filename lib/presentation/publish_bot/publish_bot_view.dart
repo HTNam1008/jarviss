@@ -110,7 +110,7 @@ class _PublishBotViewState extends State<PublishBotView> {
         ),
         onPressed: _onPublishPressed,
         child: const Text('Publish Bot',
-          style: TextStyle(color: Colors.white, fontSize: 14),
+          style: TextStyle(color: Colors.white, fontSize: 16),
         ),
       ),
     );
