@@ -71,7 +71,15 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Input Email'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12), // Thay đổi giá trị bo góc
+          ),
+          title: Text('Input Email',
+          style: TextStyle(
+            color: Colors.teal,
+            fontWeight: FontWeight.bold
+          ),
+          ),
           content: SingleChildScrollView(
             child: Column(
               children: [
@@ -148,12 +156,20 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Email Style'),
+          title: Text('Email Style',
+            style: TextStyle(
+                color: Colors.teal,
+                fontWeight: FontWeight.bold
+            ),),
           content: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Length'),
+                Text('Length',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold
+                  ),),
                 Row(
                   children: ['Short', 'Medium', 'Long'].map((lengthOption) {
                     return Padding(
@@ -161,7 +177,7 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
                       child: ChoiceChip(
                         label: Text(lengthOption),
                         selected: _selectedLength == lengthOption,
-                        selectedColor: Colors.cyanAccent, // Customize the selected color
+                        selectedColor: Colors.tealAccent, // Customize the selected color
                         onSelected: (selected) {
                           setState(() {
                             if (selected) {
@@ -174,7 +190,11 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
                   }).toList(),
                 ),
                 SizedBox(height: 16),
-                Text('Formality'),
+                Text('Formality',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold
+                  ),),
                 Row(
                   children: ['Casual', 'Neutral', 'Formal'].map((formalityOption) {
                     return Padding(
@@ -182,7 +202,7 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
                       child: ChoiceChip(
                         label: Text(formalityOption),
                         selected: _selectedFormality == formalityOption,
-                        selectedColor: Colors.cyanAccent, // Customize the selected color
+                        selectedColor: Colors.tealAccent, // Customize the selected color
                         onSelected: (selected) {
                           setState(() {
                             if (selected) {
@@ -195,7 +215,11 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
                   }).toList(),
                 ),
                 SizedBox(height: 16),
-                Text('Tone'),
+                Text('Tone',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold
+                  ),),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -204,7 +228,7 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
                     return ChoiceChip(
                       label: Text(tone),
                       selected: _selectedTone == tone, // Check if this tone is the selected one
-                      selectedColor: Colors.cyanAccent, // Customize the selected color
+                      selectedColor: Colors.tealAccent, // Customize the selected color
                       onSelected: (selected) {
                         setState(() {
                           if (selected) {
@@ -283,8 +307,15 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
       child: Consumer<EmailViewModel>(
         builder: (context, emailViewModel, child) {
           return Scaffold(
+            backgroundColor: Colors.teal[50],
             appBar: AppBar(
-              title: Text('Email Response'),
+              backgroundColor: Colors.teal[300],
+              title: Text('Email Response',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: AppSize.s20,
+                  fontWeight: FontWeightManager.semiBold,
+                ),),
             ),
             body: Column(
               children: [
@@ -349,7 +380,6 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
                                 'Add email to create reply ideas',
                                 style: TextStyle(
                                   fontSize: AppSize.s14,
-                                  fontWeight: FontWeightManager.semiBold,
                                 ),
                               ),
                             ),
@@ -384,6 +414,12 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
                     children: [
                       ElevatedButton(
                         onPressed: _showInputEmailDialog,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,  // Align content to the end (right)
                           children: [
@@ -403,6 +439,12 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
                       SizedBox(width: 16),
                       ElevatedButton(
                         onPressed: () => _showEmailStyleDialog(),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
                         child: Row(
                           children: [
                             Icon(Icons.style, color: Colors.white),
@@ -424,11 +466,17 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
                         items: [
                           DropdownMenuItem(
                             value: 'English',
-                            child: Text('English'),
+                            child: Text('English',
+                              style: TextStyle(
+                                  color: Colors.black
+                              ),),
                           ),
                           DropdownMenuItem(
                             value: 'Vietnamese',
-                            child: Text('Vietnamese'),
+                            child: Text('Vietnamese',
+                              style: TextStyle(
+                                  color: Colors.black
+                              ),),
                           ),
                         ],
                         onChanged: (value) {
@@ -509,7 +557,9 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
                         hintText: 'Input action',
                         contentPadding: EdgeInsets.symmetric(
                             vertical: 15, horizontal: 10
-                        ), // Optional, for better padding inside the TextField
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
                       ),
                     ),
                   ),
@@ -537,7 +587,16 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
                         );
                       }
                     },
-                    child: Icon(Icons.send, color: Colors.white,),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      padding: EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 10
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Icon(Icons.send, color: Colors.white),
                   ),
                 ],
               ),
