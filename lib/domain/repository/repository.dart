@@ -8,6 +8,10 @@ import 'package:jarvis/data/request/ai_bot/create_thread_request.dart';
 import 'package:jarvis/data/request/ai_bot/delete_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/get_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/get_assistants_request.dart';
+import 'package:jarvis/data/request/ai_bot/get_imported_knowledge_request.dart';
+import 'package:jarvis/data/request/ai_bot/get_knowledge_relation_request.dart';
+import 'package:jarvis/data/request/ai_bot/import_knowledge_request.dart';
+import 'package:jarvis/data/request/ai_bot/remove_knowledge_request.dart';
 import 'package:jarvis/data/request/ai_bot/retrieve_message_thread_request.dart';
 import 'package:jarvis/data/request/ai_bot/update_assistant_new_thread_playground_request.dart';
 import 'package:jarvis/data/request/ai_bot/update_assistant_request.dart';
@@ -26,6 +30,8 @@ import 'package:jarvis/data/request/bot_integration/verify_telegram_bot_integrat
 import 'package:jarvis/data/request/email/create_email_reply_request.dart';
 import 'package:jarvis/data/request/email/create_response_email_request.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
+import 'package:jarvis/data/responses/ai_bot/get_imported_knowledge_response.dart';
+import 'package:jarvis/data/responses/ai_bot/get_knowledge_relation_response.dart';
 import 'package:jarvis/data/responses/bot_integration/get_configurations_response.dart';
 import 'package:jarvis/data/responses/email/create_email_reply_response.dart';
 import 'package:jarvis/data/responses/email/create_response_email_response.dart';
@@ -53,7 +59,6 @@ abstract class Repository {
   Future<Either<Failure, Conversations>> getConversations(ConversationsRequest conversationsRequest);
   Future<Either<Failure, ConversationHistory>> getConversationHistory(ConversationHistoryRequest conversationsRequest);
   Future<Either<Failure, Token>> signInKnowledgeBase(KnowledgeAuthRequest signInKbRequest);
-  // Future<Either<Failure, GetAssistantsResponse>> getAssistants(GetAssistantsRequest getAssistantsRequest);
   Future<Either<Failure, KnowledgeResponse>> createKnowledge(CreateKnowledgeRequest request);
   Future<Either<Failure, KnowledgeResponse>> updateKnowledge(String id, CreateKnowledgeRequest request);
   Future<Either<Failure, GetKnowledgeResponse>> getKnowledge({
@@ -95,4 +100,8 @@ abstract class Repository {
   Future<Either<Failure, void>> disconnectBotIntegration(DisconnectBotIntegrationRequest disconnectBotIntegrationRequest);
   Future<Either<Failure, CreateEmailReplyResponse>> createEmailReply(CreateEmailReplyRequest emailReplyRequest);
   Future<Either<Failure, CreateResponseEmailResponse>> createResponseEmail(CreaterResponseEmailRequest responseEmailRequest);
+  Future<Either<Failure, void>> importKnowledgeAssistant(ImportKnowledgeRequest importKnowledgeRequest);
+  Future<Either<Failure, void>> removeKnowledgeAssistant(RemoveKnowledgeRequest removeKnowledgeRequest);
+  Future<Either<Failure, GetImportedKnowledgeResponse>> getImportedKnowledgeAssistant(GetImportedKnowledgeRequest getImportedKnowledgeRequest);
+  Future<Either<Failure, GetKnowledgeRelationResponse>> getKnowledgeRelation(GetKnowledgeRelationRequest getKnowledgeRelationRequest);
 }

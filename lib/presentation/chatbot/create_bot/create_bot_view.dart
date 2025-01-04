@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jarvis/app/di/di.dart';
+import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
 import 'package:jarvis/presentation/chatbot/create_bot/create_bot_viewmodel.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/common/loading_overlay.dart';
@@ -16,6 +17,7 @@ class CreateBotView extends StatefulWidget {
 
 class _CreateBotViewState extends State<CreateBotView> {
   late final CreateBotViewModel _viewModel;
+  // final Set<String> _importedKnowledgeIds = {};
 
   @override
   void initState() {
@@ -140,75 +142,84 @@ class _CreateBotViewState extends State<CreateBotView> {
   }
 
   Widget _buildKnowledgeField() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10.0),
-          border: Border.all(color: Colors.grey),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Knowledge',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
+    return StreamBuilder<Set<String>>(
+        stream: _viewModel.outputSelectedIds,
+        builder: (context, snapshot) {
+          return Padding(
+            padding: const EdgeInsets.all(AppPadding.p20),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(AppSize.s10),
+                border: Border.all(color: Colors.grey),
               ),
-              const SizedBox(height: 6.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: ColorManager.teal), // Set border color and width
-                      borderRadius: BorderRadius.circular(AppSize.s8),
-                    ),
-                    child: Text(
-                      '4 units',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.green.shade800,
-                      ),
+                  const Padding(
+                    padding: EdgeInsets.all(AppPadding.p16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Knowledge',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(width: 10.0),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-                    ),
-                    onPressed: () {
-                      // Add knowledge logic
+                  StreamBuilder<List<KnowledgeData>>(
+                    stream: _viewModel.outputKnowledge,
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      final knowledgeList = snapshot.data!;
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: knowledgeList.length,
+                        itemBuilder: (context, index) {
+                          final knowledge = knowledgeList[index];
+                          final isSelected = _viewModel.isKnowledgeSelected(knowledge.id);
+
+                          return ListTile(
+                            title: Text(knowledge.knowledgeName),
+                            subtitle: Text(knowledge.description),
+                            trailing: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: isSelected ? Colors.red : ColorManager.teal,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                              onPressed: () => setState(() {
+                                _viewModel.toggleKnowledge(knowledge.id);
+                              }),
+                              child: Text(isSelected ? 'Remove' : 'Add'),
+                            ),
+                          );
+                        },
+                      );
                     },
-                    child: const Text(
-                      'Add',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
                   ),
                 ],
               ),
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          );
+        });
   }
+
+/*   Future<void> _handleSaveAndPreview() async {
+    final success = await _viewModel.createBot();
+    if (success && mounted) {
+      Navigator.pop(context);
+    }
+  } */
 
   Widget _buildPreviewButton() {
     return Padding(

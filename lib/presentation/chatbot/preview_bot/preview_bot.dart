@@ -198,6 +198,7 @@ class _PreviewBotViewState extends State<PreviewBotView> {
                 stream: _viewModel.outputLoading,
                 builder: (context, loadingSnapshot) {
                   if (loadingSnapshot.data == true) {
+                    return const Center(child: Text("Loading..."));
                     return const Center(child: CircularProgressIndicator());
                   }
                   

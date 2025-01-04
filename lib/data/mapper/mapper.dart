@@ -139,6 +139,7 @@ extension CreateAssistantResponseMapper on CreateAssistantResponse {
       instructions: instructions,
       assistantName: assistantName,
       openAiAssistantId: openAiAssistantId,
+      openAiThreadIdPlay: openAiThreadIdPlay,
     );
   }
 }

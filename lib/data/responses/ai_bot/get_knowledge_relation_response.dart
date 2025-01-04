@@ -1,23 +1,24 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:json_annotation/json_annotation.dart';
 
-part 'get_imported_knowledge_response.g.dart';
+part 'get_knowledge_relation_response.g.dart';
 
 @JsonSerializable()
-class GetImportedKnowledgeResponse {
-  final List<ImportedKnowledge> data;
+class GetKnowledgeRelationResponse {
+  final List<KnowledgeRelation> data;
   final Meta meta;
 
-  GetImportedKnowledgeResponse({
+  GetKnowledgeRelationResponse({
     required this.data,
     required this.meta,
   });
 
-  factory GetImportedKnowledgeResponse.fromJson(Map<String, dynamic> json) => _$GetImportedKnowledgeResponseFromJson(json);
-  Map<String, dynamic> toJson() => _$GetImportedKnowledgeResponseToJson(this);
+  factory GetKnowledgeRelationResponse.fromJson(Map<String, dynamic> json) => _$GetKnowledgeRelationResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$GetKnowledgeRelationResponseToJson(this);
 }
 
 @JsonSerializable()
-class ImportedKnowledge {
+class KnowledgeRelation {
   final String? createdAt;
   final String? updatedAt;
   final String? createdBy;
@@ -27,10 +28,11 @@ class ImportedKnowledge {
   final String knowledgeName;
   final String description;
   final String userId;
-  // final int numUnits;
-  // final int totalSize;
+  final bool isImported;
+  final int numUnits;
+  final int totalSize;
 
-  ImportedKnowledge({
+  KnowledgeRelation({
     this.createdAt,
     this.updatedAt,
     this.createdBy,
@@ -40,12 +42,13 @@ class ImportedKnowledge {
     required this.knowledgeName,
     required this.description,
     required this.userId,
-    // required this.numUnits,
-    // required this.totalSize,
+    required this.isImported,
+    required this.numUnits,
+    required this.totalSize,
   });
 
-  factory ImportedKnowledge.fromJson(Map<String, dynamic> json) => _$ImportedKnowledgeFromJson(json);
-  Map<String, dynamic> toJson() => _$ImportedKnowledgeToJson(this);
+  factory KnowledgeRelation.fromJson(Map<String, dynamic> json) => _$KnowledgeRelationFromJson(json);
+  Map<String, dynamic> toJson() => _$KnowledgeRelationToJson(this);
 }
 
 @JsonSerializable()

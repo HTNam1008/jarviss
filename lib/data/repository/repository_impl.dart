@@ -13,6 +13,10 @@ import 'package:jarvis/data/request/ai_bot/create_thread_request.dart';
 import 'package:jarvis/data/request/ai_bot/delete_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/get_assistant_request.dart';
 import 'package:jarvis/data/request/ai_bot/get_assistants_request.dart';
+import 'package:jarvis/data/request/ai_bot/get_imported_knowledge_request.dart';
+import 'package:jarvis/data/request/ai_bot/get_knowledge_relation_request.dart';
+import 'package:jarvis/data/request/ai_bot/import_knowledge_request.dart';
+import 'package:jarvis/data/request/ai_bot/remove_knowledge_request.dart';
 import 'package:jarvis/data/request/ai_bot/retrieve_message_thread_request.dart';
 import 'package:jarvis/data/request/ai_bot/update_assistant_new_thread_playground_request.dart';
 import 'package:jarvis/data/request/ai_bot/update_assistant_request.dart';
@@ -30,6 +34,8 @@ import 'package:jarvis/data/request/bot_integration/verify_messenger_bot_integra
 import 'package:jarvis/data/request/bot_integration/verify_slack_bot_integration_request.dart';
 import 'package:jarvis/data/request/bot_integration/verify_telegram_bot_integration_request.dart';
 import 'package:jarvis/data/responses/ai_bot/get_assistants_response.dart';
+import 'package:jarvis/data/responses/ai_bot/get_imported_knowledge_response.dart';
+import 'package:jarvis/data/responses/ai_bot/get_knowledge_relation_response.dart';
 import 'package:jarvis/data/responses/bot_integration/get_configurations_response.dart';
 import 'package:jarvis/data/responses/email/create_email_reply_response.dart';
 import 'package:jarvis/domain/model/model.dart';
@@ -566,12 +572,68 @@ class RepositoryImpl implements Repository {
       return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
     }
   }
+  
+  @override
+  Future<Either<Failure, GetImportedKnowledgeResponse>> getImportedKnowledgeAssistant(GetImportedKnowledgeRequest getImportedKnowledgeRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.getImportedKnowledge(getImportedKnowledgeRequest);
+        return Right(response);
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
 
   @override
   Future<Either<Failure, CreateResponseEmailResponse>> createResponseEmail(CreaterResponseEmailRequest request) async {
     if (await _networkInfo.isConnected) {
       try {
         final response = await _remoteDataSource.createResponseEmail(request);
+                return Right(response);
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+}
+  @override
+  Future<Either<Failure, void>> importKnowledgeAssistant(ImportKnowledgeRequest importKnowledgeRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.importKnowledgeAssistant(importKnowledgeRequest);
+        return Right(response);
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> removeKnowledgeAssistant(RemoveKnowledgeRequest removeKnowledgeRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.removeKnowledgeAssistant(removeKnowledgeRequest);
+        return Right(response);
+      } catch (error) {
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    } else {
+      return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, GetKnowledgeRelationResponse>> getKnowledgeRelation(GetKnowledgeRelationRequest getKnowledgeRelationRequest) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _remoteDataSource.getKnowledgeRelation(getKnowledgeRelationRequest);
         return Right(response);
       } catch (error) {
         return Left(ErrorHandler.handle(error).failure);

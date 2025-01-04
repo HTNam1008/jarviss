@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:jarvis/app/app_prefs.dart';
 import 'package:jarvis/domain/repository/repository.dart';
+import 'package:jarvis/domain/usecase/sign_in_kb_usecase.dart';
 import 'package:jarvis/domain/usecase/sign_in_usecase.dart';
 import 'package:jarvis/presentation/authencation/sign_in/sign_in_viewmodel.dart';
 import 'package:jarvis/presentation/common/dialog_util.dart';
@@ -59,7 +60,7 @@ class _SignInViewState extends State<SignInView> {
   void initState() {
     super.initState();
     // Khởi tạo signInViewModel với signInUseCase
-    _signInViewModel = SignInViewModel(SignInUseCase(getIt<Repository>()), getIt<AppPreferences>());
+    _signInViewModel = SignInViewModel(SignInUseCase(getIt<Repository>()), getIt<AppPreferences>(), getIt<SignInKbUseCase>());
     _bind();
   }
 

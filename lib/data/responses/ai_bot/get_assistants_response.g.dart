@@ -60,6 +60,96 @@ Map<String, dynamic> _$AssistantDataToJson(AssistantData instance) =>
       'isFavorite': instance.isFavorite,
     };
 
+GetKnowledgeResponse _$GetKnowledgeResponseFromJson(
+        Map<String, dynamic> json) =>
+    GetKnowledgeResponse(
+      data: (json['data'] as List<dynamic>)
+          .map((e) => KnowledgeData.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      meta: MetaData.fromJson(json['meta'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$GetKnowledgeResponseToJson(
+        GetKnowledgeResponse instance) =>
+    <String, dynamic>{
+      'data': instance.data,
+      'meta': instance.meta,
+    };
+
+GetUnitsResponse _$GetUnitsResponseFromJson(Map<String, dynamic> json) =>
+    GetUnitsResponse(
+      data: (json['data'] as List<dynamic>)
+          .map((e) => UnitData.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      meta: MetaData.fromJson(json['meta'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$GetUnitsResponseToJson(GetUnitsResponse instance) =>
+    <String, dynamic>{
+      'data': instance.data,
+      'meta': instance.meta,
+    };
+
+KnowledgeData _$KnowledgeDataFromJson(Map<String, dynamic> json) =>
+    KnowledgeData(
+      index: json['0'] as String,
+      createdAt: json['createdAt'] as String?,
+      updatedAt: json['updatedAt'] as String?,
+      createdBy: json['createdBy'] as String?,
+      updatedBy: json['updatedBy'] as String?,
+      userId: json['userId'] as String?,
+      id: json['id'] as String,
+      knowledgeName: json['knowledgeName'] as String,
+      description: json['description'] as String,
+      numUnits: (json['numUnits'] as num?)?.toInt(),
+      totalSize: (json['totalSize'] as num?)?.toInt(),
+    );
+
+Map<String, dynamic> _$KnowledgeDataToJson(KnowledgeData instance) =>
+    <String, dynamic>{
+      '0': instance.index,
+      'createdAt': instance.createdAt,
+      'updatedAt': instance.updatedAt,
+      'createdBy': instance.createdBy,
+      'updatedBy': instance.updatedBy,
+      'userId': instance.userId,
+      'id': instance.id,
+      'knowledgeName': instance.knowledgeName,
+      'description': instance.description,
+      'numUnits': instance.numUnits,
+      'totalSize': instance.totalSize,
+    };
+
+UnitData _$UnitDataFromJson(Map<String, dynamic> json) => UnitData(
+      createdAt: json['0'] as String,
+      updatedAt: json['updatedAt'] as String?,
+      createdBy: json['createdBy'] as String?,
+      updatedBy: json['updatedBy'] as String?,
+      id: json['id'] as String,
+      name: json['name'] as String,
+      status: json['status'] as bool,
+      userId: json['userId'] as String,
+      knowledgeId: json['knowledgeId'] as String,
+      type: json['type'] as String,
+      size: (json['size'] as num).toInt(),
+      metadata: json['metadata'] as Object,
+    );
+
+Map<String, dynamic> _$UnitDataToJson(UnitData instance) => <String, dynamic>{
+      '0': instance.createdAt,
+      'updatedAt': instance.updatedAt,
+      'createdBy': instance.createdBy,
+      'updatedBy': instance.updatedBy,
+      'id': instance.id,
+      'name': instance.name,
+      'status': instance.status,
+      'userId': instance.userId,
+      'type': instance.type,
+      'knowledgeId': instance.knowledgeId,
+      'size': instance.size,
+      'metadata': instance.metadata,
+    };
+
 MetaData _$MetaDataFromJson(Map<String, dynamic> json) => MetaData(
       limit: (json['limit'] as num).toDouble(),
       offset: (json['offset'] as num).toDouble(),
