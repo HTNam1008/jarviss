@@ -90,6 +90,7 @@ class _KnowledgeViewState extends State<KnowledgeView> {
                     Icon(
                       Icons.add,
                       size: 14,
+                      color: Colors.white,
                     ),
                     SizedBox(width: 4,),
                     Text(
@@ -206,6 +207,7 @@ class _KnowledgeViewState extends State<KnowledgeView> {
                             ),
                             child: ListTile(
                               leading: const CircleAvatar(
+                                radius: AppSize.s24,
                                 child: Icon(Icons.article_outlined),
                               ),
                               title: Text(
@@ -227,7 +229,7 @@ class _KnowledgeViewState extends State<KnowledgeView> {
                                 onPressed: () {
                                   _showActions(context, knowledge);
                                 },
-                                color: Colors.grey,
+                                color: Colors.black,
                               ),
                               onTap: () {
                                 Navigator.push(

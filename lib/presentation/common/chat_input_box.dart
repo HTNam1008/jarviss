@@ -287,7 +287,7 @@ class _ChatInputBoxState extends State<ChatInputBox> {
         color: Colors.teal[50],
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
+            color: Colors.blueGrey.withOpacity(0.5),
             spreadRadius: 5,
             blurRadius: 10,
             offset: Offset(0, 4),

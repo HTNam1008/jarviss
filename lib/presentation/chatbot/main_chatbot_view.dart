@@ -135,6 +135,7 @@ class _ChatBotMainViewState extends State<ChatBotMainView> {
                     Icon(
                       Icons.add,
                       size: 14,
+                      color: Colors.white,
                     ),
                     SizedBox(
                       width: 4,
@@ -315,8 +316,16 @@ class _ChatBotMainViewState extends State<ChatBotMainView> {
             radius: AppSize.s24,
             backgroundImage: AssetImage(ImageAssets.botIc),
           ),
-          title: Text(assistant.assistantName),
-          subtitle: Text(assistant.description ?? ''),
+          title: Text(assistant.assistantName,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: AppSize.s14,
+            ),),
+          subtitle: Text(assistant.description ?? '',
+            style: const TextStyle(
+              fontSize: AppSize.s14,
+              color: Colors.grey,
+            ),),
           trailing: IconButton(
             icon: const Icon(Icons.more_vert),
             onPressed: () => _showActions(context, assistant.id),

@@ -130,6 +130,7 @@ class _PromptViewState extends State<PromptView> {
                     Icon(
                       Icons.add,
                       size: 14,
+                      color: Colors.white,
                     ),
                     const SizedBox(width: 4,),
                     Text(
