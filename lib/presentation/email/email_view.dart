@@ -301,7 +301,24 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
                               child: SizedBox(
                                 width: 200,
                                 height: 70,// Adjust this value to decrease/increase the width of the button
-                                child: ElevatedButton(
+                                child: MouseRegion(
+                                   onEnter: (event) {},
+                                   onExit: (event) {},
+                                  child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+                                      if (states.contains(MaterialState.hovered)) {
+                                        return Colors.white54; // Change color on hover
+                                      }
+                                      return Colors.cyan; // Default color
+                                    }),
+                                    overlayColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+                                      if (states.contains(MaterialState.hovered)) {
+                                        return Colors.white54.withOpacity(0.5); // Optional hover overlay effect
+                                      }
+                                      return null; // Default overlay
+                                    }),
+                                  ),
                                   onPressed: () {
                                     emailViewModel.createResponseEmail(
                                       idea,
@@ -322,6 +339,7 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
                                     fontWeight: FontWeightManager.semiBold,
                                   )),
                                 ),
+                                 ),
                               ),
                             );
                           }).toList() : [
@@ -341,11 +359,18 @@ class _EmailViewState extends State<EmailView> with SingleTickerProviderStateMix
                       if (emailViewModel.emailResponse.isNotEmpty)
                         Padding(
                           padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                            emailViewModel.emailResponse,
-                            style: TextStyle(
-                              fontSize: AppSize.s14,
-                              fontWeight: FontWeightManager.semiBold,
+                          child: Container(
+                            constraints: BoxConstraints(
+                              maxHeight: 310, // Limit the height of the response display
+                            ),
+                            child: SingleChildScrollView(
+                              child: Text(
+                                emailViewModel.emailResponse,
+                                style: TextStyle(
+                                  fontSize: AppSize.s14,
+                                  fontWeight: FontWeightManager.semiBold,
+                                ),
+                              ),
                             ),
                           ),
                         ),
