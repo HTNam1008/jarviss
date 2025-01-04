@@ -1,7 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:json_annotation/json_annotation.dart';
 
-import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
 
 part 'get_assistants_response.g.dart';
 
@@ -58,7 +57,7 @@ class AssistantData {
       _$AssistantDataFromJson(json);
 }
 
-@JsonSerializable()
+/* @JsonSerializable()
 class GetKnowledgeResponse {
   final List<KnowledgeData> data;
   final MetaData meta;
@@ -88,7 +87,7 @@ class GetUnitsResponse {
       _$GetUnitsResponseFromJson(json);
 
   Map<String, dynamic> toJson() => _$GetUnitsResponseToJson(this);
-}
+} */
 
 @JsonSerializable()
 class KnowledgeData {

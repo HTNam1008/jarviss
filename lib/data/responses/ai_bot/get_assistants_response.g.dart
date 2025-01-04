@@ -60,36 +60,6 @@ Map<String, dynamic> _$AssistantDataToJson(AssistantData instance) =>
       'isFavorite': instance.isFavorite,
     };
 
-GetKnowledgeResponse _$GetKnowledgeResponseFromJson(
-        Map<String, dynamic> json) =>
-    GetKnowledgeResponse(
-      data: (json['data'] as List<dynamic>)
-          .map((e) => KnowledgeData.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      meta: MetaData.fromJson(json['meta'] as Map<String, dynamic>),
-    );
-
-Map<String, dynamic> _$GetKnowledgeResponseToJson(
-        GetKnowledgeResponse instance) =>
-    <String, dynamic>{
-      'data': instance.data,
-      'meta': instance.meta,
-    };
-
-GetUnitsResponse _$GetUnitsResponseFromJson(Map<String, dynamic> json) =>
-    GetUnitsResponse(
-      data: (json['data'] as List<dynamic>)
-          .map((e) => UnitData.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      meta: MetaData.fromJson(json['meta'] as Map<String, dynamic>),
-    );
-
-Map<String, dynamic> _$GetUnitsResponseToJson(GetUnitsResponse instance) =>
-    <String, dynamic>{
-      'data': instance.data,
-      'meta': instance.meta,
-    };
-
 KnowledgeData _$KnowledgeDataFromJson(Map<String, dynamic> json) =>
     KnowledgeData(
       index: json['0'] as String,

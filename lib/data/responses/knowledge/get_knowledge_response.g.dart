@@ -35,31 +35,3 @@ Map<String, dynamic> _$MetaDataToJson(MetaData instance) => <String, dynamic>{
       'total': instance.total,
       'hasNext': instance.hasNext,
     };
-
-KnowledgeData _$KnowledgeDataFromJson(Map<String, dynamic> json) =>
-    KnowledgeData(
-      index: json['0'] as String,
-      createdAt: json['createdAt'] as String?,
-      updatedAt: json['updatedAt'] as String?,
-      createdBy: json['createdBy'] as String?,
-      updatedBy: json['updatedBy'] as String?,
-      userId: json['userId'] as String?,
-      knowledgeName: json['knowledgeName'] as String,
-      description: json['description'] as String,
-      numUnits: (json['numUnits'] as num?)?.toInt(),
-      totalSize: (json['totalSize'] as num?)?.toInt(),
-    );
-
-Map<String, dynamic> _$KnowledgeDataToJson(KnowledgeData instance) =>
-    <String, dynamic>{
-      '0': instance.index,
-      'createdAt': instance.createdAt,
-      'updatedAt': instance.updatedAt,
-      'createdBy': instance.createdBy,
-      'updatedBy': instance.updatedBy,
-      'userId': instance.userId,
-      'knowledgeName': instance.knowledgeName,
-      'description': instance.description,
-      'numUnits': instance.numUnits,
-      'totalSize': instance.totalSize,
-    };

@@ -40,7 +40,6 @@ import 'package:jarvis/data/responses/bot_integration/get_configurations_respons
 import 'package:jarvis/data/responses/email/create_email_reply_response.dart';
 import 'package:jarvis/domain/model/model.dart';
 import 'package:jarvis/domain/repository/repository.dart';
-import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
 import '../../../app/constant.dart';
 import '../request/email/create_email_reply_request.dart';
 import '../request/email/create_response_email_request.dart';
@@ -600,7 +599,7 @@ class RepositoryImpl implements Repository {
       return Left(DataSource.NO_INTERNET_CONNECTION.getFailure());
     }
   }
-}
+
   @override
   Future<Either<Failure, void>> importKnowledgeAssistant(ImportKnowledgeRequest importKnowledgeRequest) async {
     if (await _networkInfo.isConnected) {
