@@ -970,7 +970,7 @@ class _AppKbServiceClient implements AppKbServiceClient {
   }
 
   @override
-  Future<void> publishMessengerBot(
+  Future<PublishBotResponse> publishMessengerBot(
     String assistantId,
     PublishMessengerBotRequest publishMessengerBotRequest,
   ) async {
@@ -979,7 +979,7 @@ class _AppKbServiceClient implements AppKbServiceClient {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(publishMessengerBotRequest.toJson());
-    final _options = _setStreamType<void>(Options(
+    final _options = _setStreamType<PublishBotResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -995,11 +995,19 @@ class _AppKbServiceClient implements AppKbServiceClient {
           _dio.options.baseUrl,
           baseUrl,
         )));
-    await _dio.fetch<void>(_options);
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PublishBotResponse _value;
+    try {
+      _value = PublishBotResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
   }
 
   @override
-  Future<void> publishTelegramBot(
+  Future<PublishBotResponse> publishTelegramBot(
     String assistantId,
     PublishTelegramBotRequest publishTelegramBotRequest,
   ) async {
@@ -1008,7 +1016,7 @@ class _AppKbServiceClient implements AppKbServiceClient {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(publishTelegramBotRequest.toJson());
-    final _options = _setStreamType<void>(Options(
+    final _options = _setStreamType<PublishBotResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -1024,11 +1032,19 @@ class _AppKbServiceClient implements AppKbServiceClient {
           _dio.options.baseUrl,
           baseUrl,
         )));
-    await _dio.fetch<void>(_options);
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PublishBotResponse _value;
+    try {
+      _value = PublishBotResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
   }
 
   @override
-  Future<void> publishSlackBot(
+  Future<PublishBotResponse> publishSlackBot(
     String assistantId,
     PublishSlackBotRequest publishSlackBotRequest,
   ) async {
@@ -1037,7 +1053,7 @@ class _AppKbServiceClient implements AppKbServiceClient {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(publishSlackBotRequest.toJson());
-    final _options = _setStreamType<void>(Options(
+    final _options = _setStreamType<PublishBotResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -1053,7 +1069,15 @@ class _AppKbServiceClient implements AppKbServiceClient {
           _dio.options.baseUrl,
           baseUrl,
         )));
-    await _dio.fetch<void>(_options);
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PublishBotResponse _value;
+    try {
+      _value = PublishBotResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
   }
 
   @override

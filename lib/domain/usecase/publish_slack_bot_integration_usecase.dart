@@ -6,13 +6,13 @@ import 'package:jarvis/data/request/bot_integration/publish_slack_bot_request.da
 import 'package:jarvis/domain/repository/repository.dart';
 import 'package:jarvis/domain/usecase/base_usecase.dart';
 
-class PublishSlackBotIntegrationUsecase implements BaseUseCase<PublishBotSlackIntegrationUsecaseInput, void> {
+class PublishSlackBotIntegrationUsecase implements BaseUseCase<PublishBotSlackIntegrationUsecaseInput, String> {
   final Repository _repository;
 
   PublishSlackBotIntegrationUsecase(this._repository);
 
   @override
-  Future<Either<Failure, void>> execute(PublishBotSlackIntegrationUsecaseInput input) async {
+  Future<Either<Failure, String>> execute(PublishBotSlackIntegrationUsecaseInput input) async {
     return await _repository.publishBotSlackIntegration(
       PublishSlackBotRequest(
         assistandId: input.assistandId,

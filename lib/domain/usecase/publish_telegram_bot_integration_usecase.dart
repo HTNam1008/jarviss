@@ -6,13 +6,13 @@ import 'package:jarvis/data/request/bot_integration/publish_telegram_bot_request
 import 'package:jarvis/domain/repository/repository.dart';
 import 'package:jarvis/domain/usecase/base_usecase.dart';
 
-class PublishTelegramBotIntegrationUsecase implements BaseUseCase<PublishBotTelegramIntegrationUsecaseInput, void> {
+class PublishTelegramBotIntegrationUsecase implements BaseUseCase<PublishBotTelegramIntegrationUsecaseInput, String> {
   final Repository _repository;
 
   PublishTelegramBotIntegrationUsecase(this._repository);
 
   @override
-  Future<Either<Failure, void>> execute(PublishBotTelegramIntegrationUsecaseInput input) async {
+  Future<Either<Failure, String>> execute(PublishBotTelegramIntegrationUsecaseInput input) async {
     return await _repository.publishBotTelegramIntegration(
       PublishTelegramBotRequest(
         assistandId: input.assistandId,

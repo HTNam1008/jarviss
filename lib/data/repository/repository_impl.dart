@@ -382,11 +382,11 @@ class RepositoryImpl implements Repository {
   }
 
   @override
-  Future<Either<Failure, void>> publishBotMessengerIntegration(PublishMessengerBotRequest publishMessengerBotRequest) async {
+  Future<Either<Failure, String>> publishBotMessengerIntegration(PublishMessengerBotRequest publishMessengerBotRequest) async {
     if (await _networkInfo.isConnected) {
       try {
-        await _remoteDataSource.publishBotMessengerIntegration(publishMessengerBotRequest);
-        return const Right(null);
+        final response = await _remoteDataSource.publishBotMessengerIntegration(publishMessengerBotRequest);
+        return Right(response.toDomain());
       } catch (error) {
         return Left(ErrorHandler.handle(error).failure);
       }
@@ -396,11 +396,11 @@ class RepositoryImpl implements Repository {
   }
 
   @override
-  Future<Either<Failure, void>> publishBotSlackIntegration(PublishSlackBotRequest publishSlackBotRequest) async {
+  Future<Either<Failure, String>> publishBotSlackIntegration(PublishSlackBotRequest publishSlackBotRequest) async {
     if (await _networkInfo.isConnected) {
       try {
-        await _remoteDataSource.publishBotSlackIntegration(publishSlackBotRequest);
-        return const Right(null);
+        final response = await _remoteDataSource.publishBotSlackIntegration(publishSlackBotRequest);
+        return Right(response.toDomain());
       } catch (error) {
         return Left(ErrorHandler.handle(error).failure);
       }
@@ -410,11 +410,11 @@ class RepositoryImpl implements Repository {
   }
 
   @override
-  Future<Either<Failure, void>> publishBotTelegramIntegration(PublishTelegramBotRequest publishTelegramBotRequest) async {
+  Future<Either<Failure, String>> publishBotTelegramIntegration(PublishTelegramBotRequest publishTelegramBotRequest) async {
     if (await _networkInfo.isConnected) {
       try {
-        await _remoteDataSource.publishBotTelegramIntegration(publishTelegramBotRequest);
-        return const Right(null);
+        final response = await _remoteDataSource.publishBotTelegramIntegration(publishTelegramBotRequest);
+        return Right(response.toDomain());
       } catch (error) {
         return Left(ErrorHandler.handle(error).failure);
       }
