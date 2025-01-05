@@ -1,10 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 
 import 'package:jarvis/app/constant.dart';
 import 'package:jarvis/app/extensions.dart';
+import 'package:jarvis/data/network/failure.dart';
 import 'package:jarvis/data/responses/bot_integration/get_configurations_response.dart';
 import 'package:jarvis/domain/usecase/get_configurations_usecase.dart';
 import 'package:jarvis/domain/usecase/publish_messenger_bot_integration_usecase.dart';
@@ -29,6 +31,13 @@ class Platform {
   });
 
   String get type => name.toLowerCase();
+}
+
+class PublishResult {
+  final String platformType;
+  final String redirectUrl;
+
+  PublishResult({required this.platformType, required this.redirectUrl});
 }
 
 class PublishBotViewModel extends BaseViewModel implements PublishBotViewModelInputs, PublishBotViewModelOutputs {
@@ -109,52 +118,61 @@ class PublishBotViewModel extends BaseViewModel implements PublishBotViewModelIn
     inputPlatforms.add(_platforms);
   }
 
-  Future<bool> publishBot() async {
+  Future<(bool, List<PublishResult>)> publishBot() async {
     inputIsLoading.add(true);
+    final publishResults = <PublishResult>[];
 
     try {
       final selectedPlatforms = _platforms.where((p) => p.isSelected).toList();
       if (selectedPlatforms.isEmpty) {
         inputError.add('Please select at least one platform');
-        return false;
+        inputIsLoading.add(false);
+        return (false, <PublishResult>[]);
       }
 
-      final publishResults = await Future.wait(
-        selectedPlatforms.map((platform) {
-          switch (platform.type) {
-            case 'slack':
-              return _publishSlackBotIntegrationUsecase.execute(
-                PublishBotSlackIntegrationUsecaseInput(
-                  assistandId: platform.assistantId,
-                  botToken: platform.metadata['botToken'],
-                  clientId: platform.metadata['clientId'], 
-                  clientSecret: platform.metadata['clientSecret'], 
-                  signingSecret: platform.metadata['signingSecret'],
-                ),
-              );
-            case 'telegram':
-              return _publishTelegramBotIntegrationUsecase.execute(
-                PublishBotTelegramIntegrationUsecaseInput(
-                  assistandId: platform.assistantId,
-                  botToken: platform.metadata['botToken'],
-                ),
-              );
-            case 'messenger':
-              return _publishMessengerBotIntegrationUsecase.execute(
-                PublishBotMessengerIntegrationUsecaseInput(
-                  assistandId: platform.assistantId,
-                  appSecret: platform.metadata['appSecret'],
-                  botToken: platform.metadata['botToken'],
-                  pageId: platform.metadata['pageId'],
-                ),
-              );
-            default:
-              throw Exception('Unsupported platform: ${platform.type}');
-          }
+      final List<Either<Failure, String>> results = await Future.wait(
+        selectedPlatforms.map((platform) async {
+          final result = await (() {
+            switch (platform.type) {
+              case 'slack':
+                return _publishSlackBotIntegrationUsecase.execute(
+                  PublishBotSlackIntegrationUsecaseInput(
+                    assistandId: platform.assistantId,
+                    botToken: platform.metadata.botToken,
+                    clientId: platform.metadata.clientId,
+                    clientSecret: platform.metadata.clientSecret,
+                    signingSecret: platform.metadata.signingSecret,
+                  ),
+                );
+              case 'telegram':
+                return _publishTelegramBotIntegrationUsecase.execute(
+                  PublishBotTelegramIntegrationUsecaseInput(
+                    assistandId: platform.assistantId,
+                    botToken: platform.metadata.botToken,
+                  ),
+                );
+              case 'messenger':
+                return _publishMessengerBotIntegrationUsecase.execute(
+                  PublishBotMessengerIntegrationUsecaseInput(
+                    assistandId: platform.assistantId,
+                    appSecret: platform.metadata['appSecret'],
+                    botToken: platform.metadata['botToken'],
+                    pageId: platform.metadata['pageId'],
+                  ),
+                );
+              default:
+                throw Exception('Unsupported platform: ${platform.type}');
+            }
+          })();
+
+          return result.fold((failure) => Left(failure), (redirectUrl) {
+            publishResults.add(PublishResult(platformType: platform.type, redirectUrl: redirectUrl));
+            return Right(redirectUrl);
+          });
         }),
       );
 
-      final failures = publishResults
+      final failures = results
           .where((result) => result.isLeft())
           .map((result) => result.fold(
                 (failure) => failure.message,
@@ -165,15 +183,16 @@ class PublishBotViewModel extends BaseViewModel implements PublishBotViewModelIn
 
       if (failures.isNotEmpty) {
         inputError.add('Failed to publish: ${failures.join(", ")}');
-        return false;
+        inputIsLoading.add(false);
+        return (false, <PublishResult>[]);
       }
- 
+
       inputIsLoading.add(false);
-      return true;
+      return (true, publishResults);
     } catch (e) {
       inputError.add(e.toString());
       inputIsLoading.add(false);
-      return false;
+      return (false, <PublishResult>[]);
     }
   }
 
@@ -201,20 +220,20 @@ class PublishBotViewModel extends BaseViewModel implements PublishBotViewModelIn
     switch (platform.type) {
       case 'slack':
         return {
-            'botToken': values['Bot Token'] ?? '',
-            'clientId': values['Client ID'] ?? '',
-            'clientSecret': values['Client Secret'] ?? '',
-            'signingSecret': values['Signing Secret'] ?? '',
+          'botToken': values['Bot Token'] ?? '',
+          'clientId': values['Client ID'] ?? '',
+          'clientSecret': values['Client Secret'] ?? '',
+          'signingSecret': values['Signing Secret'] ?? '',
         };
       case 'telegram':
         return {
-            'botToken': values['Bot Token'] ?? '',
+          'botToken': values['Bot Token'] ?? '',
         };
       case 'messenger':
         return {
-            'botToken': values['Bot Token'] ?? '',
-            'pageId': values['Bot Page ID'] ?? '',
-            'appSecret': values['Bot App Secret'] ?? '',
+          'botToken': values['Bot Token'] ?? '',
+          'pageId': values['Bot Page ID'] ?? '',
+          'appSecret': values['Bot App Secret'] ?? '',
         };
       default:
         throw Exception('Unknown platform type');

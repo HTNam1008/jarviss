@@ -6,13 +6,13 @@ import 'package:jarvis/data/request/bot_integration/publish_messenger_bot_reques
 import 'package:jarvis/domain/repository/repository.dart';
 import 'package:jarvis/domain/usecase/base_usecase.dart';
 
-class PublishMessengerBotIntegrationUsecase implements BaseUseCase<PublishBotMessengerIntegrationUsecaseInput, void> {
+class PublishMessengerBotIntegrationUsecase implements BaseUseCase<PublishBotMessengerIntegrationUsecaseInput, String> {
   final Repository _repository;
 
   PublishMessengerBotIntegrationUsecase(this._repository);
 
   @override
-  Future<Either<Failure, void>> execute(PublishBotMessengerIntegrationUsecaseInput input) async {
+  Future<Either<Failure, String>> execute(PublishBotMessengerIntegrationUsecaseInput input) async {
     return await _repository.publishBotMessengerIntegration(
       PublishMessengerBotRequest(
         appSecret: input.appSecret, 

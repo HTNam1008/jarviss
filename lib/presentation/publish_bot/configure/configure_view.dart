@@ -5,7 +5,7 @@ import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/publish_bot/configure/configure_viewmodel.dart';
 import 'package:jarvis/presentation/publish_bot/publish_bot_viewmodel.dart';
 import 'package:flutter/services.dart';
-// import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ConfigureView extends StatefulWidget {
   final Platform platform;
@@ -26,40 +26,40 @@ class _ConfigureViewState extends State<ConfigureView> {
   final Map<String, TextEditingController> controllers = {};
   late final PlatformType platformType;
 
-/*   final Map<String, String> _helpUrls = {
+  final Map<String, String> _helpUrls = {
     'slack': 'https://www.jarvis.cx/help/knowledge-base/publish-bot/slack',
     'telegram': 'https://www.jarvis.cx/help/knowledge-base/publish-bot/telegram',
     'messenger': 'https://www.jarvis.cx/help/knowledge-base/publish-bot/messenger',
-  }; */
+  };
 
-/* Future<void> _launchHelpUrl() async {
-  try {
-    final url = _helpUrls[widget.platform.name.toLowerCase()];
-    if (url != null) {
-      final uri = Uri.parse(url);
-      if (!await launchUrl(
-        uri,
-        mode: LaunchMode.externalApplication,
-      )) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Could not launch URL'),
-            ),
-          );
+  Future<void> _launchHelpUrl() async {
+    try {
+      final url = _helpUrls[widget.platform.name.toLowerCase()];
+      if (url != null) {
+        final uri = Uri.parse(url);
+        if (!await launchUrl(
+          uri,
+          mode: LaunchMode.externalApplication,
+        )) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Could not launch URL'),
+              ),
+            );
+          }
         }
       }
-    }
-  } catch (e) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error launching URL: $e'),
-        ),
-      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error launching URL: $e'),
+          ),
+        );
+      }
     }
   }
-} */
 
   @override
   void initState() {
@@ -129,21 +129,6 @@ class _ConfigureViewState extends State<ConfigureView> {
     }
   }
 
-  /*void _launchHelpUrl() async {
-    final url = 'https://jarvis.cx/help/knowledge-base/publish-bot/slack';
-    final uri = Uri.parse(url);
-
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not open the URL')),
-        );
-      }
-    }
-  }*/
-
   Widget _buildConfigurationFields() {
     return Column(
       children: [
@@ -184,8 +169,7 @@ class _ConfigureViewState extends State<ConfigureView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            // onTap: _launchHelpUrl,
-            onTap: () => {},
+            onTap: _launchHelpUrl,
             child: Text(
               'How to obtain Slack configurations?',
               style: const TextStyle(
@@ -195,10 +179,11 @@ class _ConfigureViewState extends State<ConfigureView> {
             ),
           ),
           const SizedBox(height: 16),
-          Text(_viewModel.getStepTitle(1),
+          Text(
+            _viewModel.getStepTitle(1),
             style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
               color: Colors.teal,
             ),
           ),
@@ -208,10 +193,11 @@ class _ConfigureViewState extends State<ConfigureView> {
           _buildUrlSection('OAuth2 Redirect URLs', _viewModel.getEventUrl('slack_oauth')),
           _buildUrlSection('Event Request URL', _viewModel.getEventUrl('slack_event')),
           _buildUrlSection('Slash Request URL', _viewModel.getEventUrl('slack_slash')),
-          Text(_viewModel.getStepTitle(2),
+          Text(
+            _viewModel.getStepTitle(2),
             style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
               color: Colors.teal,
             ),
           ),
@@ -268,7 +254,19 @@ class _ConfigureViewState extends State<ConfigureView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Telegram information',
+            GestureDetector(
+              onTap: _launchHelpUrl,
+              child: Text(
+                'How to obtain Slack configurations?',
+                style: const TextStyle(
+                  color: Colors.blue,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              _viewModel.getStepTitle(2),
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -276,8 +274,7 @@ class _ConfigureViewState extends State<ConfigureView> {
               ),
             ),
           ],
-        )
-    );
+        ));
   }
 
   Widget _buildStepConfigurationMessenger() {
@@ -286,7 +283,19 @@ class _ConfigureViewState extends State<ConfigureView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(_viewModel.getStepTitle(1),
+          GestureDetector(
+            onTap: _launchHelpUrl,
+            child: Text(
+              'How to obtain Messenger configurations?',
+              style: const TextStyle(
+                color: Colors.blue,
+                fontSize: 16,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            _viewModel.getStepTitle(1),
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -298,7 +307,8 @@ class _ConfigureViewState extends State<ConfigureView> {
           const SizedBox(height: 16),
           _buildUrlSection('Callback URL', _viewModel.getEventUrl('messenger_callback')),
           _buildUrlSection('Verify Token', 'knowledge'),
-          Text(_viewModel.getStepTitle(2),
+          Text(
+            _viewModel.getStepTitle(2),
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -346,7 +356,8 @@ class _ConfigureViewState extends State<ConfigureView> {
           children: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel',
+              child: const Text(
+                'Cancel',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -360,7 +371,8 @@ class _ConfigureViewState extends State<ConfigureView> {
                       backgroundColor: Colors.teal,
                     ),
                     onPressed: _handleDisconnect,
-                    child: const Text('Disconnect',
+                    child: const Text(
+                      'Disconnect',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -373,7 +385,8 @@ class _ConfigureViewState extends State<ConfigureView> {
                       backgroundColor: Colors.teal,
                     ),
                     onPressed: _handleVerify,
-                    child: const Text('Save',
+                    child: const Text(
+                      'Save',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -393,7 +406,7 @@ class _ConfigureViewState extends State<ConfigureView> {
     if (success && mounted) {
       Navigator.pop(context, values);
     }
-  }  
+  }
 
   Future<void> _handleDisconnect() async {
     final success = await _viewModel.disconnectBot();

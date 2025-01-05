@@ -3,6 +3,7 @@ import 'package:jarvis/app/di/di.dart';
 import 'package:jarvis/presentation/common/custome_header_bar.dart';
 import 'package:jarvis/presentation/common/loading_overlay.dart';
 import 'package:jarvis/presentation/resources/assets_manager.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'publish_bot_viewmodel.dart';
 
 class PublishBotView extends StatefulWidget {
@@ -87,8 +88,7 @@ class _PublishBotViewState extends State<PublishBotView> {
                     return PlatformListItem(
                       platform: platform,
                       onConfigureTap: () => _viewModel.navigateToConfigureView(context, platform),
-                      onCheckChanged: (value) => 
-                          _viewModel.togglePlatform(platform, value ?? false),
+                      onCheckChanged: (value) => _viewModel.togglePlatform(platform, value ?? false),
                     );
                   },
                 );
@@ -109,7 +109,8 @@ class _PublishBotViewState extends State<PublishBotView> {
           minimumSize: const Size.fromHeight(50),
         ),
         onPressed: _onPublishPressed,
-        child: const Text('Publish Bot',
+        child: const Text(
+          'Publish Bot',
           style: TextStyle(color: Colors.white, fontSize: 16),
         ),
       ),
@@ -117,14 +118,15 @@ class _PublishBotViewState extends State<PublishBotView> {
   }
 
   void _onPublishPressed() async {
-    final success = await _viewModel.publishBot();
-    // TODO: show dialog success or error and show redirect url
+    final (success, results) = await _viewModel.publishBot();
+
     if (success) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Publish Success!',
+            title: const Text(
+              'Publish Success!',
               style: TextStyle(
                 color: Colors.teal,
               ),
@@ -132,14 +134,39 @@ class _PublishBotViewState extends State<PublishBotView> {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text('Redirect:'),
-                SizedBox(height: 8),
-                Text('- Slack: https://slack.com'),
-                SizedBox(height: 4),
-                Text('- Telegram: https://telegram.org'),
-                SizedBox(height: 4),
-                Text('- Messenger: https://messenger.com'),
+              children: [
+                const Text('Redirect:'),
+                const SizedBox(height: 8),
+                ...results
+                    .map((result) => Column(
+                          children: [
+                            Row(
+                              children: [
+                                Text('- ${result.platformType}: '),
+                                Expanded(
+                                  child: InkWell(
+                                    onTap: () async {
+                                      final url = Uri.parse(result.redirectUrl);
+                                      if (await canLaunchUrl(url)) {
+                                        await launchUrl(url);
+                                      }
+                                    },
+                                    child: Text(
+                                      result.redirectUrl,
+                                      style: const TextStyle(
+                                        color: Colors.blue,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                          ],
+                        ))
+                    .toList(),
               ],
             ),
             actions: [
@@ -158,7 +185,8 @@ class _PublishBotViewState extends State<PublishBotView> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Publish Failed!',
+            title: const Text(
+              'Publish Failed!',
               style: TextStyle(
                 color: Colors.red,
               ),
@@ -178,7 +206,6 @@ class _PublishBotViewState extends State<PublishBotView> {
     }
   }
 }
-
 
 class PlatformListItem extends StatelessWidget {
   final Platform platform;

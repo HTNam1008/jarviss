@@ -26,6 +26,7 @@ import 'package:jarvis/data/responses/ai_bot/update_assistant_new_thread_playgro
 import 'package:jarvis/data/responses/ai_bot/update_assistant_response.dart';
 import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
 import 'package:jarvis/data/responses/bot_integration/get_configurations_response.dart';
+import 'package:jarvis/data/responses/bot_integration/publish_bot_response.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../request/knowledge/create_knowledge_request.dart';
@@ -196,19 +197,19 @@ abstract class AppKbServiceClient {
   );
 
   @POST(ConstantAPI.publishMessengerBot)
-  Future<void> publishMessengerBot(
+  Future<PublishBotResponse> publishMessengerBot(
     @Path(ConstantPath.assistantId) String assistantId,
     @Body() PublishMessengerBotRequest  publishMessengerBotRequest,
   );
 
   @POST(ConstantAPI.publishTelegramBot)
-  Future<void> publishTelegramBot(
+  Future<PublishBotResponse> publishTelegramBot(
     @Path(ConstantPath.assistantId) String assistantId,
     @Body() PublishTelegramBotRequest  publishTelegramBotRequest,
   );
 
   @POST(ConstantAPI.publishSlackBot)
-  Future<void> publishSlackBot(
+  Future<PublishBotResponse> publishSlackBot(
     @Path(ConstantPath.assistantId) String assistantId,
     @Body() PublishSlackBotRequest  publishSlackBotRequest,
   );

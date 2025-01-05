@@ -12,6 +12,7 @@ import 'package:jarvis/data/responses/ai_chat/get_conversations_response.dart';
 import 'package:jarvis/data/responses/ai_chat/send_message_response.dart';
 import 'package:jarvis/data/responses/authentication_kb/knowledge_auth_response.dart';
 import 'package:jarvis/data/responses/bot_integration/get_configurations_response.dart';
+import 'package:jarvis/data/responses/bot_integration/publish_bot_response.dart';
 import 'package:jarvis/data/responses/responses.dart';
 import 'package:jarvis/data/responses/token/token_usage_response.dart';
 import 'package:jarvis/domain/model/model.dart';
@@ -272,6 +273,12 @@ extension CreateThreadResponseMappper on CreateThreadResponse {
 extension GetConfigurationsResponseMapper on GetConfigurationsResponse {
   List<Configuration> toDomain() {
     return configurations;
+  }
+}
+
+extension PublishBotResponseMapper on PublishBotResponse {
+  String toDomain() {
+    return redirect;
   }
 }
 
