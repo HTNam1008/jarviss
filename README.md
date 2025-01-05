@@ -1,11 +1,4 @@
 # Advanced Mobile
 
-Final Project Flutter
-
-## Milestone 1: Mock UI
-
-Link demo: https://drive.google.com/file/d/17gH4uoRa0VL2we6ZDSFF3QtE3Eqrxzvx/view?usp=sharing
-
-## Milestone 2: 
-
-Link demo 1: https://drive.google.com/file/d/1L0h7rxfhdxXryCWq04Vva-rbGlqcWEdQ/view?usp=sharing
+### Drive includes report and demo
+Link: https://drive.google.com/drive/folders/1fKnExrEBxxOan8OMVwjFB85H_pO5-atP?fbclid=IwY2xjawHnmPlleHRuA2FlbQIxMAABHSQKcN1I7CKdnbJNsYGgqf_Ky2orwQKBgQNvd_meOsOdc8Gs07QkirBbyA_aem_QArBcoW5FlBNGAvlAZ8eOA
