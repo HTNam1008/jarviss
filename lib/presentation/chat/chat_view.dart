@@ -15,6 +15,7 @@ import 'package:jarvis/presentation/resources/color_manager.dart';
 import 'package:jarvis/presentation/resources/font_manager.dart';
 import 'package:jarvis/presentation/resources/route_manager.dart';
 import 'package:jarvis/presentation/resources/values_manager.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ChatView extends StatefulWidget {
   final String? conversationId;
@@ -74,19 +75,13 @@ class _ChatViewState extends State<ChatView> {
       }
     });
 
-    if (widget.conversationId != null /* && widget.assistantId != null && widget.assistantModel != null */) {
+    if (widget.conversationId != null) {
       _viewModel.loadConversationMessages(
         widget.conversationId!,
-/*         widget.assistantId!,
-        widget.assistantModel!, */
       );
     }
 
     _scrollController.addListener(_onScroll);
-
-    /* WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToBottom();
-    }); */
 
     _initializeModels();
   }
@@ -211,8 +206,9 @@ class _ChatViewState extends State<ChatView> {
         ),
         actions: [
           TextButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed(Routes.upgradeProRoute);
+              onPressed: () async {
+                final Uri _url = Uri.parse('https://admin.dev.jarvis.cx/pricing/overview');
+                await launchUrl(_url, mode: LaunchMode.externalApplication);
               },
               child: Text(
                 "Upgrade",
