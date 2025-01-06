@@ -267,7 +267,7 @@ class ChatViewModel extends BaseViewModel implements ChatViewModelInputs, ChatVi
   Future<List<AssistantCustom>?> getAssistantsModel() async {
     final result = await _getAssistantsUseCase.execute(
       GetAssistantsUseCaseInput(
-        isFavorite: true,
+        isFavorite: false,
         limit: 20,
         offset: null,
         q: null,

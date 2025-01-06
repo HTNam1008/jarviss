@@ -239,7 +239,10 @@ class _CreateBotViewState extends State<CreateBotView> {
               ),
             ),
             onPressed: (snapshot.data ?? false) ? _onPreviewPressed : null,
-            child: const Text('Save and Preview bot'),
+            child: const Text(
+              'Save and Preview bot',
+              style: TextStyle(color: Colors.white),
+            ),
           );
         },
       ),
