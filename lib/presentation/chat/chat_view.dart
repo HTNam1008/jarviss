@@ -115,6 +115,43 @@ class _ChatViewState extends State<ChatView> {
     }
   }
 
+  Future<void> _handleRefresh() async {
+    setState(() {
+      _allModels.clear();
+    });
+
+    // Re-initialize built-in models
+    _allModels = assistantModels
+        .map((model) => AssistantModel(
+              id: model,
+              name: model,
+              isBuiltIn: true,
+            ))
+        .toList();
+
+    // Fetch custom assistants
+    final assistants = await _viewModel.getAssistantsModel();
+    if (assistants != null) {
+      setState(() {
+        _allModels.addAll(
+          assistants.map((assistant) => AssistantModel(
+                id: assistant.id,
+                name: assistant.assistantName,
+                isBuiltIn: false,
+              )),
+        );
+      });
+    }
+
+    // Update selected model if current one was removed
+    if (!_allModels.contains(_selectedModel)) {
+      setState(() {
+        _selectedModel = _allModels.first;
+      });
+    }
+    Navigator.pop(context);
+  }
+
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
@@ -161,43 +198,114 @@ class _ChatViewState extends State<ChatView> {
       key: _scaffoldKey,
       drawer: const AppDrawer(),
       appBar: CustomHeaderBar(
-        centerWidget: DropdownButton<AssistantModel>(
-          value: _selectedModel,
-          dropdownColor: ColorManager.teal,
-          style: TextStyle(color: ColorManager.white),
-          underline: const SizedBox(),
-          onChanged: (AssistantModel? newValue) {
-            if (newValue != null) {
-              setState(() {
-                _selectedModel = newValue;
-              });
-            }
-          },
-          items: _allModels.map<DropdownMenuItem<AssistantModel>>((AssistantModel value) {
-            return DropdownMenuItem<AssistantModel>(
-              value: value,
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: 120),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: !value.isBuiltIn ? AssetImage('assets/images/chatbot_avt.png') : AssetImage('assets/images/splash_logo.png'),
-                      radius: 10,
-                    ),
-                    const SizedBox(width: 6),
-                    Flexible(
-                      fit: FlexFit.loose,
-                      child: Text(
-                        value.name,
-                      ),
-                    ),
-                  ],
+        centerWidget: PopupMenuButton<AssistantModel>(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircleAvatar(
+                backgroundImage: !_selectedModel.isBuiltIn ? AssetImage('assets/images/chatbot_avt.png') : AssetImage('assets/images/splash_logo.png'),
+                radius: 10,
+              ),
+              const SizedBox(width: 6),
+              Flexible(
+                fit: FlexFit.loose,
+                child: Text(
+                  _selectedModel.name,
+                  style: TextStyle(color: ColorManager.white),
                 ),
               ),
-            );
-          }).toList(),
+              Icon(Icons.arrow_drop_down, color: ColorManager.white),
+            ],
+          ),
+          itemBuilder: (context) => [
+            PopupMenuItem(
+              enabled: false,
+              child: SizedBox(
+                width: 200,
+                height: 300,
+                child: RefreshIndicator(
+                  onRefresh: _handleRefresh,
+                  child: ListView.builder(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    itemCount: _allModels.length,
+                    itemBuilder: (context, index) {
+                      if (_allModels.elementAtOrNull(index) == null) {
+                        return null;
+                      }
+                      final model = _allModels[index];
+                      return ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: !model.isBuiltIn ? AssetImage('assets/images/chatbot_avt.png') : AssetImage('assets/images/splash_logo.png'),
+                          radius: 10,
+                        ),
+                        title: Flexible(
+                          fit: FlexFit.loose,
+                          child: Text(
+                            model.name,
+                          ),
+                        ),
+                        onTap: () {
+                          setState(() {
+                            _selectedModel = model;
+                          });
+                          Navigator.pop(context);
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
+        /* centerWidget: RefreshIndicator(
+          onRefresh: _handleRefresh,
+          color: ColorManager.teal,
+          child: SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            child: Column(
+              children: [
+                DropdownButton<AssistantModel>(
+                  value: _selectedModel,
+                  dropdownColor: ColorManager.teal,
+                  style: TextStyle(color: ColorManager.white),
+                  underline: const SizedBox(),
+                  onChanged: (AssistantModel? newValue) {
+                    if (newValue != null) {
+                      setState(() {
+                        _selectedModel = newValue;
+                      });
+                    }
+                  },
+                  items: _allModels.map<DropdownMenuItem<AssistantModel>>((AssistantModel value) {
+                    return DropdownMenuItem<AssistantModel>(
+                      value: value,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: 120),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CircleAvatar(
+                              backgroundImage: !value.isBuiltIn ? AssetImage('assets/images/chatbot_avt.png') : AssetImage('assets/images/splash_logo.png'),
+                              radius: 10,
+                            ),
+                            const SizedBox(width: 6),
+                            Flexible(
+                              fit: FlexFit.loose,
+                              child: Text(
+                                value.name,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ),
+        ), */
         leading: IconButton(
           icon: const Icon(Icons.menu, color: Colors.white),
           onPressed: () {
